@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:proj_flutter/Models/status.dart';
 import 'package:proj_flutter/Views/tela_prospectar.dart';
 import '../Models/cnpjStatus.dart';
 import '../helprs/formatadores.dart';
-import 'SidebarItem.dart';
+import 'widgets/SidebarItem.dart';
 
 class TelaConsultaCnpjPage extends StatefulWidget {
   final List<String> cnpjs;
@@ -67,7 +68,7 @@ class _TelaConsultaCnpjPageState
     try {
       final response = await http.post(
         Uri.parse(
-            'http://localhost:8080/v1/cnpjja/pesquisar_cnpj'),
+            '${dotenv.env['API_URL']}/cnpjja/popularBase'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode([
           {"cnpj": _resultados[index].cnpj}

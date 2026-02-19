@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:proj_flutter/Views/tela_consultaCnpjPage.dart';
 import 'package:proj_flutter/helprs/formatadores.dart';
-import '../Models/baseConciliadora.dart';
+import '../helprs/baseConciliadora.dart';
 import '../ModerViews/buscarApi.dart';
 import '../models/prospectar.dart';
-import 'BotaoFavorito.dart';
-import 'SidebarItem.dart';
+import 'widgets/BotaoFavorito.dart';
+import 'widgets/SidebarItem.dart';
 
 class TelaProspectar extends StatefulWidget {
   const TelaProspectar({super.key});
