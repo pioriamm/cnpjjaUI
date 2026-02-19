@@ -6,6 +6,7 @@ import 'package:proj_flutter/Models/status.dart';
 import 'package:proj_flutter/Views/tela_prospectar.dart';
 import '../Models/cnpjStatus.dart';
 import '../helprs/formatadores.dart';
+import 'SidebarItem.dart';
 
 class TelaConsultaCnpjPage extends StatefulWidget {
   final List<String> cnpjs;
@@ -168,6 +169,7 @@ class _TelaConsultaCnpjPageState
       child: Column(
         children: [
           const SizedBox(height: 40),
+
           const ListTile(
             leading: Icon(Icons.storage),
             title: Text(
@@ -175,27 +177,56 @@ class _TelaConsultaCnpjPageState
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
+
           const Divider(),
-          GestureDetector(
-            child: const ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Início"),
-            ),
-            onTap: () => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const TelaProspectar()),
+
+          SidebarItem(
+            icon: Icons.home,
+            title: "Início",
+            onTap: () => Navigator.of(context).pushAndRemoveUntil(
+              PageRouteBuilder(
+                transitionDuration:
+                const Duration(milliseconds: 350),
+                pageBuilder: (_, animation, __) =>
+                const TelaProspectar(),
+                transitionsBuilder:
+                    (_, animation, __, child) {
+                  final slideAnimation = Tween<Offset>(
+                    begin: const Offset(0.08, 0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                  );
+
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: slideAnimation,
+                      child: child,
+                    ),
+                  );
+                },
+              ),
                   (route) => false,
             ),
           ),
-          Spacer(),
-          const ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Configurações")),
+
+          const Spacer(),
+
+          const SidebarItem(
+            icon: Icons.settings,
+            title: "Configurações",
+          ),
+
           const SizedBox(height: 20),
         ],
       ),
     );
   }
+
 
   // ================= TOPBAR =================
 

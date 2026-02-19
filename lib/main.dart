@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'Views/tela_menus.dart';
+import 'Views/tela_prospectar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TelaMenus(),
+      home: TelaProspectar(),
     );
   }
 }
