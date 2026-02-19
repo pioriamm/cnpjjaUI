@@ -1,9 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:proj_flutter/Models/status.dart';
+import 'package:proj_flutter/Views/tela_prospectar.dart';
 import '../Models/cnpjStatus.dart';
+import '../helprs/formatadores.dart';
 
 class TelaConsultaCnpjPage extends StatefulWidget {
   final List<String> cnpjs;
@@ -11,10 +13,12 @@ class TelaConsultaCnpjPage extends StatefulWidget {
   const TelaConsultaCnpjPage({super.key, required this.cnpjs});
 
   @override
-  State<TelaConsultaCnpjPage> createState() => _TelaConsultaCnpjPageState();
+  State<TelaConsultaCnpjPage> createState() =>
+      _TelaConsultaCnpjPageState();
 }
 
-class _TelaConsultaCnpjPageState extends State<TelaConsultaCnpjPage> {
+class _TelaConsultaCnpjPageState
+    extends State<TelaConsultaCnpjPage> {
   final List<CnpjStatus> _resultados = [];
 
   bool _processando = false;
@@ -24,14 +28,15 @@ class _TelaConsultaCnpjPageState extends State<TelaConsultaCnpjPage> {
   void initState() {
     super.initState();
     _resultados.addAll(
-      widget.cnpjs.map((e) => CnpjStatus(cnpj: e)).toList(),
-    );
+        widget.cnpjs.map((e) => CnpjStatus(cnpj: e)));
   }
 
   int get _total => _resultados.length;
 
   int get _restantes =>
       _resultados.where((e) => e.status != Status.ok).length;
+
+  // ================= PROCESSAMENTO =================
 
   Future<void> _processarCnpjs() async {
     setState(() {
@@ -48,9 +53,7 @@ class _TelaConsultaCnpjPageState extends State<TelaConsultaCnpjPage> {
       await Future.delayed(const Duration(milliseconds: 300));
     }
 
-    setState(() {
-      _processando = false;
-    });
+    setState(() => _processando = false);
   }
 
   Future<void> _processarCnpjIndividual(int index) async {
@@ -62,7 +65,8 @@ class _TelaConsultaCnpjPageState extends State<TelaConsultaCnpjPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8080/v1/cnpjja/pesquisar_cnpj'),
+        Uri.parse(
+            'http://localhost:8080/v1/cnpjja/pesquisar_cnpj'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode([
           {"cnpj": _resultados[index].cnpj}
@@ -73,7 +77,9 @@ class _TelaConsultaCnpjPageState extends State<TelaConsultaCnpjPage> {
 
       setState(() {
         _resultados[index].status =
-        response.statusCode == 200 ? Status.ok : Status.erro;
+        response.statusCode == 200
+            ? Status.ok
+            : Status.erro;
       });
     } catch (_) {
       setState(() {
@@ -89,6 +95,8 @@ class _TelaConsultaCnpjPageState extends State<TelaConsultaCnpjPage> {
     });
   }
 
+  // ================= STATUS ICON =================
+
   Widget _buildStatusWidget(Status status, int index) {
     switch (status) {
       case Status.processando:
@@ -99,61 +107,169 @@ class _TelaConsultaCnpjPageState extends State<TelaConsultaCnpjPage> {
         );
 
       case Status.ok:
-        return const Icon(Icons.check_circle, color: Colors.green);
+        return const Icon(Icons.check_circle,
+            color: Colors.green);
 
       case Status.erro:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.cancel, color: Colors.red),
-            const SizedBox(width: 8),
             TextButton(
-              onPressed: () => _processarCnpjIndividual(index),
+              onPressed: () =>
+                  _processarCnpjIndividual(index),
               child: const Text("Retentar"),
-            ),
+            )
           ],
         );
 
       case Status.inicial:
-      return const SizedBox();
+        return const SizedBox();
     }
   }
+
+  // ================= BUILD =================
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Consulta CNPJ')),
-      body: Column(
+      backgroundColor: const Color(0xffEEF2F7),
+      body: Row(
         children: [
-          const SizedBox(height: 16),
+          /// SIDEBAR
+          _sideBar(),
 
-          /// CONTADORES
-          Text("Total: $_total"),
-          Text("Faltando: $_restantes"),
+          /// CONTEÚDO
+          Expanded(
+            child: Column(
+              children: [
+                _topBar(),
+                Expanded(child: _conteudo()),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-          const SizedBox(height: 16),
+  // ================= SIDEBAR =================
 
-          /// BOTÕES
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: _processando ? null : _processarCnpjs,
-                child: Text(
-                    _processando ? "Processando..." : "Iniciar Consulta"),
-              ),
-              const SizedBox(width: 12),
-              ElevatedButton(
-                onPressed: _processando ? _pararExecucao : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+  Widget _sideBar() {
+    return Container(
+      width: 230,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xffEAF1FF), Color(0xffDCE8FF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 40),
+          const ListTile(
+            leading: Icon(Icons.storage),
+            title: Text(
+              "Popular\nBase",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          const Divider(),
+          GestureDetector(
+            child: const ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Início"),
+            ),
+            onTap: () => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const TelaProspectar()),
+                  (route) => false,
+            ),
+          ),
+          Spacer(),
+          const ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Configurações")),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  // ================= TOPBAR =================
+
+  Widget _topBar() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      color: Colors.white,
+      child: Row(
+        children: const [
+          Expanded(
+            child: Text(
+              "Consulta de CNPJs",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+          CircleAvatar(child: Icon(Icons.person)),
+        ],
+      ),
+    );
+  }
+
+  // ================= CONTEÚDO =================
+
+  Widget _conteudo() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          /// CARD CONTROLE
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: _cardDecoration(),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _infoBox("Total", _total),
+                    _infoBox("Faltando", _restantes),
+                  ],
                 ),
-                child: const Text("Parar"),
-              ),
-            ],
+                const SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed:
+                      _processando ? null : _processarCnpjs,
+                      icon: const Icon(Icons.play_arrow),
+                      label: Text(_processando
+                          ? "Processando..."
+                          : "Iniciar"),
+                    ),
+                    const SizedBox(width: 12),
+                    ElevatedButton.icon(
+                      onPressed:
+                      _processando ? _pararExecucao : null,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red),
+                      icon: const Icon(Icons.stop, color: Colors.white,),
+                      label: const Text("Parar",style: TextStyle(color: Colors.white),),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           /// LISTA
           Expanded(
@@ -162,16 +278,54 @@ class _TelaConsultaCnpjPageState extends State<TelaConsultaCnpjPage> {
               itemBuilder: (context, index) {
                 final item = _resultados[index];
 
-                return ListTile(
-                title: Text(item.cnpj),
-                trailing:
-                _buildStatusWidget(item.status, index),
+                return Container(
+                  margin:
+                  const EdgeInsets.symmetric(vertical: 6),
+                  decoration: _cardDecoration(),
+                  child: ListTile(
+                    leading:
+                    const Icon(Icons.work),
+                    title: Text( Formatadores.formatarCnpj(item.cnpj) ),
+                    trailing:
+                    _buildStatusWidget(item.status, index),
+                  ),
                 );
               },
             ),
           ),
         ],
       ),
+    );
+  }
+
+  // ================= WIDGETS AUX =================
+
+  BoxDecoration _cardDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: const [
+        BoxShadow(
+          blurRadius: 12,
+          color: Colors.black12,
+          offset: Offset(0, 4),
+        )
+      ],
+    );
+  }
+
+  Widget _infoBox(String titulo, int valor) {
+    return Column(
+      children: [
+        Text(titulo,
+            style: const TextStyle(color: Colors.grey)),
+        const SizedBox(height: 4),
+        Text(
+          "$valor",
+          style: const TextStyle(
+              fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }
