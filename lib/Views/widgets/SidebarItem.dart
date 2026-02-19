@@ -33,7 +33,7 @@ class _SidebarItemState extends State<SidebarItem> {
           ),
           child: Row(
             children: [
-              /// INDICADOR LATERAL
+
               AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
                 width: 4,
