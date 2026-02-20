@@ -4,10 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:proj_flutter/Models/status.dart';
-import 'package:proj_flutter/Views/tela_prospectar.dart';
-import '../Models/cnpjStatus.dart';
-import '../helprs/formatadores.dart';
-import 'widgets/SidebarItem.dart';
+import 'package:proj_flutter/Views/tela_antiga/tela_prospectar.dart';
+import '../../Models/cnpjStatus.dart';
+import '../../helprs/formatadores.dart';
+import '../widgets/SidebarItem.dart';
 
 class TelaConsultaCnpjPage extends StatefulWidget {
   final List<String> cnpjs;

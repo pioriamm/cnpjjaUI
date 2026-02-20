@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 
 import '../models/prospectar.dart';
 
-class BuscarApi {
+class BuscarApiMongo {
 
-  static Future<List<Prospectar>> buscarDadosApi() async {
+  static Future<List<Prospectar>> buscarDadosMongo() async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/mongo/buscarDados'),
       headers: {"Content-Type": "application/json"},
@@ -16,7 +16,7 @@ class BuscarApi {
       final List<dynamic> jsonList = jsonDecode(response.body);
 
       return jsonList
-          .map((empresa) => Prospectar.fromJson(empresa))
+          .map<Prospectar>((empresa) => Prospectar.fromJson(empresa))
           .toList();
     } else {
       throw Exception('Erro ao buscar dados: ${response.statusCode}');

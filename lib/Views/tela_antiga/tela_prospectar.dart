@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/Views/tela_consultaCnpjPage.dart';
+import 'package:proj_flutter/Views/tela_antiga/tela_consultaCnpjPage.dart';
 import 'package:proj_flutter/helprs/formatadores.dart';
-import '../helprs/baseConciliadora.dart';
-import '../ModerViews/buscarApi.dart';
-import '../models/prospectar.dart';
-import 'widgets/BotaoFavorito.dart';
-import 'widgets/SidebarItem.dart';
+import '../../helprs/baseConciliadora.dart';
+import '../../ModerViews/buscarApiMongo.dart';
+import '../../models/prospectar.dart';
+import '../widgets/BotaoFavorito.dart';
+import '../widgets/SidebarItem.dart';
 
 class TelaProspectar extends StatefulWidget {
+
   const TelaProspectar({super.key});
 
   @override
@@ -23,7 +24,7 @@ class _TelaProspectarState extends State<TelaProspectar> {
   @override
   void initState() {
     super.initState();
-    _futureDados = BuscarApi.buscarDadosApi();
+    _futureDados = BuscarApiMongo.buscarDadosMongo();
   }
 
   @override
@@ -59,21 +60,14 @@ class _TelaProspectarState extends State<TelaProspectar> {
   Widget _sideBar() {
     return Container(
       width: 230,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xffEAF1FF), Color(0xffDCE8FF)],
-        ),
-      ),
+      decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xffEAF1FF), Color(0xffDCE8FF)])),
       child: Column(
         children: [
           const SizedBox(height: 40),
 
           const ListTile(
             leading: Icon(Icons.work),
-            title: Text(
-              "Prospectar\nEmpresas",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            title: Text("Prospectar\nEmpresas", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
 
           const Divider(),
@@ -84,8 +78,7 @@ class _TelaProspectarState extends State<TelaProspectar> {
             onTap: () => Navigator.of(context).pushAndRemoveUntil(
               PageRouteBuilder(
                 transitionDuration: const Duration(milliseconds: 350),
-                pageBuilder: (_, animation, __) =>
-                const TelaProspectar(),
+                pageBuilder: (_, animation, __) => const TelaProspectar(),
                 transitionsBuilder: (_, animation, __, child) {
                   final slideAnimation = Tween<Offset>(
                     begin: const Offset(0.08, 0),
@@ -94,12 +87,11 @@ class _TelaProspectarState extends State<TelaProspectar> {
 
                   return FadeTransition(
                     opacity: animation,
-                    child: SlideTransition(
-                        position: slideAnimation, child: child),
+                    child: SlideTransition(position: slideAnimation, child: child),
                   );
                 },
               ),
-                  (route) => false,
+              (route) => false,
             ),
           ),
 
@@ -109,51 +101,34 @@ class _TelaProspectarState extends State<TelaProspectar> {
             onTap: () => Navigator.push(
               context,
               PageRouteBuilder(
-                transitionDuration:
-                const Duration(milliseconds: 350),
+                transitionDuration: const Duration(milliseconds: 350),
                 pageBuilder: (_, animation, __) =>
-                    TelaConsultaCnpjPage(
-                        cnpjs:
-                        BaseConciliadora.Lista_base_conciliadora),
+                    TelaConsultaCnpjPage(cnpjs: BaseConciliadora.Lista_base_conciliadora),
                 transitionsBuilder: (_, animation, __, child) {
-                  final slide = Tween(
-                    begin: const Offset(0.1, 0),
-                    end: Offset.zero,
-                  ).animate(animation);
+                  final slide = Tween(begin: const Offset(0.1, 0), end: Offset.zero).animate(animation);
 
                   return FadeTransition(
                     opacity: animation,
-                    child:
-                    SlideTransition(position: slide, child: child),
+                    child: SlideTransition(position: slide, child: child),
                   );
                 },
               ),
             ),
           ),
 
-          const SidebarItem(
-            icon: Icons.star_border,
-            title: "Favoritos",
-          ),
+          const SidebarItem(icon: Icons.star_border, title: "Favoritos"),
 
-          const SidebarItem(
-            icon: Icons.chat_bubble_outline,
-            title: "Contato",
-          ),
+          const SidebarItem(icon: Icons.chat_bubble_outline, title: "Contato"),
 
           const Spacer(),
 
-          const SidebarItem(
-            icon: Icons.settings,
-            title: "Configurações",
-          ),
+          const SidebarItem(icon: Icons.settings, title: "Configurações"),
 
           const SizedBox(height: 20),
         ],
       ),
     );
   }
-
 
   // ================= TOPBAR =================
 
@@ -271,44 +246,140 @@ class _TelaProspectarState extends State<TelaProspectar> {
       childrenPadding: EdgeInsets.zero,
       title: Text("Sócios da empresa ${dado.empresaRaiz}", style: const TextStyle(fontWeight: FontWeight.bold)),
       children: (dado.membros ?? []).map<Widget>((membro) {
-        /// ✅ REMOVE empresas iguais ao CNPJ raiz
-        final empresasFiltradas = (membro.empresas ?? [])
-            .where((emp) => (emp.nomeEmpresaSocio ?? '').toLowerCase().trim() != empresaRaiz)
+        /// remove empresa raiz + somente ATIVAS
+        final empresasAtivas = (membro.empresas ?? [])
+            .where(
+              (emp) => (emp.nomeEmpresaSocio ?? '').toLowerCase().trim() != empresaRaiz && emp.status?.text == "Ativa",
+            )
             .toList();
 
-        /// se não sobrou nenhuma empresa, não mostra nada
-        if (empresasFiltradas.isEmpty) {
+        if (empresasAtivas.isEmpty) {
           return ExpansionTile(
             enabled: false,
             leading: const Icon(Icons.person_outline),
             title: Text(membro.nomeMembro ?? ""),
-            children: const [ListTile(title: Text("Sem outras empresas vinculadas"))],
+            children: const [ListTile(title: Text("Sem empresas ativas vinculadas"))],
           );
         }
 
         return ExpansionTile(
           leading: const Icon(Icons.person_outline),
           title: Text(membro.nomeMembro ?? ""),
-          children: empresasFiltradas.map<Widget>((emp) {
+          children: empresasAtivas.map<Widget>((emp) {
             final membrosSocio = emp.membrosEmpresaSocio ?? [];
+            final telefones = emp.telefone ?? [];
+            final emails = emp.email ?? [];
 
             return ExpansionTile(
-              leading: const Icon(Icons.business),
-              title: Text(
-                emp.nomeEmpresaSocio ?? '',
-                style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-              ),
-              trailing: const Text("👍🏻", style: TextStyle(fontSize: 26)),
+              title: Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: const Color(0xffF4F6FA),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-              /// Sócios da empresa relacionada
-              children: membrosSocio.isNotEmpty
-                  ? membrosSocio.map<Widget>((p) {
-                      return ListTile(
-                        leading: const Icon(Icons.person),
-                        title: Text("${p.name ?? ''} (${p.age ?? ''})"),
-                      );
-                    }).toList()
-                  : const [ListTile(title: Text("Sem sócios cadastrados"))],
+                    /// ICONE
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffE8D1A7),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.business_center,
+                        color: Colors.deepPurple,
+                        size: 28,
+                      ),
+                    ),
+
+                    const SizedBox(width: 16),
+
+                    /// CONTEUDO
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+
+                          /// NOME EMPRESA
+                          Text(
+                            emp.nomeEmpresaSocio ?? '',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+
+                          const SizedBox(height: 4),
+
+                          /// CNPJ
+                          if (emp.cnpjEmpresaSocio != null)
+                            Text(
+                              "CNPJ: ${Formatadores.formatarCnpj(emp.cnpjEmpresaSocio)}",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                              ),
+                            ),
+
+                          const SizedBox(height: 14),
+
+                          /// STATUS
+                          Text(
+                            "Status: ${emp.status?.text ?? ''}",
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          /// TELEFONES
+                          if (telefones.isNotEmpty)
+                            ...telefones.map<Widget>(
+                                  (t) => Padding(
+                                padding: const EdgeInsets.only(bottom: 6),
+                                child: Text(
+                                  "(${t.area}) ${t.number}",
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ),
+
+                          /// EMAILS
+                          if (emails.isNotEmpty)
+                            ...emails.map<Widget>(
+                                  (e) => Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  e.address ?? "",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              children: [
+                if (membrosSocio.isNotEmpty)
+                  ...membrosSocio.map<Widget>(
+                    (p) => ListTile(leading: const Icon(Icons.person), title: Text("${p.name ?? ''} (${p.age ?? ''})")),
+                  )
+                else
+                  const ListTile(title: Text("Sem sócios cadastrados")),
+              ],
             );
           }).toList(),
         );
