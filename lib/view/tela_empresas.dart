@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/Views/widgets/EmpresaCardWidget.dart';
-import 'package:proj_flutter/Views/widgets/FiltroBuscaWidget.dart';
-import 'package:proj_flutter/Views/widgets/dialogs/NovaEmpresaDialog.dart';
-import 'package:proj_flutter/Views/widgets/SideBarWidget.dart';
-import 'package:proj_flutter/Views/widgets/botao_padrao.dart';
 import 'package:proj_flutter/helprs/formatadores.dart';
-
-import '../../models/prospectar.dart';
-import '../Models/enum_MenuItem.dart';
-import '../ModerViews/buscarApiMongo.dart';
+import 'package:proj_flutter/model/enum_MenuItem.dart';
+import 'package:proj_flutter/model/prospec.dart';
+import 'package:proj_flutter/modelview/buscarApiMongo.dart';
+import 'package:proj_flutter/view/widgets/EmpresaCardWidget.dart';
+import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
+import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
+import 'package:proj_flutter/view/widgets/botao_padrao.dart';
+import 'package:proj_flutter/view/widgets/dialogs/NovaEmpresaDialog.dart';
 import '../helprs/Cores.dart';
 
 class TelaEmpresas extends StatefulWidget {
@@ -21,13 +20,10 @@ class TelaEmpresas extends StatefulWidget {
 class _TelaEmpresasState extends State<TelaEmpresas> {
   List<Prospectar> empresas = [];
   List<Prospectar> empresasFiltradas = [];
-
   bool carregando = true;
   String? erro;
-
   final TextEditingController _filtroController = TextEditingController();
-
-  MenuItem _selected = MenuItem.socios;
+  MenuItem _selected = MenuItem.empresas;
 
   @override
   void initState() {
@@ -165,21 +161,20 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                       itemCount: empresasFiltradas.length,
                       itemBuilder: (context, index) {
                         final empresa = empresasFiltradas[index];
-
-                        final dados = empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
+                        final empresaAtual = empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
 
                         return EmpresaCardWidget(
-                          razaoSocial: dados?.empresaRaiz ?? '',
-                          nomeFantasia: dados?.alias ?? '',
-                          cnpj: Formatadores.formatarCnpj("${dados?.cnpjRaizId }")?? '',
-                          cnae: '',
-                          atividade: '',
+                          razaoSocial: empresaAtual?.empresaRaiz ?? '',
+                          nomeFantasia: empresaAtual?.alias ?? "${empresaAtual?.empresaRaiz}",
+                          cnpj: Formatadores.formatarCnpj("${empresaAtual?.cnpjRaizId}") ?? '',
+                          cnae: Formatadores.formatarCnae("${empresaAtual?.cnae?.id!}") ?? '',
+                          atividade: empresaAtual?.cnae?.descricao ?? '',
                           telefone: SizedBox(
-                            height: 60,
+                            height: 10,
                             child: ListView.builder(
-                              itemCount: dados?.telefone?.length ?? 0,
+                              itemCount: empresaAtual?.telefone?.length ?? 0,
                               itemBuilder: (context, i) {
-                                final tel = dados!.telefone![i];
+                                final tel = empresaAtual!.telefone![i];
                                 return Text(
                                   "(${tel.area ?? ''}) ${tel.number ?? ''}",
                                   style: const TextStyle(fontSize: 13),
@@ -187,8 +182,10 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                               },
                             ),
                           ),
-                          email: dados?.email?.isNotEmpty == true ? dados?.email?.first.address ?? '' : '',
-                          socios: dados?.membros?.map((m) => m.nomeMembro ?? '').toList() ?? [],
+                          email: empresaAtual?.email?.isNotEmpty == true
+                              ? empresaAtual?.email?.first.address ?? ''
+                              : '',
+                          socios: empresaAtual?.membros?.map((m) => m.nomeMembro ?? '').toList() ?? [],
 
                           onEdit: () {},
                           onDelete: () {},

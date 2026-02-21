@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/Views/widgets/ClienteCardWidget.dart';
-import 'package:proj_flutter/Views/widgets/FiltroBuscaWidget.dart';
-import 'package:proj_flutter/Views/widgets/IndicadorCardWidget.dart';
-import 'package:proj_flutter/Views/widgets/dialogs/NovoSocioDialog.dart';
-import 'package:proj_flutter/Views/widgets/SideBarWidget.dart';
-import 'package:proj_flutter/Views/widgets/botao_padrao.dart';
-
-import '../Models/enum_MenuItem.dart';
-import '../Models/novoLayout/Socios.dart';
+import 'package:proj_flutter/model/enum_MenuItem.dart';
+import 'package:proj_flutter/model/prospec.dart';
+import 'package:proj_flutter/modelview/buscarApiMongo.dart';
+import 'package:proj_flutter/view/tela_empresas.dart';
+import 'package:proj_flutter/view/tela_socio.dart';
+import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
+import 'package:proj_flutter/view/widgets/IndicadorCardMonetaryWidget.dart';
+import 'package:proj_flutter/view/widgets/IndicadorCardWidget.dart';
+import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
+import 'package:proj_flutter/view/widgets/botao_padrao.dart';
+import 'package:proj_flutter/view/widgets/dialogs/NovoSocioDialog.dart';
 import '../helprs/Cores.dart';
 
 class TelaPesquisa extends StatefulWidget {
+
+
+
   TelaPesquisa({super.key});
 
   @override
@@ -18,15 +23,47 @@ class TelaPesquisa extends StatefulWidget {
 }
 
 class _TelaPesquisaState extends State<TelaPesquisa> {
-  final List<Socio> listaSocios = [];
+  List<Prospectar> empresas = [];
+  List<Prospectar> empresasFiltradas = [];
+  bool carregando = true;
+  String? erro;
+  MenuItem _selected = MenuItem.pesquisa;
 
-  MenuItem _selected = MenuItem.socios;
 
   final TextEditingController _filtroController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _carregarEmpresas();
+  }
+  Future<void> _carregarEmpresas() async {
+    setState(() {
+      carregando = true;
+      erro = null;
+    });
+
+    try {
+      final resultado = await BuscarApiMongo.buscarDadosMongo();
+
+      setState(() {
+        empresas = resultado;
+        empresasFiltradas = List.from(resultado);
+      });
+    } catch (e) {
+      setState(() {
+        erro = e.toString();
+      });
+    } finally {
+      setState(() {
+        carregando = false;
+      });
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     var tela = MediaQuery.of(context).size;
+    var ticketMedido = (empresasFiltradas.length * 150.55);
 
     return Scaffold(
       body: Row(
@@ -103,26 +140,49 @@ class _TelaPesquisaState extends State<TelaPesquisa> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: const [
-                      IndicadorCardWidget(
-                        icon: Icons.group,
-                        valor: 3,
-                        titulo: "Sócios cadastrados",
+                  const SizedBox(height: 20),
+                  Wrap(
+                    spacing: 30,
+                    runSpacing: 30,
+                    alignment: WrapAlignment.start,
+                    runAlignment: WrapAlignment.end,
+                    children: [
+                      IndicadorCardMonetaryWidget(
+                        icon: Icons.sell_outlined,
+                        valor: ticketMedido,
+                        titulo: "Ticket Médio",
                       ),
-                      IndicadorCardWidget(
+                       IndicadorCardWidget(
+                        icon: Icons.badge,
+                        valor: empresas
+                            .expand((e) => e.dados ?? [])
+                            .expand((d) => d.membros ?? [])
+                            .length,
+                        titulo: "Sócios cadastrados", tela: TelaSocio(),
+                      ),
+                       IndicadorCardWidget(
                         icon: Icons.apartment,
-                        valor: 3,
-                        titulo: "Empresas cadastradas",
+                        valor: empresas.length,
+                        titulo: "Empresas cadastradas", tela: TelaEmpresas(),
                       ),
-                      IndicadorCardWidget(
+                      const IndicadorCardWidget(
                         icon: Icons.trending_up,
                         valor: 5,
-                        titulo: "vinculos registrados",
+                        titulo: "Vínculos registrados", tela: TelaEmpresas(),
                       ),
+                      const IndicadorCardWidget(
+                        icon: Icons.ads_click,
+                        valor: 5,
+                        titulo: "Oportuniades Diretas", tela: TelaEmpresas(),
+                      ),
+                      const IndicadorCardWidget(
+                        icon: Icons.account_tree,
+                        valor: 5,
+                        titulo: "Oportunidades Indiretas", tela: TelaEmpresas(),
+                      ),
+
                     ],
-                  ),
+                  )
                 ],
               ),
             ),

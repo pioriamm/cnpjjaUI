@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'Views/tela_pesquisa.dart';
+import 'package:proj_flutter/view/tela_pesquisa.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
@@ -16,6 +16,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        fontFamily: 'PlusJakartaSans',
+      ),
       home: TelaPesquisa(),
     );
   }

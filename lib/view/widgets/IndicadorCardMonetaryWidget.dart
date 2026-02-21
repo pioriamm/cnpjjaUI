@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:proj_flutter/helprs/Cores.dart';
+import 'package:proj_flutter/helprs/formatadores.dart';
 
-class IndicadorCardWidget extends StatefulWidget {
+class IndicadorCardMonetaryWidget extends StatefulWidget {
   final IconData icon;
-  final int valor;
+  final double valor;
   final String titulo;
 
-  const IndicadorCardWidget({
+  const IndicadorCardMonetaryWidget({
     super.key,
     required this.icon,
     required this.valor,
@@ -14,10 +15,10 @@ class IndicadorCardWidget extends StatefulWidget {
   });
 
   @override
-  State<IndicadorCardWidget> createState() => _IndicadorCardWidgetState();
+  State<IndicadorCardMonetaryWidget> createState() => _IndicadorCardMonetaryWidgetState();
 }
 
-class _IndicadorCardWidgetState extends State<IndicadorCardWidget> {
+class _IndicadorCardMonetaryWidgetState extends State<IndicadorCardMonetaryWidget> {
   bool isHovering = false;
 
   @override
@@ -80,10 +81,9 @@ class _IndicadorCardWidgetState extends State<IndicadorCardWidget> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color:
-                  isHovering ? corHover : Colors.black,
+                  color: isHovering ? corHover : Colors.black,
                 ),
-                child: Text(widget.valor.toString()),
+                child: Text(Formatadores.formatarReal(widget.valor)),
               ),
 
               const SizedBox(height: 6),
