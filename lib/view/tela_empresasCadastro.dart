@@ -10,20 +10,20 @@ import 'package:proj_flutter/view/widgets/botao_padrao.dart';
 import 'package:proj_flutter/view/widgets/dialogs/NovaEmpresaDialog.dart';
 import '../helprs/Cores.dart';
 
-class TelaEmpresas extends StatefulWidget {
-  const TelaEmpresas({super.key});
+class TelaEmpresasCadastro extends StatefulWidget {
+  const TelaEmpresasCadastro({super.key});
 
   @override
-  State<TelaEmpresas> createState() => _TelaEmpresasState();
+  State<TelaEmpresasCadastro> createState() => _TelaEmpresasCadastroState();
 }
 
-class _TelaEmpresasState extends State<TelaEmpresas> {
+class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
   List<Prospectar> empresas = [];
   List<Prospectar> empresasFiltradas = [];
   bool carregando = true;
   String? erro;
   final TextEditingController _filtroController = TextEditingController();
-  MenuItem _selected = MenuItem.empresas;
+  MenuItem _selected = MenuItem.empresasCadastro;
 
   @override
   void initState() {
@@ -104,7 +104,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                         "Empresas",
                         style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.bold),
                       ),
-                      /*BotaoPadrao(
+                      BotaoPadrao(
                         acao: () async {
                           final resultado = await showDialog(
                             context: context,
@@ -123,7 +123,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                           const SizedBox(width: 8),
                           Text("Nova Empresa", style: TextStyle(color: Cores.branco, fontSize: 16)),
                         ],
-                      ),*/
+                      ),
                     ],
                   ),
 

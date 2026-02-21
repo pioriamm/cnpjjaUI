@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:proj_flutter/model/enum_MenuItem.dart';
 import '../../helprs/Cores.dart';
 import '../tela_empresas.dart';
+import '../tela_empresasCadastro.dart';
 import '../tela_socio.dart';
 import '../tela_pesquisa.dart';
+import '../tela_socioCadastro.dart';
 
 class SideBarWidget extends StatefulWidget {
   final MenuItem selectedItem;
@@ -20,11 +22,10 @@ class _SideBarWidgetState extends State<SideBarWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: 230,
-      color: const Color(0xFF123C3C),
+      color: Cores.verde_escuro,
       child: Column(
         children: [
           const SizedBox(height: 30),
-
           const Text(
             "conciliadora",
             style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w600, letterSpacing: 1),
@@ -55,6 +56,24 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             title: "Empresas",
             item: MenuItem.empresas,
             page: const TelaEmpresas(),
+          ),
+          const SizedBox(height: 30),
+          const Divider(color: Colors.white24),
+          const SizedBox(height: 30),
+          _menuItem(
+            context: context,
+            icon: Icons.edit_outlined,
+            title: "Cadastro Sócios",
+            item: MenuItem.sociosCadastro,
+            page: TelaSocioCadastro(),
+          ),
+
+          _menuItem(
+            context: context,
+            icon: Icons.edit_outlined,
+            title: "Cadastro Empresas",
+            item: MenuItem.empresasCadastro,
+            page: const TelaEmpresasCadastro(),
           ),
           const Spacer(),
           const Padding(

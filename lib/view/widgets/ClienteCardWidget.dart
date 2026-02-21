@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proj_flutter/helprs/formatadores.dart';
 import 'package:proj_flutter/model/EmpresaSocio.dart';
 
+import '../../helprs/Cores.dart';
 import '../../helprs/tooltip_controller.dart';
 
 class ClienteCardWidget extends StatefulWidget {
@@ -33,9 +34,10 @@ class ClienteCardWidget extends StatefulWidget {
 class _ClienteCardWidgetState extends State<ClienteCardWidget> {
 
   String get inicial => widget.nome.isNotEmpty ? widget.nome[0].toUpperCase() : "?";
-  void _mostrarTooltip(BuildContext context) {
-    final overlay = Overlay.of(context);
 
+  void _mostrarTooltip(BuildContext context) {
+
+    final overlay = Overlay.of(context);
     final box = context.findRenderObject() as RenderBox;
     final position = box.localToGlobal(Offset.zero);
 
@@ -69,7 +71,7 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
           /// Avatar
           CircleAvatar(
             radius: 24,
-            backgroundColor: const Color(0xFF123C3C),
+            backgroundColor:  Cores.verde_escuro,
             child: Text(
               inicial,
               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -84,11 +86,8 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.nome, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-
                 const SizedBox(height: 4),
-
                 Text(widget.cpf, style: TextStyle(color: Colors.grey.shade700)),
-
                 const SizedBox(height: 8),
 
                 Wrap(
@@ -230,7 +229,8 @@ class _TooltipEmpresasState extends State<_TooltipEmpresas> {
                                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                   ),
                                   const SizedBox(height: 6),
-                                  Text(empresa.cnpjEmpresaSocio ?? '', style: TextStyle(color: Colors.grey.shade700)),
+                                  Text(Formatadores.formatarCnpj("${empresa.cnpjEmpresaSocio}") ?? ''
+                                      , style: TextStyle(color: Colors.grey.shade700)),
                                 ],
                               ),
                             ),

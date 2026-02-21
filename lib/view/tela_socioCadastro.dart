@@ -14,15 +14,15 @@ import '../model/prospec.dart';
 import '../modelview/buscarApiMongo.dart';
 
 
-class TelaSocio extends StatefulWidget {
-  const TelaSocio({super.key});
+class TelaSocioCadastro extends StatefulWidget {
+  const TelaSocioCadastro({super.key});
 
   @override
-  State<TelaSocio> createState() => _TelaSocioState();
+  State<TelaSocioCadastro> createState() => _TelaSocioCadastroState();
 }
 
-class _TelaSocioState extends State<TelaSocio> {
-  MenuItem _selected = MenuItem.socios;
+class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
+  MenuItem _selected = MenuItem.sociosCadastro;
 
   List<Prospectar> empresas = [];
   List<Membro> socios = [];
@@ -148,7 +148,7 @@ class _TelaSocioState extends State<TelaSocio> {
                         style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
-                     /* BotaoPadrao(
+                      BotaoPadrao(
                         acao: () async {
                           await showDialog(
                             context: context,
@@ -162,7 +162,7 @@ class _TelaSocioState extends State<TelaSocio> {
                           const SizedBox(width: 8),
                           Text("Novo Sócio", style: TextStyle(color: Cores.branco, fontSize: 16)),
                         ],
-                      ),*/
+                      ),
                     ],
                   ),
 
