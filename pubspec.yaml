@@ -29,6 +29,7 @@ flutter:
     - producao.env
     - local.env
     - assets/img/pipedrive_icon.png
+    - assets/img/cnpjja_icon.jpeg
     - assets/img/conciliadora_icon.jpeg
 
   fonts:

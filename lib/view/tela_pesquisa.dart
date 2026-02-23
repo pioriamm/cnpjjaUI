@@ -44,7 +44,7 @@ class _TelaPesquisaState extends State<TelaPesquisa> {
     });
 
     try {
-      final resultado = await BuscarApiMongo.buscarDadosMongo();
+      final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
 
       setState(() {
         empresas = resultado;

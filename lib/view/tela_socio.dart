@@ -55,7 +55,7 @@ class _TelaSocioState extends State<TelaSocio> {
     });
 
     try {
-      final resultado = await BuscarApiMongo.buscarDadosMongo();
+      final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
 
       /// ===============================
       /// FLATTEN → EMPRESAS → DADOS → MEMBROS

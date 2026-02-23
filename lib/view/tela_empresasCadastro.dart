@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:proj_flutter/helprs/formatadores.dart';
+import 'package:proj_flutter/model/EmpresasConciliadora.dart';
 import 'package:proj_flutter/model/enum_MenuItem.dart';
 import 'package:proj_flutter/model/prospec.dart';
 import 'package:proj_flutter/modelview/buscarApiMongo.dart';
+import 'package:proj_flutter/view/widgets/EmpresaCardSimplesWidget.dart';
 import 'package:proj_flutter/view/widgets/EmpresaCardWidget.dart';
 import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
 import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
@@ -18,8 +20,9 @@ class TelaEmpresasCadastro extends StatefulWidget {
 }
 
 class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
-  List<Prospectar> empresas = [];
-  List<Prospectar> empresasFiltradas = [];
+  List<EmpresasConciliadora> empresas = [];
+  List<EmpresasConciliadora> empresasFiltradas = [];
+
   bool carregando = true;
   String? erro;
   final TextEditingController _filtroController = TextEditingController();
@@ -44,7 +47,9 @@ class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
     });
 
     try {
-      final resultado = await BuscarApiMongo.buscarDadosMongo();
+      final resultado = await BuscarApiMongo.buscarBaseConciliadora();
+
+      resultado.sort((a, b) => a.razaoSocial!.toLowerCase().compareTo(b.razaoSocial!.toLowerCase()),);
 
       setState(() {
         empresas = resultado;
@@ -101,7 +106,7 @@ class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Empresas",
+                        "Cadastro de Empresas",
                         style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.bold),
                       ),
                       BotaoPadrao(
@@ -142,11 +147,11 @@ class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
 
                       setState(() {
                         empresasFiltradas = empresas.where((empresa) {
-                          final dados = empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
+                          final dados = empresa.id?.isNotEmpty == true ? empresa.id : null;
 
-                          return (dados?.empresaRaiz ?? '').toLowerCase().contains(busca) ||
-                              (dados?.alias ?? '').toLowerCase().contains(busca) ||
-                              (dados?.cnpjRaizId ?? '').contains(busca);
+                          return (empresa.razaoSocial ?? '').toLowerCase().contains(busca) ||
+                              (empresa.alias ?? '').toLowerCase().contains(busca) ||
+                              (empresa.id ?? '').contains(busca);
                         }).toList();
                       });
                     },
@@ -161,34 +166,13 @@ class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
                       itemCount: empresasFiltradas.length,
                       itemBuilder: (context, index) {
                         final empresa = empresasFiltradas[index];
-                        final empresaAtual = empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
+                        final empresaAtual = empresa;
 
-                        return EmpresaCardWidget(
-                          razaoSocial: empresaAtual?.empresaRaiz ?? '',
-                          nomeFantasia: empresaAtual?.alias ?? "${empresaAtual?.empresaRaiz}",
-                          cnpj: Formatadores.formatarCnpj("${empresaAtual?.cnpjRaizId}") ?? '',
-                          cnae: Formatadores.formatarCnae("${empresaAtual?.cnae?.id!}") ?? '',
-                          atividade: empresaAtual?.cnae?.descricao ?? '',
-                          telefone: SizedBox(
-                            height: 10,
-                            child: ListView.builder(
-                              itemCount: empresaAtual?.telefone?.length ?? 0,
-                              itemBuilder: (context, i) {
-                                final tel = empresaAtual!.telefone![i];
-                                return Text(
-                                  "(${tel.area ?? ''}) ${tel.number ?? ''}",
-                                  style: const TextStyle(fontSize: 13),
-                                );
-                              },
-                            ),
-                          ),
-                          email: empresaAtual?.email?.isNotEmpty == true
-                              ? empresaAtual?.email?.first.address ?? ''
-                              : '',
-                          socios: empresaAtual?.membros?.map((m) => m.nomeMembro ?? '').toList() ?? [],
-
-                          onEdit: () {},
-                          onDelete: () {},
+                        return EmpresaCardSimplesWidget(
+                          razaoSocial: empresaAtual.razaoSocial ?? '',
+                          nomeFantasia: empresaAtual.alias ?? "${empresaAtual.razaoSocial}",
+                          cnpj: Formatadores.formatarCnpj("${empresaAtual.cnpj}") ?? '',
+                          cnpjJa: empresaAtual.pesquisado! ,
                         );
                       },
                     ),

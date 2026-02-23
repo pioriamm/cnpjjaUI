@@ -6,8 +6,6 @@ import 'package:proj_flutter/modelview/buscarApiMongo.dart';
 import 'package:proj_flutter/view/widgets/EmpresaCardWidget.dart';
 import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
 import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
-import 'package:proj_flutter/view/widgets/botao_padrao.dart';
-import 'package:proj_flutter/view/widgets/dialogs/NovaEmpresaDialog.dart';
 import '../helprs/Cores.dart';
 
 class TelaEmpresas extends StatefulWidget {
@@ -44,7 +42,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
     });
 
     try {
-      final resultado = await BuscarApiMongo.buscarDadosMongo();
+      final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
 
       setState(() {
         empresas = resultado;

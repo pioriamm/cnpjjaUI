@@ -13,6 +13,10 @@ class Formatadores {
     );
   }
 
+ static String limparCnpj(String cnpj) {
+    return cnpj.replaceAll(RegExp(r'[.\-/]'), '');
+  }
+
   static String formatarReal(double valor) {
     final formatter = NumberFormat.currency(
       locale: 'pt_BR',
