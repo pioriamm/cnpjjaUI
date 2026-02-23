@@ -100,7 +100,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                     children: [
                       Text(
                         "Empresas",
-                        style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.w700),
                       ),
                       /*BotaoPadrao(
                         acao: () async {
@@ -164,7 +164,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                         return EmpresaCardWidget(
                           razaoSocial: empresaAtual?.empresaRaiz ?? '',
                           nomeFantasia: empresaAtual?.alias ?? "${empresaAtual?.empresaRaiz}",
-                          cnpj: Formatadores.formatarCnpj("${empresaAtual?.cnpjRaizId}") ?? '',
+                          cnpj: Formatadores.formatarCnpj("${empresaAtual?.cnpjRaizId}"),
                           cnae: Formatadores.formatarCnae("${empresaAtual?.cnae?.id!}") ?? '',
                           atividade: empresaAtual?.cnae?.descricao ?? '',
                           telefone: SizedBox(

@@ -52,7 +52,7 @@ class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
       resultado.sort((a, b) => a.razaoSocial!.toLowerCase().compareTo(b.razaoSocial!.toLowerCase()),);
 
       setState(() {
-        empresas = resultado;
+        empresas = resultado.where((empresa) => empresa.pesquisado == false).toList();
         empresasFiltradas = List.from(resultado);
       });
     } catch (e) {
@@ -165,14 +165,16 @@ class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
                     child: ListView.builder(
                       itemCount: empresasFiltradas.length,
                       itemBuilder: (context, index) {
+
                         final empresa = empresasFiltradas[index];
                         final empresaAtual = empresa;
 
                         return EmpresaCardSimplesWidget(
                           razaoSocial: empresaAtual.razaoSocial ?? '',
                           nomeFantasia: empresaAtual.alias ?? "${empresaAtual.razaoSocial}",
-                          cnpj: Formatadores.formatarCnpj("${empresaAtual.cnpj}") ?? '',
-                          cnpjJa: empresaAtual.pesquisado! ,
+                          cnpj: Formatadores.formatarCnpj("${empresaAtual.cnpj}"),
+                          cnpjJa: empresaAtual.pesquisado!,
+                          empresasConciliadora: empresa,
                         );
                       },
                     ),

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../helprs/Cores.dart';
 import '../../helprs/baseConciliadora.dart';
+import '../../model/EmpresasConciliadora.dart';
 import '../../modelview/buscarApiMongo.dart';
+import 'BotaoCnpjJa.dart';
 import 'ImageIconButtonWidget.dart';
 
 class EmpresaCardSimplesWidget extends StatelessWidget {
@@ -10,13 +12,14 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
   final String nomeFantasia;
   final String cnpj;
   final bool cnpjJa;
+  final EmpresasConciliadora empresasConciliadora;
 
   const EmpresaCardSimplesWidget({
     super.key,
     required this.razaoSocial,
     required this.nomeFantasia,
     required this.cnpj,
-    required this.cnpjJa,
+    required this.cnpjJa, required this.empresasConciliadora,
   });
 
   @override
@@ -66,10 +69,8 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
               /// AÇÕES
               Row(
                 children: [
-                  if (!cnpjJa)
-                    ImageIconButton(imagePath: 'assets/img/cnpjja_icon.jpeg', onPressed: (){
-                      BuscarApiMongo.pesquisarCnpjja(cnpj);
-                    })
+                  if (!empresasConciliadora.pesquisado!)
+                    BotaoCnpjJa(empresasConciliadora: empresasConciliadora,),
                 ],
               ),
             ],
@@ -83,7 +84,7 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
   Widget _tag(String texto, {IconData? icon}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(color: Colors.blueGrey.shade50, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(color: Cores.verde_claro_W100, borderRadius: BorderRadius.circular(20)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
