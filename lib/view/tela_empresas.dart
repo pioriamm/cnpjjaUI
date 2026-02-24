@@ -7,6 +7,7 @@ import 'package:proj_flutter/view/widgets/EmpresaCardWidget.dart';
 import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
 import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
 import '../helprs/Cores.dart';
+import '../model/EmpresasConciliadora.dart';
 
 class TelaEmpresas extends StatefulWidget {
   const TelaEmpresas({super.key});
@@ -18,6 +19,8 @@ class TelaEmpresas extends StatefulWidget {
 class _TelaEmpresasState extends State<TelaEmpresas> {
   List<Prospectar> empresas = [];
   List<Prospectar> empresasFiltradas = [];
+  List<EmpresasConciliadora> ListaEmpresaBaseConciliadora = [];
+
   bool carregando = true;
   String? erro;
   final TextEditingController _filtroController = TextEditingController();
@@ -43,10 +46,12 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
 
     try {
       final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
+      final baseConciliadora = await BuscarApiMongo.buscarBaseConciliadora();
 
       setState(() {
         empresas = resultado;
         empresasFiltradas = List.from(resultado);
+        ListaEmpresaBaseConciliadora = baseConciliadora;
       });
     } catch (e) {
       setState(() {
@@ -102,26 +107,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                         "Empresas",
                         style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.w700),
                       ),
-                      /*BotaoPadrao(
-                        acao: () async {
-                          final resultado = await showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (_) => const NovaEmpresaDialog(),
-                          );
 
-                          /// reload após cadastro
-                          if (resultado != null) {
-                            _carregarEmpresas();
-                          }
-                        },
-                        cor: Cores.verde_escuro,
-                        conteudo: [
-                          Icon(Icons.add, color: Cores.branco),
-                          const SizedBox(width: 8),
-                          Text("Nova Empresa", style: TextStyle(color: Cores.branco, fontSize: 16)),
-                        ],
-                      ),*/
                     ],
                   ),
 
@@ -182,12 +168,10 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                           ),
                           email: empresaAtual?.email?.isNotEmpty == true
                               ? empresaAtual?.email?.first.address ?? ''
-                              : '',
+                              : 'Sem informações',
                           socios: empresaAtual?.membros?.map((m) => m.nomeMembro ?? '').toList() ?? [],
-
-                          onEdit: () {},
-                          onDelete: () {},
                           empresasVinculadas: empresaAtual!.membros!,
+                          ListaEmpresaBaseConciliadora:  ListaEmpresaBaseConciliadora,
                         );
                       },
                     ),

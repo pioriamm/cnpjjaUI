@@ -148,7 +148,7 @@ class _TelaEmpresasCadastroState
                     MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Cadastro de Empresas",
+                        "Lista de Empresas",
                         style: TextStyle(
                           fontSize: 30,
                           color: Cores.verde_escuro,
@@ -213,7 +213,6 @@ class _TelaEmpresasCadastroState
                       itemBuilder: (context, index) {
                         final empresa =
                         empresasFiltradas[index];
-
                         return EmpresaCardSimplesWidget(
                           empresa: empresa,
                         );

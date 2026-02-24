@@ -1,8 +1,8 @@
-import 'package:proj_flutter/model/Email.dart';
-import 'package:proj_flutter/model/Membo.dart';
-import 'package:proj_flutter/model/Telefone.dart';
-import 'package:proj_flutter/model/StatusEmpresa.dart';
-import 'package:proj_flutter/model/Cnae.dart';
+import 'Cnae.dart';
+import 'Email.dart';
+import 'Membo.dart';
+import 'StatusEmpresa.dart';
+import 'Telefone.dart';
 
 class Dados {
   final String? alias;
@@ -29,15 +29,38 @@ class Dados {
 
   factory Dados.fromJson(Map<String, dynamic> json) {
     return Dados(
-      alias: json['alias'],
-      cnae: json['cnae'] != null ? Cnae.fromJson(json['cnae']) : null,
-      cnpjRaizId: json['cnpj_raiz_id'],
-      companiaId: json['compania_id'],
-      empresaRaiz: json['empresa_raiz'],
-      email: (json['email'] as List?)?.map((e) => Email.fromJson(e)).toList(),
-      telefone: (json['telefone'] as List?)?.map((e) => Telefone.fromJson(e)).toList(),
-      status: json['status'] != null ? StatusEmpresa.fromJson(json['status']) : null,
-      membros: (json['membros'] as List?)?.map((e) => Membro.fromJson(e)).toList(),
+      alias: json['alias'] as String?,
+
+      cnae: json['cnae'] != null
+          ? Cnae.fromJson(json['cnae'] as Map<String, dynamic>)
+          : null,
+
+      cnpjRaizId: json['cnpj_raiz_id'] as String?,
+      companiaId: json['compania_id'] as int?,
+      empresaRaiz: json['empresa_raiz'] as String?,
+
+      /// ✅ EMAIL TIPADO
+      email: (json['email'] as List<dynamic>?)
+          ?.map<Email>((e) =>
+          Email.fromJson(e as Map<String, dynamic>))
+          .toList(),
+
+      /// ✅ TELEFONE TIPADO
+      telefone: (json['telefone'] as List<dynamic>?)
+          ?.map<Telefone>((e) =>
+          Telefone.fromJson(e as Map<String, dynamic>))
+          .toList(),
+
+      status: json['status'] != null
+          ? StatusEmpresa.fromJson(
+          json['status'] as Map<String, dynamic>)
+          : null,
+
+      /// ✅ MEMBROS TIPADO (AQUI ESTAVA O PROBLEMA)
+      membros: (json['membros'] as List<dynamic>?)
+          ?.map<Membro>((e) =>
+          Membro.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

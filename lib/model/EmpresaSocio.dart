@@ -8,7 +8,7 @@ class EmpresaSocio {
   final String? idEmpresaSocio;
   final String? nomeEmpresaSocio;
   final String? cnpjEmpresaSocio;
-  final Cnae cna;
+  final Cnae cnae;
 
   final List<Person>? membrosEmpresaSocio;
   final List<Telefone>? telefone;
@@ -23,7 +23,7 @@ class EmpresaSocio {
     this.telefone,
     this.email,
     this.status,
-    required this.cna,
+    required this.cnae,
   });
 
   factory EmpresaSocio.fromJson(Map<String, dynamic> json) {
@@ -35,7 +35,7 @@ class EmpresaSocio {
       telefone: (json['telefone'] as List?)?.map((e) => Telefone.fromJson(e)).toList(),
       email: (json['email'] as List?)?.map((e) => Email.fromJson(e)).toList(),
       status: json['status'] != null ? StatusEmpresa.fromJson(json['status']) : null,
-      cna: json['cnae'] != null ? Cnae.fromJson(json['cnae']) : Cnae(),
+      cnae: json['cnae'] != null ? Cnae.fromJson(json['cnae']) : Cnae(),
     );
   }
 }

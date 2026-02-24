@@ -9,7 +9,7 @@ class ImageIconButton extends StatelessWidget {
     super.key,
     required this.imagePath,
     this.onPressed,
-    this.size = 22,
+    this.size = 45,
   });
 
   @override

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/helprs/formatadores.dart';
-
+import 'package:proj_flutter/model/EmpresasConciliadora.dart';
 import '../../helprs/Cores.dart';
-import '../../helprs/baseConciliadora.dart';
+import '../../model/EmpresaSocio.dart';
 import '../../model/Membo.dart';
+import 'EmpresaItem.dart';
 import 'ImageIconButtonWidget.dart';
+
 
 class EmpresaCardWidget extends StatelessWidget {
   final String razaoSocial;
@@ -19,6 +20,7 @@ class EmpresaCardWidget extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? pipedrive;
   final List<Membro>? empresasVinculadas;
+  final List<EmpresasConciliadora>  ListaEmpresaBaseConciliadora;
 
   const EmpresaCardWidget({
     super.key,
@@ -32,7 +34,9 @@ class EmpresaCardWidget extends StatelessWidget {
     required this.socios,
     this.onEdit,
     this.onDelete,
-    this.pipedrive, required this.empresasVinculadas,
+    this.pipedrive,
+    required this.empresasVinculadas,
+    required this.ListaEmpresaBaseConciliadora,
   });
 
   @override
@@ -83,17 +87,7 @@ class EmpresaCardWidget extends StatelessWidget {
               ),
 
               /// AÇÕES
-              Row(
-                children: [
-                  if (BaseConciliadora.Lista_base_conciliadora.contains(cnpj))
-                    ImageIconButton(imagePath: 'assets/img/conciliadora_icon.jpeg', onPressed: () {})
-                  else
-                    ImageIconButton(imagePath: 'assets/img/pipedrive_icon.png', onPressed: pipedrive),
-                  IconButton(icon: const Icon(Icons.edit_outlined), onPressed: onEdit),
 
-                  IconButton(icon: const Icon(Icons.delete_outline), onPressed: onDelete),
-                ],
-              ),
             ],
           ),
           const Divider(height: 28),
@@ -132,6 +126,7 @@ class EmpresaCardWidget extends StatelessWidget {
                         Expanded(child: Text(email, overflow: TextOverflow.ellipsis)),
                       ],
                     ),
+
                   ],
                 ),
               ),
@@ -180,114 +175,29 @@ class EmpresaCardWidget extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: empresas.length,
                   itemBuilder: (context, index) {
-                    final emp = empresas[index];
+                    final EmpresaSocio emp = empresas[index];
 
-                    return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 6),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Row(
+                    final existe = (ListaEmpresaBaseConciliadora ?? []).any((empresa) => empresa.cnpj == emp.cnpjEmpresaSocio);
+
+                    return EmpresaItem(
+                      emp: emp,
+                      razaoSocial: razaoSocial,
+                      opcoes: Row(
                         children: [
-                          const Icon(Icons.apartment_outlined),
-
-                          const SizedBox(width: 12),
-
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  emp.nomeEmpresaSocio ?? '',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 6),
-
-                                /// CNPJ
-                                Row(
-                                  children: [
-                                    Icon(Icons.badge_outlined,
-                                        size: 16, color: Colors.grey.shade700),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      Formatadores.limparCnpj(emp.cnpjEmpresaSocio),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 4),
-
-                                /// TELEFONES
-                                if (emp.telefone != null && emp.telefone!.isNotEmpty)
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(Icons.phone_outlined,
-                                          size: 16, color: Colors.grey.shade700),
-                                      const SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          emp.telefone!
-                                              .where((t) =>
-                                          t.number != null && t.number!.isNotEmpty)
-                                              .map((t) {
-                                            final area = t.area ?? '';
-                                            final numero =
-                                            Formatadores.formatarNumero(t.number!);
-                                            return '($area) $numero';
-                                          })
-                                              .join('\n'),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey.shade700,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                const SizedBox(height: 4),
-
-                                /// EMAILS
-                                if (emp.email != null && emp.email!.isNotEmpty)
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(Icons.email_outlined,
-                                          size: 16, color: Colors.grey.shade700),
-                                      const SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          emp.email!
-                                              .where((e) =>
-                                          e.address != null &&
-                                              e.address!.isNotEmpty)
-                                              .map((e) => e.address!)
-                                              .join('\n'),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey.shade700,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                              ],
+                          /// ✅ se estiver na base
+                          if (existe)
+                            ImageIconButton(
+                              imagePath: 'assets/img/conciliadora_icon.jpeg',
+                              onPressed: () {},
+                            )
+                          else
+                            ImageIconButton(
+                              imagePath: 'assets/img/pipedrive_icon.png',
+                              onPressed: pipedrive,
                             ),
-                          ),
                         ],
                       ),
+                      ListaEmpresaBaseConciliadora: ListaEmpresaBaseConciliadora,
                     );
                   },
                 );
@@ -295,14 +205,7 @@ class EmpresaCardWidget extends StatelessWidget {
             ),
           ),
 
-          Row(
-            children: [
-              Icon(Icons.warning_amber_rounded, color: Cores.vermelho,),
-              Text("Os dados foram orinados da empresa raiz:",style: TextStyle(color: Cores.verde_escuro, fontWeight:
-              FontWeight.normal),),
-              Text("${razaoSocial}",style: TextStyle(color: Cores.verde_escuro, fontWeight: FontWeight.bold),),
-            ],
-          ),
+
         ],
       ),
     );

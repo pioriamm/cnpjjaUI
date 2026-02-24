@@ -3,6 +3,7 @@ import 'package:proj_flutter/model/enum_MenuItem.dart';
 import '../../helprs/Cores.dart';
 import '../tela_empresas.dart';
 import '../tela_empresasCadastro.dart';
+import '../tela_empresasCadastroCnpjja.dart';
 import '../tela_socio.dart';
 import '../tela_pesquisa.dart';
 import '../tela_socioCadastro.dart';
@@ -41,7 +42,13 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             item: MenuItem.pesquisa,
             page: TelaPesquisa(),
           ),
-
+          _menuItem(
+            context: context,
+            icon: Icons.apartment,
+            title: "Lista Empresas CNPJÁ",
+            item: MenuItem.empresasCadastro,
+            page: const TelaEmpresasCadastroCnpjja(),
+          ),
           _menuItem(
             context: context,
             icon: Icons.group_outlined,
@@ -68,13 +75,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             page: TelaSocioCadastro(),
           ),
 
-          _menuItem(
-            context: context,
-            icon: Icons.edit_outlined,
-            title: "Cadastro Empresas",
-            item: MenuItem.empresasCadastro,
-            page: const TelaEmpresasCadastro(),
-          ),
+
           const Spacer(),
           const Padding(
             padding: EdgeInsets.only(bottom: 16),

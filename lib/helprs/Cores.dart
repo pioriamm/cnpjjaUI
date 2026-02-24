@@ -4,6 +4,8 @@ class Cores {
 
  static Color verde_escuro = Color(0xFF103339);
  static Color verde_claro = Color(0xFF87b526);
+ static Color verde_claro_W50 = Color(0xffabf117);
+ static Color verde_claro_W40 = Color(0xffC2D500);
  static Color verde_claro_W100 = Color(0xffe5f3d2);
  static Color branco = Color(0xfffbfbfc);
  static Color cinza = Color(0xffbdbdc8);
