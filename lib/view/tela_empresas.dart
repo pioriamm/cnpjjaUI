@@ -187,6 +187,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
 
                           onEdit: () {},
                           onDelete: () {},
+                          empresasVinculadas: empresaAtual!.membros!,
                         );
                       },
                     ),

@@ -35,4 +35,16 @@ class Formatadores {
     return '$inicio-$fim';
   }
 
+  static String formatarNumero(String numero) {
+    numero = numero.replaceAll(RegExp(r'\D'), '');
+
+    if (numero.length == 11) {
+      return '${numero.substring(0, 5)}-${numero.substring(5)}';
+    } else if (numero.length == 10) {
+      return '${numero.substring(0, 4)}-${numero.substring(4)}';
+    }
+
+    return numero;
+  }
+
 }

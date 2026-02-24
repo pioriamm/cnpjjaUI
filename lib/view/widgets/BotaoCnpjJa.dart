@@ -29,7 +29,7 @@ class _BotaoCnpjJaState extends State<BotaoCnpjJa> {
             final resultado = await BuscarApiMongo.pesquisarCnpjja(widget.empresasConciliadora.cnpj!);
 
             if (resultado == 200) {
-              final status = await BuscarApiMongo.atualizarStatusEmpresa(widget.empresasConciliadora.id);
+              final status = await BuscarApiMongo.atualizarStatusEmpresa(widget.empresasConciliadora.iId?.oid);
             }
           },
           child: AnimatedContainer(

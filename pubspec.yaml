@@ -30,6 +30,7 @@ flutter:
     - local.env
     - assets/img/pipedrive_icon.png
     - assets/img/cnpja.png
+    - assets/img/conciliadora_logo.png
     - assets/img/cnpjja_icon.jpeg
     - assets/img/conciliadora_icon.jpeg
 

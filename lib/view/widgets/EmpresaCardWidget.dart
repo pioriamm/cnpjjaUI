@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:proj_flutter/helprs/formatadores.dart';
 
 import '../../helprs/Cores.dart';
 import '../../helprs/baseConciliadora.dart';
+import '../../model/Membo.dart';
 import 'ImageIconButtonWidget.dart';
 
 class EmpresaCardWidget extends StatelessWidget {
@@ -16,6 +18,7 @@ class EmpresaCardWidget extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? pipedrive;
+  final List<Membro>? empresasVinculadas;
 
   const EmpresaCardWidget({
     super.key,
@@ -29,7 +32,7 @@ class EmpresaCardWidget extends StatelessWidget {
     required this.socios,
     this.onEdit,
     this.onDelete,
-    this.pipedrive,
+    this.pipedrive, required this.empresasVinculadas,
   });
 
   @override
@@ -93,9 +96,7 @@ class EmpresaCardWidget extends StatelessWidget {
               ),
             ],
           ),
-
           const Divider(height: 28),
-
           /// BODY
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,9 +135,7 @@ class EmpresaCardWidget extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(width: 20),
-
               /// SÓCIOS
               Expanded(
                 child: Column(
@@ -152,6 +151,156 @@ class EmpresaCardWidget extends StatelessWidget {
                   ],
                 ),
               ),
+            ],
+          ),
+
+          /// DETALHES DAS EMPRESAS
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Builder(
+              builder: (context) {
+
+                /// 🔹 junta todas empresas dos membros
+                final empresas = {
+                  for (var empresa in (empresasVinculadas
+                      ?.expand((m) => m.empresas ?? [])
+                      .where((e) =>
+                  e.nomeEmpresaSocio != razaoSocial)
+                      .toList() ??
+                      []))
+                    empresa.cnpjEmpresaSocio: empresa
+                }.values.toList();
+
+                if (empresas.isEmpty) {
+                  return const Text("Nenhuma empresa vinculada");
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: empresas.length,
+                  itemBuilder: (context, index) {
+                    final emp = empresas[index];
+
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.apartment_outlined),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  emp.nomeEmpresaSocio ?? '',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 6),
+
+                                /// CNPJ
+                                Row(
+                                  children: [
+                                    Icon(Icons.badge_outlined,
+                                        size: 16, color: Colors.grey.shade700),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      Formatadores.limparCnpj(emp.cnpjEmpresaSocio),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 4),
+
+                                /// TELEFONES
+                                if (emp.telefone != null && emp.telefone!.isNotEmpty)
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.phone_outlined,
+                                          size: 16, color: Colors.grey.shade700),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          emp.telefone!
+                                              .where((t) =>
+                                          t.number != null && t.number!.isNotEmpty)
+                                              .map((t) {
+                                            final area = t.area ?? '';
+                                            final numero =
+                                            Formatadores.formatarNumero(t.number!);
+                                            return '($area) $numero';
+                                          })
+                                              .join('\n'),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey.shade700,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                const SizedBox(height: 4),
+
+                                /// EMAILS
+                                if (emp.email != null && emp.email!.isNotEmpty)
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.email_outlined,
+                                          size: 16, color: Colors.grey.shade700),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          emp.email!
+                                              .where((e) =>
+                                          e.address != null &&
+                                              e.address!.isNotEmpty)
+                                              .map((e) => e.address!)
+                                              .join('\n'),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey.shade700,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+
+          Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Cores.vermelho,),
+              Text("Os dados foram orinados da empresa raiz:",style: TextStyle(color: Cores.verde_escuro, fontWeight:
+              FontWeight.normal),),
+              Text("${razaoSocial}",style: TextStyle(color: Cores.verde_escuro, fontWeight: FontWeight.bold),),
             ],
           ),
         ],

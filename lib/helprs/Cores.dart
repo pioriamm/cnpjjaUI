@@ -8,4 +8,6 @@ class Cores {
  static Color branco = Color(0xfffbfbfc);
  static Color cinza = Color(0xffbdbdc8);
  static Color verde_cnpjja = Color(0xff1A2B35);
+ static Color vermelho = Color(0xfff40202);
+ static Color amarelo = Color(0xff352e17);
 }
