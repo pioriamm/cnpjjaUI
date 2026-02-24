@@ -4,8 +4,6 @@ import 'package:proj_flutter/helprs/Cores.dart';
 import 'package:proj_flutter/view/widgets/ClienteCardWidget.dart';
 import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
 import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
-import 'package:proj_flutter/view/widgets/botao_padrao.dart';
-import 'package:proj_flutter/view/widgets/dialogs/NovoSocioDialog.dart';
 
 import '../model/Dados.dart';
 import '../model/Membo.dart';

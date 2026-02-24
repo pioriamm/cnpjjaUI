@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:proj_flutter/model/enum_MenuItem.dart';
 import '../../helprs/Cores.dart';
 import '../tela_empresas.dart';
-import '../tela_empresasCadastro.dart';
 import '../tela_empresasCadastroCnpjja.dart';
 import '../tela_socio.dart';
 import '../tela_pesquisa.dart';
@@ -40,21 +40,21 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             icon: Icons.home_outlined,
             title: "Pesquisa",
             item: MenuItem.pesquisa,
-            page: TelaPesquisa(),
+            page: "pesquisa",
           ),
           _menuItem(
             context: context,
             icon: Icons.apartment,
             title: "Lista Empresas CNPJÁ",
             item: MenuItem.empresasCadastro,
-            page: const TelaEmpresasCadastroCnpjja(),
+            page: "empresascnpja",
           ),
           _menuItem(
             context: context,
             icon: Icons.group_outlined,
             title: "Sócios",
             item: MenuItem.socios,
-            page: TelaSocio(),
+            page: "socios",
           ),
 
           _menuItem(
@@ -62,7 +62,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             icon: Icons.apartment_outlined,
             title: "Empresas",
             item: MenuItem.empresas,
-            page: const TelaEmpresas(),
+            page: "empresas",
           ),
           const SizedBox(height: 30),
           const Divider(color: Colors.white24),
@@ -72,7 +72,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             icon: Icons.edit_outlined,
             title: "Cadastro Sócios",
             item: MenuItem.sociosCadastro,
-            page: TelaSocioCadastro(),
+            page: "castrar_socios",
           ),
 
 
@@ -93,7 +93,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
     required IconData icon,
     required String title,
     required MenuItem item,
-    required Widget page,
+    required String page,
   }) {
     final bool isSelected = widget.selectedItem == item;
     final bool isHovered = _hoveredItem == item;
@@ -114,14 +114,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
           onTap: () {
             if (!isSelected) {
               widget.onItemSelected(item);
-
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 250),
-                  pageBuilder: (_, animation, __) => FadeTransition(opacity: animation, child: page),
-                ),
-              );
+              context.go('/${page}');
             }
           },
           child: AnimatedContainer(

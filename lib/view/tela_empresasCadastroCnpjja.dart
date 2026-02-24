@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:proj_flutter/model/enum_MenuItem.dart';
 import 'package:proj_flutter/modelview/buscarApiMongo.dart';
 import 'package:proj_flutter/view/tela_empresasResumo.dart';
@@ -241,16 +242,15 @@ class _TelaEmpresasCadastroCnpjjaState
                         final empresasSocios = _empresasOrdenadasDosSocios(empresa);
 
                         return GestureDetector(
-                          onTap: (){
-                            Navigator.pushReplacement(
-                              context,
-                              PageRouteBuilder(
-                                transitionDuration: const Duration(milliseconds: 250),
-                                pageBuilder: (_, animation, __) => FadeTransition(opacity: animation, child: TelaEmpresasResumo(empresa: empresa,)),
-                              ),
-                            );
+                          onTap: ()=>
 
-                          },
+                            GoRoute(
+                              path: '/empresa-resumo',
+                              builder: (context, state) {
+                                final empresa = state.extra as Prospectar?;
+                                return TelaEmpresasResumo(empresa: empresa);
+                              },
+                            ),
                           child: Column(
                             crossAxisAlignment:
                             CrossAxisAlignment.start,
