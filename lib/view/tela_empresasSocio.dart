@@ -17,16 +17,23 @@ class TelaEmpresasSocio extends StatefulWidget {
   State<TelaEmpresasSocio> createState() => _TelaEmpresasSocioState();
 }
 
+enum FiltroCliente { todos, cliente, naoCliente }
+
 class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
   List<Prospectar> empresas = [];
   List<Prospectar> empresasFiltradas = [];
   List<EmpresasConciliadora> listaEmpresasConciliadora = [];
 
+
+  Map<String, bool> mapaClientes = {};
+
   bool carregando = true;
   String? erro;
 
   final TextEditingController _filtroController = TextEditingController();
+
   MenuItem _selected = MenuItem.empresaSocio;
+  FiltroCliente _filtroCliente = FiltroCliente.todos;
 
   @override
   void initState() {
@@ -41,7 +48,7 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
   }
 
   /// =====================================================
-  /// CARREGAR EMPRESAS
+  /// CARREGAR DADOS
   /// =====================================================
   Future<void> _carregarEmpresas() async {
     setState(() {
@@ -50,9 +57,17 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
     });
 
     try {
-      final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
+      final resultado =
+      await BuscarApiMongo.buscarEmpresasBaseCnpjja();
+
       final listaConciliadora =
       await BuscarApiMongo.buscarBaseConciliadora();
+
+      /// cria mapa rápido
+      final mapa = {
+        for (final e in listaConciliadora)
+          if (e.cnpj != null) e.cnpj!: e.conciliadora == true
+      };
 
       resultado.sort(
             (a, b) => _razaoSocial(a)
@@ -64,15 +79,12 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
         empresas = resultado;
         empresasFiltradas = List.from(resultado);
         listaEmpresasConciliadora = listaConciliadora;
+        mapaClientes = mapa;
       });
     } catch (e) {
-      setState(() {
-        erro = e.toString();
-      });
+      setState(() => erro = e.toString());
     } finally {
-      setState(() {
-        carregando = false;
-      });
+      setState(() => carregando = false);
     }
   }
 
@@ -84,9 +96,54 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
     return dados?.empresaRaiz ?? '';
   }
 
-  /// =====================================================
-  /// EMPRESAS DOS SÓCIOS (SEM DUPLICAR)
-  /// =====================================================
+
+  bool _empresaEhCliente(Prospectar empresa) {
+    final dados =
+    empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
+    final cnpj = dados?.cnpjRaizId;
+    if (cnpj == null) return false;
+
+    return mapaClientes[cnpj] ?? false;
+  }
+
+
+  void _aplicarFiltros() {
+    final busca = _filtroController.text.toLowerCase();
+
+    setState(() {
+      empresasFiltradas = empresas.where((empresa) {
+        final dados =
+        empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
+
+
+        final matchTexto =
+            (dados?.empresaRaiz ?? '').toLowerCase().contains(busca) ||
+                (dados?.alias ?? '').toLowerCase().contains(busca) ||
+                (dados?.cnpjRaizId ?? '').contains(busca);
+
+        /// consulta lista conciliadora
+        final ehCliente = _empresaEhCliente(empresa);
+
+        bool matchCliente = true;
+
+        switch (_filtroCliente) {
+          case FiltroCliente.cliente:
+            matchCliente = ehCliente;
+            break;
+          case FiltroCliente.naoCliente:
+            matchCliente = !ehCliente;
+            break;
+          case FiltroCliente.todos:
+            matchCliente = true;
+            break;
+        }
+
+        return matchTexto && matchCliente;
+      }).toList();
+    });
+  }
+
+
   List<dynamic> _empresasOrdenadasDosSocios(Prospectar prospectar) {
     final dados = prospectar.dados?.isNotEmpty == true
         ? prospectar.dados!.first
@@ -94,54 +151,32 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
 
     if (dados == null) return [];
 
-    final todasEmpresas =
+    final todas =
         dados.membros?.expand((m) => m.empresas ?? []).toList() ?? [];
 
     final mapaUnico = {
-      for (var e in todasEmpresas)
+      for (var e in todas)
         if (e.cnpjEmpresaSocio != null) e.cnpjEmpresaSocio!: e,
     };
 
     final listaFinal = mapaUnico.values.toList();
 
-    listaFinal.sort(
-          (a, b) => (a.nomeEmpresaSocio ?? '')
-          .toLowerCase()
-          .compareTo((b.nomeEmpresaSocio ?? '').toLowerCase()),
-    );
+    listaFinal.sort((a, b) => (a.nomeEmpresaSocio ?? '')
+        .toLowerCase()
+        .compareTo((b.nomeEmpresaSocio ?? '').toLowerCase()));
 
     return listaFinal;
   }
 
   int _totalEmpresasParceiros() {
-    return empresasFiltradas.fold<int>(0, (total, empresa) {
-      return total + _empresasOrdenadasDosSocios(empresa).length;
-    });
+    return empresasFiltradas.fold<int>(
+      0,
+          (total, empresa) =>
+      total + _empresasOrdenadasDosSocios(empresa).length,
+    );
   }
 
-  /// =====================================================
-  /// FILTRO
-  /// =====================================================
-  void _filtrar(String valor) {
-    final busca = valor.toLowerCase();
 
-    setState(() {
-      empresasFiltradas = empresas.where((empresa) {
-        final dados =
-        empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
-
-        return (dados?.empresaRaiz ?? '')
-            .toLowerCase()
-            .contains(busca) ||
-            (dados?.alias ?? '').toLowerCase().contains(busca) ||
-            (dados?.cnpjRaizId ?? '').contains(busca);
-      }).toList();
-    });
-  }
-
-  /// =====================================================
-  /// BUILD
-  /// =====================================================
   @override
   Widget build(BuildContext context) {
     final tela = MediaQuery.of(context).size;
@@ -149,18 +184,15 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
     return Scaffold(
       body: Row(
         children: [
-          /// SIDEBAR
           SizedBox(
             width: tela.width * 0.2,
             child: SideBarWidget(
               selectedItem: _selected,
-              onItemSelected: (item) {
-                setState(() => _selected = item);
-              },
+              onItemSelected: (item) =>
+                  setState(() => _selected = item),
             ),
           ),
 
-          /// CONTEÚDO
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -170,7 +202,6 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// HEADER
                   Text(
                     "Empresas Sócios",
                     style: TextStyle(
@@ -182,44 +213,73 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
 
                   const SizedBox(height: 8),
 
-                  /// TOTAL
                   Text(
-                    "${_totalEmpresasParceiros()} "
-                        "${_totalEmpresasParceiros() == 1 ? 'empresa cadastrada' : 'empresas cadastradas'}",
+                    "${_totalEmpresasParceiros()} empresas cadastradas",
                     style: const TextStyle(fontSize: 15),
                   ),
 
                   const SizedBox(height: 15),
 
-                  /// FILTRO
-                  FiltroBuscaWidget(
-                    controller: _filtroController,
-                    onChanged: _filtrar,
-                    hintText: 'Filtrar por CNPJ ou Nome',
+                  /// BUSCA + DROPDOWN
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FiltroBuscaWidget(
+                          controller: _filtroController,
+                          onChanged: (_) => _aplicarFiltros(),
+                          hintText: 'Filtrar por CNPJ ou Nome',
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      DropdownButton<FiltroCliente>(
+                        value: _filtroCliente,
+                        items: const [
+                          DropdownMenuItem(
+                            value: FiltroCliente.todos,
+                            child: Text('Todos'),
+                          ),
+                          DropdownMenuItem(
+                            value: FiltroCliente.cliente,
+                            child: Text('É cliente'),
+                          ),
+                          DropdownMenuItem(
+                            value: FiltroCliente.naoCliente,
+                            child: Text('Não é cliente'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          if (value == null) return;
+
+                          setState(() {
+                            _filtroCliente = value;
+                          });
+
+                          _aplicarFiltros();
+                        },
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 15),
 
-                  /// LISTA (LOADING APENAS AQUI)
                   Expanded(
                     child: Builder(
                       builder: (_) {
                         if (erro != null) {
-                          return Center(
-                            child: Text("Erro: $erro"),
-                          );
+                          return Center(child: Text("Erro: $erro"));
                         }
 
                         if (carregando) {
                           return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                              child: CircularProgressIndicator());
                         }
 
                         if (empresasFiltradas.isEmpty) {
                           return const Center(
-                            child: Text("Nenhuma empresa encontrada"),
-                          );
+                              child:
+                              Text("Nenhuma empresa encontrada"));
                         }
 
                         return ListView.builder(
@@ -228,7 +288,8 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
                             final empresa = empresasFiltradas[index];
 
                             final empresasSocios =
-                            _empresasOrdenadasDosSocios(empresa);
+                            _empresasOrdenadasDosSocios(
+                                empresa);
 
                             return GestureDetector(
                               onTap: () {
@@ -245,9 +306,11 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
                                     final empresaConvertida =
                                     EmpresasConciliadora(
                                       razaoSocial:
-                                      empresaSocio.nomeEmpresaSocio,
+                                      empresaSocio
+                                          .nomeEmpresaSocio,
                                       cnpj:
-                                      empresaSocio.cnpjEmpresaSocio,
+                                      empresaSocio
+                                          .cnpjEmpresaSocio,
                                     );
 
                                     return EmpresaCardSimplesCnpjaWidget(

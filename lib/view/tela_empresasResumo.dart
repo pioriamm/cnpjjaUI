@@ -17,20 +17,16 @@ class TelaEmpresasResumo extends StatefulWidget {
   const TelaEmpresasResumo({super.key, required this.empresa});
 
   @override
-  State<TelaEmpresasResumo> createState() =>
-      _TelaEmpresasResumoState();
+  State<TelaEmpresasResumo> createState() => _TelaEmpresasResumoState();
 }
 
-class _TelaEmpresasResumoState
-    extends State<TelaEmpresasResumo> {
+class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
   List<EmpresasConciliadora> listaEmpresaBaseConciliadora = [];
 
   bool carregando = true;
   String? erro;
 
-  final TextEditingController _filtroController =
-  TextEditingController();
-
+  final TextEditingController _filtroController = TextEditingController();
   MenuItem _selected = MenuItem.empresas;
 
   /// Getter seguro
@@ -55,11 +51,6 @@ class _TelaEmpresasResumoState
   }
 
   Future<void> _carregarEmpresas() async {
-    setState(() {
-      carregando = true;
-      erro = null;
-    });
-
     try {
       final baseConciliadora =
       await BuscarApiMongo.buscarBaseConciliadora();
@@ -68,17 +59,14 @@ class _TelaEmpresasResumoState
 
       setState(() {
         listaEmpresaBaseConciliadora = baseConciliadora;
+        carregando = false;
+        erro = null;
       });
     } catch (e) {
       if (!mounted) return;
 
       setState(() {
         erro = e.toString();
-      });
-    } finally {
-      if (!mounted) return;
-
-      setState(() {
         carregando = false;
       });
     }
@@ -89,12 +77,14 @@ class _TelaEmpresasResumoState
     final tela = MediaQuery.of(context).size;
     final empresa = empresaAtual;
 
+    /// TELEFONES TIPADOS
     final List<Telefone> telefones =
     (empresa?.telefone ?? []).map<Telefone>((e) {
       if (e is Telefone) return e;
       return Telefone.fromJson(e);
     }).toList();
 
+    /// MEMBROS TIPADOS
     final List<Membro> membros =
     (empresa?.membros ?? []).map<Membro>((e) {
       if (e is Membro) return e;
@@ -104,7 +94,7 @@ class _TelaEmpresasResumoState
     return Scaffold(
       body: Row(
         children: [
-          /// SIDEBAR
+          /// SIDEBAR (sempre visível)
           SizedBox(
             width: tela.width * 0.2,
             child: SideBarWidget(
@@ -127,7 +117,7 @@ class _TelaEmpresasResumoState
                 children: [
                   /// HEADER
                   Text(
-                    "Resumo da Empresa",
+                    "Resumo da Empresas",
                     style: TextStyle(
                       fontSize: 30,
                       color: Cores.verde_escuro,
@@ -137,73 +127,72 @@ class _TelaEmpresasResumoState
 
                   const SizedBox(height: 15),
 
-                  /// CONTEÚDO CONTROLADO
+                  /// ================= LISTA =================
                   Expanded(
                     child: Builder(
                       builder: (_) {
-                        /// ERRO
+                        /// ERRO somente na área da lista
                         if (erro != null) {
                           return Center(
                             child: Text("Erro: $erro"),
                           );
                         }
 
-                        /// LOADING
+                        /// LOADING somente aqui
                         if (carregando) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
 
-                        /// CARD
+                        /// CONTEÚDO NORMAL
                         return ListView(
                           children: [
-                            EmpresaCardWidget(
-                              razaoSocial:
-                              empresa?.empresaRaiz ?? '',
-                              nomeFantasia:
-                              (empresa?.alias?.isNotEmpty ?? false)
-                                  ? empresa!.alias!
-                                  : empresa?.empresaRaiz ?? '',
-                              cnpj: empresa?.cnpjRaizId != null
-                                  ? Formatadores.formatarCnpj(
-                                  empresa!.cnpjRaizId!)
-                                  : '',
-                              cnae: empresa?.cnae?.id != null
-                                  ? Formatadores.formatarCnae(
-                                  empresa!.cnae!.id.toString())
-                                  : '',
-                              atividade:
-                              empresa?.cnae?.descricao ?? '',
-                              telefone: SizedBox(
-                                height: 40,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  physics:
-                                  const NeverScrollableScrollPhysics(),
-                                  itemCount: telefones.length,
-                                  itemBuilder: (context, i) {
-                                    final tel = telefones[i];
-                                    return Text(
-                                      "(${tel.area ?? ''}) ${tel.number ?? ''}",
-                                      style:
-                                      const TextStyle(fontSize: 13),
-                                    );
-                                  },
-                                ),
+                            Theme(
+                              data: Theme.of(context).copyWith(
+                                dividerColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                highlightColor:
+                                Colors.transparent,
                               ),
-                              email:
-                              (empresa?.email?.isNotEmpty ?? false)
-                                  ? empresa!
-                                  .email!.first.address ??
-                                  ''
-                                  : 'Sem informações',
-                              socios: membros
-                                  .map((m) => m.nomeMembro ?? '')
-                                  .toList(),
-                              empresasVinculadas: membros,
-                              ListaEmpresaBaseConciliadora:
-                              listaEmpresaBaseConciliadora,
+                              child: EmpresaCardWidget(
+                                razaoSocial:
+                                empresa?.empresaRaiz ?? '',
+                                nomeFantasia:
+                                (empresa?.alias?.isNotEmpty ??
+                                    false)
+                                    ? empresa!.alias!
+                                    : empresa?.empresaRaiz ?? '',
+                                cnpj: empresa?.cnpjRaizId != null
+                                    ? Formatadores.formatarCnpj(
+                                    empresa!.cnpjRaizId!)
+                                    : '',
+                                cnae: empresa?.cnae?.id != null
+                                    ? Formatadores.formatarCnae(
+                                    empresa!.cnae!.id
+                                        .toString())
+                                    : '',
+                                atividade:
+                                empresa?.cnae?.descricao ?? '',
+                                telefone: telefones
+                                    .map((tel) =>
+                                "(${tel.area ?? ''}) ${tel.number ?? ''}")
+                                    .join(' • '),
+                                email:
+                                (empresa?.email?.isNotEmpty ??
+                                    false)
+                                    ? empresa!.email!.first
+                                    .address ??
+                                    ''
+                                    : 'Sem informações',
+                                socios: membros
+                                    .map((m) =>
+                                m.nomeMembro ?? '')
+                                    .toList(),
+                                empresasVinculadas: membros,
+                                listaEmpresaBaseConciliadora:
+                                listaEmpresaBaseConciliadora,
+                              ),
                             ),
                           ],
                         );

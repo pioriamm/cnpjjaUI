@@ -19,7 +19,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Inter',),
+      theme: ThemeData(fontFamily: 'Inter',
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: Color(0xFF87b526), // cor do loader
+      ),),
       routerConfig: appRouter,
     );
   }

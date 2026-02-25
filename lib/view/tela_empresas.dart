@@ -19,7 +19,7 @@ class TelaEmpresas extends StatefulWidget {
 class _TelaEmpresasState extends State<TelaEmpresas> {
   List<Prospectar> empresas = [];
   List<Prospectar> empresasFiltradas = [];
-  List<EmpresasConciliadora> ListaEmpresaBaseConciliadora = [];
+  List<EmpresasConciliadora> listaEmpresaBaseConciliadora = [];
 
   bool carregando = true;
   String? erro;
@@ -46,22 +46,21 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
     });
 
     try {
-      final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
-      final baseConciliadora = await BuscarApiMongo.buscarBaseConciliadora();
+      final resultado =
+      await BuscarApiMongo.buscarEmpresasBaseCnpjja();
+
+      final baseConciliadora =
+      await BuscarApiMongo.buscarBaseConciliadora();
 
       setState(() {
         empresas = resultado;
         empresasFiltradas = List.from(resultado);
-        ListaEmpresaBaseConciliadora = baseConciliadora;
+        listaEmpresaBaseConciliadora = baseConciliadora;
       });
     } catch (e) {
-      setState(() {
-        erro = e.toString();
-      });
+      setState(() => erro = e.toString());
     } finally {
-      setState(() {
-        carregando = false;
-      });
+      setState(() => carregando = false);
     }
   }
 
@@ -77,9 +76,8 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
             width: tela.width * 0.2,
             child: SideBarWidget(
               selectedItem: _selected,
-              onItemSelected: (item) {
-                setState(() => _selected = item);
-              },
+              onItemSelected: (item) =>
+                  setState(() => _selected = item),
             ),
           ),
 
@@ -94,23 +92,17 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   /// HEADER
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Empresas",
-                        style: TextStyle(
-                          fontSize: 30,
-                          color: Cores.verde_escuro,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    "Empresas",
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Cores.verde_escuro,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
 
                   const SizedBox(height: 8),
 
-                  /// CONTADOR
                   Text(
                     "${empresasFiltradas.length} empresas cadastradas",
                     style: const TextStyle(fontSize: 15),
@@ -139,7 +131,8 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                               (dados?.alias ?? '')
                                   .toLowerCase()
                                   .contains(busca) ||
-                              (dados?.cnpjRaizId ?? '').contains(busca);
+                              (dados?.cnpjRaizId ?? '')
+                                  .contains(busca);
                         }).toList();
                       });
                     },
@@ -147,32 +140,26 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
 
                   const SizedBox(height: 15),
 
-                  /// LISTA (LOADING SOMENTE AQUI)
+                  /// LISTA
                   Expanded(
                     child: Builder(
                       builder: (_) {
-                        /// ERRO
                         if (erro != null) {
-                          return Center(
-                            child: Text("Erro: $erro"),
-                          );
+                          return Center(child: Text("Erro: $erro"));
                         }
 
-                        /// LOADING
                         if (carregando) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
 
-                        /// LISTA VAZIA
                         if (empresasFiltradas.isEmpty) {
                           return const Center(
                             child: Text("Nenhuma empresa encontrada"),
                           );
                         }
 
-                        /// LISTVIEW NORMAL
                         return ListView.builder(
                           itemCount: empresasFiltradas.length,
                           itemBuilder: (context, index) {
@@ -182,50 +169,47 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                                 ? empresa.dados!.first
                                 : null;
 
-                            return EmpresaCardWidget(
-                              razaoSocial:
-                              empresaAtual?.empresaRaiz ?? '',
-                              nomeFantasia:
-                              empresaAtual?.alias ??
-                                  "${empresaAtual?.empresaRaiz}",
-                              cnpj: Formatadores.formatarCnpj(
-                                  "${empresaAtual?.cnpjRaizId}"),
-                              cnae: Formatadores.formatarCnae(
-                                  "${empresaAtual?.cnae?.id!}") ??
-                                  '',
-                              atividade:
-                              empresaAtual?.cnae?.descricao ?? '',
-                              telefone: SizedBox(
-                                height: 10,
-                                child: ListView.builder(
-                                  itemCount:
-                                  empresaAtual?.telefone?.length ?? 0,
-                                  itemBuilder: (context, i) {
-                                    final tel =
-                                    empresaAtual!.telefone![i];
-                                    return Text(
-                                      "(${tel.area ?? ''}) ${tel.number ?? ''}",
-                                      style:
-                                      const TextStyle(fontSize: 13),
-                                    );
-                                  },
-                                ),
+                            /// 🔥 REMOVE LINHA DO EXPANSION TILE
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                dividerColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
                               ),
-                              email: empresaAtual?.email?.isNotEmpty ==
-                                  true
-                                  ? empresaAtual
-                                  ?.email?.first.address ??
-                                  ''
-                                  : 'Sem informações',
-                              socios: empresaAtual?.membros
-                                  ?.map((m) =>
-                              m.nomeMembro ?? '')
-                                  .toList() ??
-                                  [],
-                              empresasVinculadas:
-                              empresaAtual!.membros!,
-                              ListaEmpresaBaseConciliadora:
-                              ListaEmpresaBaseConciliadora,
+                              child: EmpresaCardWidget(
+                                razaoSocial:
+                                empresaAtual?.empresaRaiz ?? '',
+                                nomeFantasia:
+                                empresaAtual?.alias ??
+                                    "${empresaAtual?.empresaRaiz}",
+                                cnpj: Formatadores.formatarCnpj(
+                                    "${empresaAtual?.cnpjRaizId}"),
+                                cnae: Formatadores.formatarCnae(
+                                    "${empresaAtual?.cnae?.id!}") ??
+                                    '',
+                                atividade:
+                                empresaAtual?.cnae?.descricao ?? '',
+                                telefone: empresaAtual!.telefone!
+                                    .map((tel) =>
+                                "(${tel.area ?? ''}) ${tel.number ?? ''}")
+                                    .join(' • '),
+                                email: empresaAtual
+                                    ?.email?.isNotEmpty ==
+                                    true
+                                    ? empresaAtual!
+                                    .email!.first.address ??
+                                    ''
+                                    : 'Sem informações',
+                                socios: empresaAtual?.membros
+                                    ?.map((m) =>
+                                m.nomeMembro ?? '')
+                                    .toList() ??
+                                    [],
+                                empresasVinculadas:
+                                empresaAtual!.membros!,
+                                listaEmpresaBaseConciliadora:
+                                listaEmpresaBaseConciliadora,
+                              ),
                             );
                           },
                         );
