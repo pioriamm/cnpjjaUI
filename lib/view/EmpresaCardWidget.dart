@@ -1,3 +1,4 @@
+import 'package:cnpjjaUi/helprs/Cores.dart';
 import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
 import '../modelview/buscarApiMongo.dart';
@@ -52,10 +53,9 @@ class EmpresaCardWidget extends StatelessWidget {
                 ),
                 child: const Icon(Icons.business),
               ),
-
               const SizedBox(width: 12),
 
-              /// 👇 EVITA OVERFLOW
+              /// evita overflow
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,10 +81,8 @@ class EmpresaCardWidget extends StatelessWidget {
                 ),
               ),
 
-              Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.grey.shade600,
-              ),
+              Icon(Icons.keyboard_arrow_down,
+                  color: Colors.grey.shade600),
             ],
           ),
 
@@ -97,7 +95,6 @@ class EmpresaCardWidget extends StatelessWidget {
             children: [
               _tag(Formatadores.formatarCnpj(cnpj)),
 
-              /// ❌ NÃO usar ?? (cnae já é String)
               if (cnae.isNotEmpty) _tag(cnae),
 
               if (conciliadora) _tag("Conciliadora"),
@@ -106,14 +103,8 @@ class EmpresaCardWidget extends StatelessWidget {
                   ? _tag("Pesquisado")
                   : _tag(
                 "Pesquisar",
-                chamar: () async {
-                  final result =
-                  await BuscarApiMongo.pesquisarCnpjja(cnpj);
-
-                  if (result?.toString() == "200") {
-                    await BuscarApiMongo.atualizarStatusEmpresa(id);
-                  }
-                },
+                chamar: () =>
+                    _pesquisarEmpresa(context),
               ),
             ],
           ),
@@ -132,10 +123,55 @@ class EmpresaCardWidget extends StatelessWidget {
     );
   }
 
-  /// TAG reutilizável segura
+  /// ===============================
+  /// AÇÃO DE PESQUISA (CORRIGIDA)
+  /// ===============================
+  Future<void> _pesquisarEmpresa(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text("Iniciando a Pesquisa: $razaoSocial"),
+          backgroundColor: Cores.verde_claro,
+        ),
+      );
+
+      final result = await BuscarApiMongo.pesquisarCnpjja(cnpj);
+
+      if (!context.mounted) return;
+
+      messenger.hideCurrentSnackBar();
+
+      if (result == 200) {
+        await BuscarApiMongo.atualizarStatusEmpresa(id);
+
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text("Empresa pesquisada com sucesso"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text("Erro: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+    }
+  }
+
+  /// TAG reutilizável
   Widget _tag(String text, {VoidCallback? chamar}) {
     final child = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding:
+      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(20),
@@ -147,7 +183,6 @@ class EmpresaCardWidget extends StatelessWidget {
       ),
     );
 
-    /// 👇 só cria detector se existir ação
     if (chamar == null) return child;
 
     return InkWell(

@@ -25,23 +25,18 @@ class BuscarApiMongo {
 
   static Future<int> pesquisarCnpjja(String cnpj) async {
     final url = Uri.parse('${dotenv.env['API_URL']}/cnpjja/popularBase');
+
     var cnpjLimpo = Formatadores.limparCnpj(cnpj);
-    final body = [
-      {"cnpj": cnpjLimpo},
-    ];
+
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
+      body: jsonEncode([
+        {"cnpj": cnpjLimpo}
+      ]),
     );
 
-    if (response.statusCode != 200) {
-      throw Exception(
-        'Erro na pesquisa: ${response.statusCode} - ${response.body}',
-      );
-    }
-
-    return 200;
+    return response.statusCode;
   }
 
   static Future<List<EmpresasConciliadora>> buscarBaseConciliadora() async {
