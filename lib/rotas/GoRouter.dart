@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'dart:html' as html;
 import '../model/prospec.dart';
 import '../view/tela_empresas.dart';
 import '../view/tela_empresasCadastro.dart';
@@ -13,7 +13,12 @@ import '../view/tela_socioCadastro.dart';
 CustomTransitionPage buildPageWithTransition({
   required GoRouterState state,
   required Widget child,
+  required String title,
+
 }) {
+  // altera o nome da aba
+  html.document.title = title;
+
   return CustomTransitionPage(
     key: state.pageKey,
     transitionDuration: const Duration(milliseconds: 250),
@@ -40,7 +45,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildPageWithTransition(
             state: state,
-            child: TelaPesquisa(),
+            child: TelaPesquisa(), title: 'Dashboard',
           ),
     ),
 
@@ -48,8 +53,9 @@ final GoRouter appRouter = GoRouter(
       path: '/empresa-socio',
       pageBuilder: (context, state) =>
           buildPageWithTransition(
+
             state: state,
-            child: TelaEmpresasSocio(),
+            child: TelaEmpresasSocio(), title: 'Empresa Sócios',
           ),
     ),
 
@@ -60,7 +66,7 @@ final GoRouter appRouter = GoRouter(
 
         return buildPageWithTransition(
           state: state,
-          child: TelaEmpresasResumo(empresa: empresa),
+          child: TelaEmpresasResumo(empresa: empresa), title: 'Empresa Resumo',
         );
       },
     ),
@@ -70,7 +76,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildPageWithTransition(
             state: state,
-            child: TelaEmpresas(),
+            child: TelaEmpresas(), title: 'Empresas',
           ),
     ),
 
@@ -79,7 +85,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildPageWithTransition(
             state: state,
-            child: TelaEmpresasCadastro(),
+            child: TelaEmpresasCadastro(), title: 'Cadastro Empresas',
           ),
     ),
 
@@ -88,7 +94,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildPageWithTransition(
             state: state,
-            child: TelaSocio(),
+            child: TelaSocio(), title: 'Sócios',
           ),
     ),
 
@@ -97,7 +103,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildPageWithTransition(
             state: state,
-            child: TelaSocioCadastro(),
+            child: TelaSocioCadastro(), title: 'Cadastrar Sócios',
           ),
     ),
   ],
