@@ -6,7 +6,7 @@ import '../view/tela_empresas.dart';
 import '../view/tela_empresasCadastro.dart';
 import '../view/tela_empresasSocio.dart';
 import '../view/tela_empresasResumo.dart';
-import '../view/tela_pesquisa.dart';
+import '../view/tela_dashboard.dart';
 import '../view/tela_socio.dart';
 import '../view/tela_socioCadastro.dart';
 
@@ -45,7 +45,7 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) =>
           buildPageWithTransition(
             state: state,
-            child: TelaPesquisa(), title: 'Dashboard',
+            child: TelaDashBoard(), title: 'Dashboard',
           ),
     ),
 

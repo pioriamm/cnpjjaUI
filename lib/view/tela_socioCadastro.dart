@@ -13,7 +13,6 @@ import '../model/enum_MenuItem.dart';
 import '../model/prospec.dart';
 import '../modelview/buscarApiMongo.dart';
 
-
 class TelaSocioCadastro extends StatefulWidget {
   const TelaSocioCadastro({super.key});
 
@@ -46,7 +45,7 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
   }
 
   /// ===============================
-  /// CARREGA E FLATTEN DOS SÓCIOS
+  /// CARREGA SÓCIOS
   /// ===============================
   Future<void> _carregarEmpresas() async {
     setState(() {
@@ -57,33 +56,27 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
     try {
       final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
 
-      /// ===============================
-      /// FLATTEN → EMPRESAS → DADOS → MEMBROS
-      /// ===============================
       final List<Membro> todosSocios = resultado
           .expand<Dados>((p) => p.dados ?? <Dados>[])
           .expand<Membro>((d) => d.membros ?? <Membro>[])
           .toList();
 
-      /// ===============================
-      /// REMOVE DUPLICADOS (POR ID OU NOME)
-      /// ===============================
       final sociosUnicosMap = <String, Membro>{};
 
       for (final socio in todosSocios) {
         final chave = socio.idMembro ?? socio.nomeMembro ?? '';
-
         if (chave.isNotEmpty) {
           sociosUnicosMap[chave] = socio;
         }
       }
 
-      final List<Membro> sociosUnicos = sociosUnicosMap.values.toList();
+      final sociosUnicos = sociosUnicosMap.values.toList();
 
-      /// ===============================
-      /// ORDENA ALFABETICAMENTE
-      /// ===============================
-      sociosUnicos.sort((a, b) => (a.nomeMembro ?? '').toLowerCase().compareTo((b.nomeMembro ?? '').toLowerCase()));
+      sociosUnicos.sort(
+            (a, b) => (a.nomeMembro ?? '')
+            .toLowerCase()
+            .compareTo((b.nomeMembro ?? '').toLowerCase()),
+      );
 
       setState(() {
         empresas = resultado;
@@ -136,7 +129,10 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
           /// CONTEÚDO
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
+              padding: EdgeInsets.symmetric(
+                horizontal: tela.width * 0.09,
+                vertical: 50,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -145,7 +141,11 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
                     children: [
                       Text(
                         "Sócios",
-                        style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 30,
+                          color: Cores.verde_escuro,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const Spacer(),
                       BotaoPadrao(
@@ -153,14 +153,21 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
                           await showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (_) => const NovoSocioDialog(),
+                            builder: (_) =>
+                            const NovoSocioDialog(),
                           );
                         },
                         cor: Cores.verde_escuro,
                         conteudo: [
                           Icon(Icons.add, color: Cores.branco),
                           const SizedBox(width: 8),
-                          Text("Novo Sócio", style: TextStyle(color: Cores.branco, fontSize: 16)),
+                          Text(
+                            "Novo Sócio",
+                            style: TextStyle(
+                              color: Cores.branco,
+                              fontSize: 16,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -168,10 +175,14 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
 
                   const SizedBox(height: 8),
 
-                  Text("${sociosFiltrados.length} sócios cadastrados", style: const TextStyle(fontSize: 15)),
+                  Text(
+                    "${sociosFiltrados.length} sócios cadastrados",
+                    style: const TextStyle(fontSize: 15),
+                  ),
 
                   const SizedBox(height: 15),
 
+                  /// FILTRO
                   FiltroBuscaWidget(
                     controller: _filtroController,
                     onChanged: _filtrar,
@@ -180,30 +191,56 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
 
                   const SizedBox(height: 15),
 
-                  /// LISTA
+                  /// LISTA CONTROLADA
                   Expanded(
-                    child: carregando
-                        ? const Center(child: CircularProgressIndicator())
-                        : ListView.builder(
-                            itemCount: sociosFiltrados.length,
-                            itemBuilder: (context, index) {
-                              final socio = sociosFiltrados[index];
-                              return ClienteCardWidget(
-                                nome: socio.nomeMembro ?? '',
-                                cpf: socio.idMembro ?? "",
-                                telefone: '',
-                                email: '',
-                                quantidadeEmpresas: socio.empresas?.length ?? 0,
-                                onEdit: () {
-                                  print("Editar ${socio.nomeMembro}");
-                                },
-                                onDelete: () {
-                                  print("Excluir ${socio.nomeMembro}");
-                                },
-                                empresas: socio.empresas ?? [],
-                              );
-                            },
-                          ),
+                    child: Builder(
+                      builder: (_) {
+                        /// ERRO
+                        if (erro != null) {
+                          return Center(
+                            child: Text("Erro: $erro"),
+                          );
+                        }
+
+                        /// LOADING
+                        if (carregando) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        /// VAZIO
+                        if (sociosFiltrados.isEmpty) {
+                          return const Center(
+                            child: Text("Nenhum sócio encontrado"),
+                          );
+                        }
+
+                        /// LISTA NORMAL
+                        return ListView.builder(
+                          itemCount: sociosFiltrados.length,
+                          itemBuilder: (context, index) {
+                            final socio = sociosFiltrados[index];
+
+                            return ClienteCardWidget(
+                              nome: socio.nomeMembro ?? '',
+                              cpf: socio.idMembro ?? "",
+                              telefone: '',
+                              email: '',
+                              quantidadeEmpresas:
+                              socio.empresas?.length ?? 0,
+                              onEdit: () {
+                                print("Editar ${socio.nomeMembro}");
+                              },
+                              onDelete: () {
+                                print("Excluir ${socio.nomeMembro}");
+                              },
+                              empresas: socio.empresas ?? [],
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

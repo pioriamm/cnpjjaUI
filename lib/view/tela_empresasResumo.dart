@@ -17,16 +17,20 @@ class TelaEmpresasResumo extends StatefulWidget {
   const TelaEmpresasResumo({super.key, required this.empresa});
 
   @override
-  State<TelaEmpresasResumo> createState() => _TelaEmpresasResumoState();
+  State<TelaEmpresasResumo> createState() =>
+      _TelaEmpresasResumoState();
 }
 
-class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
+class _TelaEmpresasResumoState
+    extends State<TelaEmpresasResumo> {
   List<EmpresasConciliadora> listaEmpresaBaseConciliadora = [];
 
   bool carregando = true;
   String? erro;
 
-  final TextEditingController _filtroController = TextEditingController();
+  final TextEditingController _filtroController =
+  TextEditingController();
+
   MenuItem _selected = MenuItem.empresas;
 
   /// Getter seguro
@@ -51,21 +55,30 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
   }
 
   Future<void> _carregarEmpresas() async {
+    setState(() {
+      carregando = true;
+      erro = null;
+    });
+
     try {
-      final baseConciliadora = await BuscarApiMongo.buscarBaseConciliadora();
+      final baseConciliadora =
+      await BuscarApiMongo.buscarBaseConciliadora();
 
       if (!mounted) return;
 
       setState(() {
         listaEmpresaBaseConciliadora = baseConciliadora;
-        carregando = false;
-        erro = null;
       });
     } catch (e) {
       if (!mounted) return;
 
       setState(() {
         erro = e.toString();
+      });
+    } finally {
+      if (!mounted) return;
+
+      setState(() {
         carregando = false;
       });
     }
@@ -74,23 +87,16 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
   @override
   Widget build(BuildContext context) {
     final tela = MediaQuery.of(context).size;
-
-    if (carregando) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    if (erro != null) {
-      return Scaffold(body: Center(child: Text("Erro: $erro")));
-    }
-
     final empresa = empresaAtual;
 
-     final List<Telefone> telefones = (empresa?.telefone ?? []).map<Telefone>((e) {
+    final List<Telefone> telefones =
+    (empresa?.telefone ?? []).map<Telefone>((e) {
       if (e is Telefone) return e;
       return Telefone.fromJson(e);
     }).toList();
 
-    final List<Membro> membros = (empresa?.membros ?? []).map<Membro>((e) {
+    final List<Membro> membros =
+    (empresa?.membros ?? []).map<Membro>((e) {
       if (e is Membro) return e;
       return Membro.fromJson(e);
     }).toList();
@@ -98,6 +104,7 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
     return Scaffold(
       body: Row(
         children: [
+          /// SIDEBAR
           SizedBox(
             width: tela.width * 0.2,
             child: SideBarWidget(
@@ -108,55 +115,99 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
             ),
           ),
 
+          /// CONTEÚDO
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
+              padding: EdgeInsets.symmetric(
+                horizontal: tela.width * 0.09,
+                vertical: 50,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /// HEADER
                   Text(
-                    "Resumo da Empresas",
-                    style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.w700),
+                    "Resumo da Empresa",
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Cores.verde_escuro,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
 
                   const SizedBox(height: 15),
 
+                  /// CONTEÚDO CONTROLADO
                   Expanded(
-                    child: ListView(
-                      children: [
-                        EmpresaCardWidget(
-                          razaoSocial: empresa?.empresaRaiz ?? '',
-                          nomeFantasia: (empresa?.alias?.isNotEmpty ?? false)
-                              ? empresa!.alias!
-                              : empresa?.empresaRaiz ?? '',
-                          cnpj: empresa?.cnpjRaizId != null ? Formatadores.formatarCnpj(empresa!.cnpjRaizId!) : '',
-                          cnae: empresa?.cnae?.id != null
-                              ? Formatadores.formatarCnae(empresa!.cnae!.id.toString())
-                              : '',
-                          atividade: empresa?.cnae?.descricao ?? '',
-                          telefone: SizedBox(
-                            height: 40,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: telefones.length,
-                              itemBuilder: (context, i) {
-                                final tel = telefones[i];
-                                return Text(
-                                  "(${tel.area ?? ''}) ${tel.number ?? ''}",
-                                  style: const TextStyle(fontSize: 13),
-                                );
-                              },
+                    child: Builder(
+                      builder: (_) {
+                        /// ERRO
+                        if (erro != null) {
+                          return Center(
+                            child: Text("Erro: $erro"),
+                          );
+                        }
+
+                        /// LOADING
+                        if (carregando) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        /// CARD
+                        return ListView(
+                          children: [
+                            EmpresaCardWidget(
+                              razaoSocial:
+                              empresa?.empresaRaiz ?? '',
+                              nomeFantasia:
+                              (empresa?.alias?.isNotEmpty ?? false)
+                                  ? empresa!.alias!
+                                  : empresa?.empresaRaiz ?? '',
+                              cnpj: empresa?.cnpjRaizId != null
+                                  ? Formatadores.formatarCnpj(
+                                  empresa!.cnpjRaizId!)
+                                  : '',
+                              cnae: empresa?.cnae?.id != null
+                                  ? Formatadores.formatarCnae(
+                                  empresa!.cnae!.id.toString())
+                                  : '',
+                              atividade:
+                              empresa?.cnae?.descricao ?? '',
+                              telefone: SizedBox(
+                                height: 40,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics:
+                                  const NeverScrollableScrollPhysics(),
+                                  itemCount: telefones.length,
+                                  itemBuilder: (context, i) {
+                                    final tel = telefones[i];
+                                    return Text(
+                                      "(${tel.area ?? ''}) ${tel.number ?? ''}",
+                                      style:
+                                      const TextStyle(fontSize: 13),
+                                    );
+                                  },
+                                ),
+                              ),
+                              email:
+                              (empresa?.email?.isNotEmpty ?? false)
+                                  ? empresa!
+                                  .email!.first.address ??
+                                  ''
+                                  : 'Sem informações',
+                              socios: membros
+                                  .map((m) => m.nomeMembro ?? '')
+                                  .toList(),
+                              empresasVinculadas: membros,
+                              ListaEmpresaBaseConciliadora:
+                              listaEmpresaBaseConciliadora,
                             ),
-                          ),
-                          email: (empresa?.email?.isNotEmpty ?? false)
-                              ? empresa!.email!.first.address ?? ''
-                              : 'Sem informações',
-                          socios: membros.map((m) => m.nomeMembro ?? '').toList(),
-                          empresasVinculadas: membros,
-                          ListaEmpresaBaseConciliadora: listaEmpresaBaseConciliadora,
-                        ),
-                      ],
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ],

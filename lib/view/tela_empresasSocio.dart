@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:proj_flutter/model/enum_MenuItem.dart';
 import 'package:proj_flutter/modelview/buscarApiMongo.dart';
-import 'package:proj_flutter/view/tela_empresasResumo.dart';
 import 'package:proj_flutter/view/widgets/EmpresaCardSimplesCnpjaWidget.dart';
 import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
 import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
@@ -10,18 +9,15 @@ import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
 import '../helprs/Cores.dart';
 import '../model/EmpresasConciliadora.dart';
 import '../model/prospec.dart';
-import '../model/EmpresaSocio.dart';
 
 class TelaEmpresasSocio extends StatefulWidget {
   const TelaEmpresasSocio({super.key});
 
   @override
-  State<TelaEmpresasSocio> createState() =>
-      _TelaEmpresasSocioState();
+  State<TelaEmpresasSocio> createState() => _TelaEmpresasSocioState();
 }
 
-class _TelaEmpresasSocioState
-    extends State<TelaEmpresasSocio> {
+class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
   List<Prospectar> empresas = [];
   List<Prospectar> empresasFiltradas = [];
   List<EmpresasConciliadora> listaEmpresasConciliadora = [];
@@ -30,7 +26,6 @@ class _TelaEmpresasSocioState
   String? erro;
 
   final TextEditingController _filtroController = TextEditingController();
-
   MenuItem _selected = MenuItem.empresaSocio;
 
   @override
@@ -56,38 +51,33 @@ class _TelaEmpresasSocioState
 
     try {
       final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
-
-      final listaConciliadora = await BuscarApiMongo.buscarBaseConciliadora();
+      final listaConciliadora =
+      await BuscarApiMongo.buscarBaseConciliadora();
 
       resultado.sort(
-        (a, b) => _razaoSocial(
-          a,
-        ).toLowerCase().compareTo(_razaoSocial(b).toLowerCase()),
+            (a, b) => _razaoSocial(a)
+            .toLowerCase()
+            .compareTo(_razaoSocial(b).toLowerCase()),
       );
 
       setState(() {
         empresas = resultado;
         empresasFiltradas = List.from(resultado);
         listaEmpresasConciliadora = listaConciliadora;
-        carregando = false;
       });
     } catch (e) {
       setState(() {
         erro = e.toString();
+      });
+    } finally {
+      setState(() {
         carregando = false;
       });
     }
   }
 
-  int _totalEmpresasParceiros() {
-    return empresasFiltradas.fold<int>(0, (total, empresa) {
-      final empresasSocios = _empresasOrdenadasDosSocios(empresa);
-      return total + empresasSocios.length;
-    });
-  }
-
   /// =====================================================
-  /// RAZÃO SOCIAL SEGURA
+  /// RAZÃO SOCIAL
   /// =====================================================
   String _razaoSocial(Prospectar p) {
     final dados = p.dados?.isNotEmpty == true ? p.dados!.first : null;
@@ -95,8 +85,7 @@ class _TelaEmpresasSocioState
   }
 
   /// =====================================================
-  /// EMPRESAS DOS SÓCIOS
-  /// (SEM DUPLICAR + ORDENADA)
+  /// EMPRESAS DOS SÓCIOS (SEM DUPLICAR)
   /// =====================================================
   List<dynamic> _empresasOrdenadasDosSocios(Prospectar prospectar) {
     final dados = prospectar.dados?.isNotEmpty == true
@@ -108,7 +97,6 @@ class _TelaEmpresasSocioState
     final todasEmpresas =
         dados.membros?.expand((m) => m.empresas ?? []).toList() ?? [];
 
-    /// remove duplicadas por CNPJ
     final mapaUnico = {
       for (var e in todasEmpresas)
         if (e.cnpjEmpresaSocio != null) e.cnpjEmpresaSocio!: e,
@@ -117,12 +105,18 @@ class _TelaEmpresasSocioState
     final listaFinal = mapaUnico.values.toList();
 
     listaFinal.sort(
-      (a, b) => (a.nomeEmpresaSocio ?? '').toLowerCase().compareTo(
-        (b.nomeEmpresaSocio ?? '').toLowerCase(),
-      ),
+          (a, b) => (a.nomeEmpresaSocio ?? '')
+          .toLowerCase()
+          .compareTo((b.nomeEmpresaSocio ?? '').toLowerCase()),
     );
 
     return listaFinal;
+  }
+
+  int _totalEmpresasParceiros() {
+    return empresasFiltradas.fold<int>(0, (total, empresa) {
+      return total + _empresasOrdenadasDosSocios(empresa).length;
+    });
   }
 
   /// =====================================================
@@ -133,11 +127,12 @@ class _TelaEmpresasSocioState
 
     setState(() {
       empresasFiltradas = empresas.where((empresa) {
-        final dados = empresa.dados?.isNotEmpty == true
-            ? empresa.dados!.first
-            : null;
+        final dados =
+        empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
 
-        return (dados?.empresaRaiz ?? '').toLowerCase().contains(busca) ||
+        return (dados?.empresaRaiz ?? '')
+            .toLowerCase()
+            .contains(busca) ||
             (dados?.alias ?? '').toLowerCase().contains(busca) ||
             (dados?.cnpjRaizId ?? '').contains(busca);
       }).toList();
@@ -150,14 +145,6 @@ class _TelaEmpresasSocioState
   @override
   Widget build(BuildContext context) {
     final tela = MediaQuery.of(context).size;
-
-    if (carregando) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    if (erro != null) {
-      return Scaffold(body: Center(child: Text("Erro: $erro")));
-    }
 
     return Scaffold(
       body: Row(
@@ -195,10 +182,10 @@ class _TelaEmpresasSocioState
 
                   const SizedBox(height: 8),
 
-                  /// TOTAL GERAL
+                  /// TOTAL
                   Text(
                     "${_totalEmpresasParceiros()} "
-                    "${_totalEmpresasParceiros() == 1 ? 'empresa cadastrada' : 'empresas cadastradas'}",
+                        "${_totalEmpresasParceiros() == 1 ? 'empresa cadastrada' : 'empresas cadastradas'}",
                     style: const TextStyle(fontSize: 15),
                   ),
 
@@ -213,41 +200,66 @@ class _TelaEmpresasSocioState
 
                   const SizedBox(height: 15),
 
-                  /// LISTA
+                  /// LISTA (LOADING APENAS AQUI)
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: empresasFiltradas.length,
-                      itemBuilder: (context, index) {
-                        final empresa = empresasFiltradas[index];
+                    child: Builder(
+                      builder: (_) {
+                        if (erro != null) {
+                          return Center(
+                            child: Text("Erro: $erro"),
+                          );
+                        }
 
-                        final empresasSocios = _empresasOrdenadasDosSocios(
-                          empresa,
-                        );
+                        if (carregando) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                        return GestureDetector(
-                          onTap: () {
-                            context.push(
-                              '/empresa-resumo',
-                              extra: empresa,
+                        if (empresasFiltradas.isEmpty) {
+                          return const Center(
+                            child: Text("Nenhuma empresa encontrada"),
+                          );
+                        }
+
+                        return ListView.builder(
+                          itemCount: empresasFiltradas.length,
+                          itemBuilder: (context, index) {
+                            final empresa = empresasFiltradas[index];
+
+                            final empresasSocios =
+                            _empresasOrdenadasDosSocios(empresa);
+
+                            return GestureDetector(
+                              onTap: () {
+                                context.push(
+                                  '/empresa-resumo',
+                                  extra: empresa,
+                                );
+                              },
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  ...empresasSocios.map((empresaSocio) {
+                                    final empresaConvertida =
+                                    EmpresasConciliadora(
+                                      razaoSocial:
+                                      empresaSocio.nomeEmpresaSocio,
+                                      cnpj:
+                                      empresaSocio.cnpjEmpresaSocio,
+                                    );
+
+                                    return EmpresaCardSimplesCnpjaWidget(
+                                      empresa: empresaConvertida,
+                                      listaEmpresasConciliadora:
+                                      listaEmpresasConciliadora,
+                                    );
+                                  }),
+                                ],
+                              ),
                             );
                           },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ...empresasSocios.map((empresaSocio) {
-                                final empresaConvertida = EmpresasConciliadora(
-                                  razaoSocial: empresaSocio.nomeEmpresaSocio,
-                                  cnpj: empresaSocio.cnpjEmpresaSocio,
-                                );
-
-                                return EmpresaCardSimplesCnpjaWidget(
-                                  empresa: empresaConvertida,
-                                  listaEmpresasConciliadora:
-                                      listaEmpresasConciliadora,
-                                );
-                              }),
-                            ],
-                          ),
                         );
                       },
                     ),

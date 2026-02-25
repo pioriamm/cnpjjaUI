@@ -12,17 +12,17 @@ import 'package:proj_flutter/view/widgets/botao_padrao.dart';
 import 'package:proj_flutter/view/widgets/dialogs/NovoSocioDialog.dart';
 import '../helprs/Cores.dart';
 
-class TelaPesquisa extends StatefulWidget {
+class TelaDashBoard extends StatefulWidget {
 
 
 
-  TelaPesquisa({super.key});
+  TelaDashBoard({super.key});
 
   @override
-  State<TelaPesquisa> createState() => _TelaPesquisaState();
+  State<TelaDashBoard> createState() => _TelaDashBoardState();
 }
 
-class _TelaPesquisaState extends State<TelaPesquisa> {
+class _TelaDashBoardState extends State<TelaDashBoard> {
   List<Prospectar> empresas = [];
   List<Prospectar> empresasFiltradas = [];
   bool carregando = true;

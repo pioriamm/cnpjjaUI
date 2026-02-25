@@ -5,7 +5,7 @@ import '../../helprs/Cores.dart';
 import '../tela_empresas.dart';
 import '../tela_empresasSocio.dart';
 import '../tela_socio.dart';
-import '../tela_pesquisa.dart';
+import '../tela_dashboard.dart';
 import '../tela_socioCadastro.dart';
 
 class SideBarWidget extends StatefulWidget {
