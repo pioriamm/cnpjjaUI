@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/helprs/Cores.dart';
-import 'package:proj_flutter/helprs/formatadores.dart';
+import 'package:cnpjjaUi/helprs/Cores.dart';
+import 'package:cnpjjaUi/helprs/formatadores.dart';
 
 class IndicadorCardMonetaryWidget extends StatefulWidget {
   final IconData icon;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/helprs/Cores.dart';
+import 'package:cnpjjaUi/helprs/Cores.dart';
 
 import '../botao_padrao.dart';
 

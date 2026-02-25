@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/helprs/formatadores.dart';
-import 'package:proj_flutter/model/EmpresasConciliadora.dart';
-import 'package:proj_flutter/model/enum_MenuItem.dart';
-import 'package:proj_flutter/modelview/buscarApiMongo.dart';
-import 'package:proj_flutter/view/widgets/EmpresaCardSimplesWidget.dart';
-import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
-import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
-import 'package:proj_flutter/view/widgets/botao_padrao.dart';
-import 'package:proj_flutter/view/widgets/dialogs/NovaEmpresaDialog.dart';
+import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:cnpjjaUi/model/EmpresasConciliadora.dart';
+import 'package:cnpjjaUi/model/enum_MenuItem.dart';
+import 'package:cnpjjaUi/modelview/buscarApiMongo.dart';
+import 'package:cnpjjaUi/view/widgets/EmpresaCardSimplesWidget.dart';
+import 'package:cnpjjaUi/view/widgets/FiltroBuscaWidget.dart';
+import 'package:cnpjjaUi/view/widgets/SideBarWidget.dart';
+import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
+import 'package:cnpjjaUi/view/widgets/dialogs/NovaEmpresaDialog.dart';
 import '../helprs/Cores.dart';
 
 class TelaEmpresasCadastro extends StatefulWidget {

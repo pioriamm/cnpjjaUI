@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:proj_flutter/helprs/formatadores.dart';
-import 'package:proj_flutter/model/prospec.dart';
+import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:cnpjjaUi/model/prospec.dart';
 
 import '../model/EmpresasConciliadora.dart';
 

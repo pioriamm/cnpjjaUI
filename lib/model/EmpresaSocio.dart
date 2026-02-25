@@ -1,8 +1,8 @@
-import 'package:proj_flutter/model/Email.dart';
-import 'package:proj_flutter/model/Telefone.dart';
-import 'package:proj_flutter/model/StatusEmpresa.dart';
-import 'package:proj_flutter/model/Cnae.dart';
-import 'package:proj_flutter/model/person.dart';
+import 'package:cnpjjaUi/model/Email.dart';
+import 'package:cnpjjaUi/model/Telefone.dart';
+import 'package:cnpjjaUi/model/StatusEmpresa.dart';
+import 'package:cnpjjaUi/model/Cnae.dart';
+import 'package:cnpjjaUi/model/person.dart';
 
 class EmpresaSocio {
   final String? idEmpresaSocio;

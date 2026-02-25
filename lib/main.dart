@@ -1,8 +1,9 @@
 
+import 'package:cnpjjaUi/rotas/GoRouter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:proj_flutter/rotas/GoRouter.dart';
+
 
 
 Future<void> main() async {

@@ -8,13 +8,13 @@ import '../view/tela_empresasSocio.dart';
 import '../view/tela_empresasResumo.dart';
 import '../view/tela_dashboard.dart';
 import '../view/tela_socio.dart';
+import '../view/tela_pesquisarBase.dart';
 import '../view/tela_socioCadastro.dart';
 
 CustomTransitionPage buildPageWithTransition({
   required GoRouterState state,
   required Widget child,
   required String title,
-
 }) {
   // altera o nome da aba
   html.document.title = title;
@@ -24,10 +24,7 @@ CustomTransitionPage buildPageWithTransition({
     transitionDuration: const Duration(milliseconds: 250),
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: animation,
-        child: child,
-      );
+      return FadeTransition(opacity: animation, child: child);
     },
   );
 }
@@ -35,76 +32,81 @@ CustomTransitionPage buildPageWithTransition({
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(
-      path: '/',
-      redirect: (_, __) => '/pesquisa',
-    ),
+    GoRoute(path: '/', redirect: (_, __) => '/pesquisa'),
 
     GoRoute(
       path: '/pesquisa',
-      pageBuilder: (context, state) =>
-          buildPageWithTransition(
-            state: state,
-            child: TelaDashBoard(), title: 'Dashboard',
-          ),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        state: state,
+        child: TelaDashBoard(),
+        title: 'Dashboard',
+      ),
     ),
 
     GoRoute(
       path: '/empresa-socio',
-      pageBuilder: (context, state) =>
-          buildPageWithTransition(
+      pageBuilder: (context, state) => buildPageWithTransition(
+        state: state,
+        child: TelaEmpresasSocio(),
+        title: 'Empresa Sócios',
+      ),
+    ),
 
-            state: state,
-            child: TelaEmpresasSocio(), title: 'Empresa Sócios',
-          ),
+    GoRoute(
+      path: '/carregar-base',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        state: state,
+        child: TelaPesquisarBase(),
+        title: 'Carregar Base',
+      ),
     ),
 
     GoRoute(
       path: '/empresa-resumo',
       pageBuilder: (context, state) {
         final empresa = state.extra as Prospectar?;
-
         return buildPageWithTransition(
           state: state,
-          child: TelaEmpresasResumo(empresa: empresa), title: 'Empresa Resumo',
+          child: TelaEmpresasResumo(empresa: empresa),
+          title: 'Empresa Resumo',
         );
       },
     ),
 
     GoRoute(
       path: '/empresas',
-      pageBuilder: (context, state) =>
-          buildPageWithTransition(
-            state: state,
-            child: TelaEmpresas(), title: 'Empresas',
-          ),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        state: state,
+        child: TelaEmpresas(),
+        title: 'Empresas',
+      ),
     ),
 
     GoRoute(
       path: '/cadastro-empresas',
-      pageBuilder: (context, state) =>
-          buildPageWithTransition(
-            state: state,
-            child: TelaEmpresasCadastro(), title: 'Cadastro Empresas',
-          ),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        state: state,
+        child: TelaEmpresasCadastro(),
+        title: 'Cadastro Empresas',
+      ),
     ),
 
     GoRoute(
       path: '/socios',
-      pageBuilder: (context, state) =>
-          buildPageWithTransition(
-            state: state,
-            child: TelaSocio(), title: 'Sócios',
-          ),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        state: state,
+        child: TelaSocio(),
+        title: 'Sócios',
+      ),
     ),
 
     GoRoute(
       path: '/castrar_socios',
-      pageBuilder: (context, state) =>
-          buildPageWithTransition(
-            state: state,
-            child: TelaSocioCadastro(), title: 'Cadastrar Sócios',
-          ),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        state: state,
+        child: TelaSocioCadastro(),
+        title: 'Cadastrar Sócios',
+      ),
     ),
   ],
 );

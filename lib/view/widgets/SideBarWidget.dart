@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:proj_flutter/model/enum_MenuItem.dart';
+import 'package:cnpjjaUi/model/enum_MenuItem.dart';
 import '../../helprs/Cores.dart';
 import '../tela_empresas.dart';
 import '../tela_empresasSocio.dart';
@@ -56,12 +56,21 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             item: MenuItem.empresaSocio,
             page: "empresa-socio",
           ),
+
           _menuItem(
             context: context,
             icon: Icons.group_outlined,
             title: "Sócios",
             item: MenuItem.socios,
             page: "socios",
+          ),
+
+          _menuItem(
+            context: context,
+            icon: Icons.data_object,
+            title: "Caregar Base",
+            item: MenuItem.pesquisarBase,
+            page: "carregar-base",
           ),
 
 

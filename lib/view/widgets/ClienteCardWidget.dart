@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/helprs/formatadores.dart';
-import 'package:proj_flutter/model/EmpresaSocio.dart';
+import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:cnpjjaUi/model/EmpresaSocio.dart';
 
 import '../../helprs/Cores.dart';
 import '../../helprs/tooltip_controller.dart';

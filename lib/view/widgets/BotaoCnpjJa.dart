@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/modelview/buscarApiMongo.dart';
+import 'package:cnpjjaUi/modelview/buscarApiMongo.dart';
 
 import '../../helprs/Cores.dart';
 import '../../model/EmpresasConciliadora.dart';

@@ -1,5 +1,5 @@
 
-import 'package:proj_flutter/model/status.dart';
+import 'package:cnpjjaUi/model/status.dart';
 
 class CnpjStatus {
   final String cnpj;

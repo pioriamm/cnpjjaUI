@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/model/enum_MenuItem.dart';
-import 'package:proj_flutter/model/prospec.dart';
-import 'package:proj_flutter/modelview/buscarApiMongo.dart';
-import 'package:proj_flutter/view/tela_empresas.dart';
-import 'package:proj_flutter/view/tela_socio.dart';
-import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
-import 'package:proj_flutter/view/widgets/IndicadorCardMonetaryWidget.dart';
-import 'package:proj_flutter/view/widgets/IndicadorCardWidget.dart';
-import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
-import 'package:proj_flutter/view/widgets/botao_padrao.dart';
-import 'package:proj_flutter/view/widgets/dialogs/NovoSocioDialog.dart';
+import 'package:cnpjjaUi/model/enum_MenuItem.dart';
+import 'package:cnpjjaUi/model/prospec.dart';
+import 'package:cnpjjaUi/modelview/buscarApiMongo.dart';
+import 'package:cnpjjaUi/view/tela_empresas.dart';
+import 'package:cnpjjaUi/view/tela_socio.dart';
+import 'package:cnpjjaUi/view/widgets/FiltroBuscaWidget.dart';
+import 'package:cnpjjaUi/view/widgets/IndicadorCardMonetaryWidget.dart';
+import 'package:cnpjjaUi/view/widgets/IndicadorCardWidget.dart';
+import 'package:cnpjjaUi/view/widgets/SideBarWidget.dart';
+import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
+import 'package:cnpjjaUi/view/widgets/dialogs/NovoSocioDialog.dart';
 import '../helprs/Cores.dart';
 
 class TelaDashBoard extends StatefulWidget {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:proj_flutter/model/enum_MenuItem.dart';
-import 'package:proj_flutter/modelview/buscarApiMongo.dart';
-import 'package:proj_flutter/view/widgets/EmpresaCardSimplesCnpjaWidget.dart';
-import 'package:proj_flutter/view/widgets/FiltroBuscaWidget.dart';
-import 'package:proj_flutter/view/widgets/SideBarWidget.dart';
+import 'package:cnpjjaUi/model/enum_MenuItem.dart';
+import 'package:cnpjjaUi/modelview/buscarApiMongo.dart';
+import 'package:cnpjjaUi/view/widgets/EmpresaCardSimplesCnpjaWidget.dart';
+import 'package:cnpjjaUi/view/widgets/FiltroBuscaWidget.dart';
+import 'package:cnpjjaUi/view/widgets/SideBarWidget.dart';
 
 import '../helprs/Cores.dart';
 import '../model/EmpresasConciliadora.dart';

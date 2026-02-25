@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proj_flutter/model/EmpresasConciliadora.dart';
+import 'package:cnpjjaUi/model/EmpresasConciliadora.dart';
 import '../../helprs/Cores.dart';
 import '../../model/EmpresaSocio.dart';
 import '../../model/Membo.dart';

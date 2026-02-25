@@ -1,5 +1,5 @@
 
-import 'package:proj_flutter/model/Dados.dart';
+import 'package:cnpjjaUi/model/Dados.dart';
 
 class Prospectar {
   final String? id;

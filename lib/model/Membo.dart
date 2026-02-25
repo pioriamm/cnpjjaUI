@@ -1,6 +1,6 @@
 
 
-import 'package:proj_flutter/model/EmpresaSocio.dart';
+import 'package:cnpjjaUi/model/EmpresaSocio.dart';
 
 class Membro {
   final String? idMembro;
