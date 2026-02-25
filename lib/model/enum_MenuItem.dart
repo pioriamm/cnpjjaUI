@@ -3,5 +3,5 @@ enum MenuItem {
   socios,
   empresas,
   sociosCadastro,
-  empresasCadastro,
+  empresaSocio,
 }

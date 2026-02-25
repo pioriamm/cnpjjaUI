@@ -4,13 +4,12 @@ import 'package:go_router/go_router.dart';
 import '../model/prospec.dart';
 import '../view/tela_empresas.dart';
 import '../view/tela_empresasCadastro.dart';
-import '../view/tela_empresasCadastroCnpjja.dart';
+import '../view/tela_empresasSocio.dart';
 import '../view/tela_empresasResumo.dart';
 import '../view/tela_pesquisa.dart';
 import '../view/tela_socio.dart';
 import '../view/tela_socioCadastro.dart';
 
-/// ✅ TRANSIÇÃO GLOBAL (Opção 5)
 CustomTransitionPage buildPageWithTransition({
   required GoRouterState state,
   required Widget child,
@@ -19,17 +18,10 @@ CustomTransitionPage buildPageWithTransition({
     key: state.pageKey,
     transitionDuration: const Duration(milliseconds: 250),
     child: child,
-    transitionsBuilder:
-        (context, animation, secondaryAnimation, child) {
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return FadeTransition(
         opacity: animation,
-        child: SlideTransition(
-          position: Tween(
-            begin: const Offset(0.08, 0),
-            end: Offset.zero,
-          ).animate(animation),
-          child: child,
-        ),
+        child: child,
       );
     },
   );
@@ -38,8 +30,6 @@ CustomTransitionPage buildPageWithTransition({
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-
-    /// REDIRECT ROOT
     GoRoute(
       path: '/',
       redirect: (_, __) => '/pesquisa',
@@ -55,11 +45,11 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/empresascnpja',
+      path: '/empresa-socio',
       pageBuilder: (context, state) =>
           buildPageWithTransition(
             state: state,
-            child: TelaEmpresasCadastroCnpjja(),
+            child: TelaEmpresasSocio(),
           ),
     ),
 

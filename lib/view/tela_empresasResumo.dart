@@ -85,13 +85,11 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
 
     final empresa = empresaAtual;
 
-    /// ✅ TELEFONES TIPADOS
-    final List<Telefone> telefones = (empresa?.telefone ?? []).map<Telefone>((e) {
+     final List<Telefone> telefones = (empresa?.telefone ?? []).map<Telefone>((e) {
       if (e is Telefone) return e;
       return Telefone.fromJson(e);
     }).toList();
 
-    /// ✅ MEMBROS TIPADOS (CORREÇÃO DO ERRO)
     final List<Membro> membros = (empresa?.membros ?? []).map<Membro>((e) {
       if (e is Membro) return e;
       return Membro.fromJson(e);
@@ -144,7 +142,6 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
                               itemCount: telefones.length,
                               itemBuilder: (context, i) {
                                 final tel = telefones[i];
-
                                 return Text(
                                   "(${tel.area ?? ''}) ${tel.number ?? ''}",
                                   style: const TextStyle(fontSize: 13),

@@ -12,16 +12,16 @@ import '../model/EmpresasConciliadora.dart';
 import '../model/prospec.dart';
 import '../model/EmpresaSocio.dart';
 
-class TelaEmpresasCadastroCnpjja extends StatefulWidget {
-  const TelaEmpresasCadastroCnpjja({super.key});
+class TelaEmpresasSocio extends StatefulWidget {
+  const TelaEmpresasSocio({super.key});
 
   @override
-  State<TelaEmpresasCadastroCnpjja> createState() =>
-      _TelaEmpresasCadastroCnpjjaState();
+  State<TelaEmpresasSocio> createState() =>
+      _TelaEmpresasSocioState();
 }
 
-class _TelaEmpresasCadastroCnpjjaState
-    extends State<TelaEmpresasCadastroCnpjja> {
+class _TelaEmpresasSocioState
+    extends State<TelaEmpresasSocio> {
   List<Prospectar> empresas = [];
   List<Prospectar> empresasFiltradas = [];
   List<EmpresasConciliadora> listaEmpresasConciliadora = [];
@@ -31,7 +31,7 @@ class _TelaEmpresasCadastroCnpjjaState
 
   final TextEditingController _filtroController = TextEditingController();
 
-  MenuItem _selected = MenuItem.empresasCadastro;
+  MenuItem _selected = MenuItem.empresaSocio;
 
   @override
   void initState() {
@@ -55,16 +55,14 @@ class _TelaEmpresasCadastroCnpjjaState
     });
 
     try {
-      final resultado =
-      await BuscarApiMongo.buscarEmpresasBaseCnpjja();
+      final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
 
-      final listaConciliadora =
-      await BuscarApiMongo.buscarBaseConciliadora();
+      final listaConciliadora = await BuscarApiMongo.buscarBaseConciliadora();
 
       resultado.sort(
-            (a, b) => _razaoSocial(a)
-            .toLowerCase()
-            .compareTo(_razaoSocial(b).toLowerCase()),
+        (a, b) => _razaoSocial(
+          a,
+        ).toLowerCase().compareTo(_razaoSocial(b).toLowerCase()),
       );
 
       setState(() {
@@ -87,12 +85,12 @@ class _TelaEmpresasCadastroCnpjjaState
       return total + empresasSocios.length;
     });
   }
+
   /// =====================================================
   /// RAZÃO SOCIAL SEGURA
   /// =====================================================
   String _razaoSocial(Prospectar p) {
-    final dados =
-    p.dados?.isNotEmpty == true ? p.dados!.first : null;
+    final dados = p.dados?.isNotEmpty == true ? p.dados!.first : null;
     return dados?.empresaRaiz ?? '';
   }
 
@@ -100,34 +98,26 @@ class _TelaEmpresasCadastroCnpjjaState
   /// EMPRESAS DOS SÓCIOS
   /// (SEM DUPLICAR + ORDENADA)
   /// =====================================================
-  List<dynamic> _empresasOrdenadasDosSocios(
-      Prospectar prospectar) {
-    final dados =
-    prospectar.dados?.isNotEmpty == true
+  List<dynamic> _empresasOrdenadasDosSocios(Prospectar prospectar) {
+    final dados = prospectar.dados?.isNotEmpty == true
         ? prospectar.dados!.first
         : null;
 
     if (dados == null) return [];
 
     final todasEmpresas =
-        dados.membros
-            ?.expand((m) => m.empresas ?? [])
-            .toList() ??
-            [];
+        dados.membros?.expand((m) => m.empresas ?? []).toList() ?? [];
 
     /// remove duplicadas por CNPJ
     final mapaUnico = {
       for (var e in todasEmpresas)
-        if (e.cnpjEmpresaSocio != null)
-          e.cnpjEmpresaSocio!: e,
+        if (e.cnpjEmpresaSocio != null) e.cnpjEmpresaSocio!: e,
     };
 
     final listaFinal = mapaUnico.values.toList();
 
     listaFinal.sort(
-          (a, b) => (a.nomeEmpresaSocio ?? '')
-          .toLowerCase()
-          .compareTo(
+      (a, b) => (a.nomeEmpresaSocio ?? '').toLowerCase().compareTo(
         (b.nomeEmpresaSocio ?? '').toLowerCase(),
       ),
     );
@@ -143,17 +133,12 @@ class _TelaEmpresasCadastroCnpjjaState
 
     setState(() {
       empresasFiltradas = empresas.where((empresa) {
-        final dados =
-        empresa.dados?.isNotEmpty == true
+        final dados = empresa.dados?.isNotEmpty == true
             ? empresa.dados!.first
             : null;
 
-        return (dados?.empresaRaiz ?? '')
-            .toLowerCase()
-            .contains(busca) ||
-            (dados?.alias ?? '')
-                .toLowerCase()
-                .contains(busca) ||
+        return (dados?.empresaRaiz ?? '').toLowerCase().contains(busca) ||
+            (dados?.alias ?? '').toLowerCase().contains(busca) ||
             (dados?.cnpjRaizId ?? '').contains(busca);
       }).toList();
     });
@@ -167,15 +152,11 @@ class _TelaEmpresasCadastroCnpjjaState
     final tela = MediaQuery.of(context).size;
 
     if (carregando) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (erro != null) {
-      return Scaffold(
-        body: Center(child: Text("Erro: $erro")),
-      );
+      return Scaffold(body: Center(child: Text("Erro: $erro")));
     }
 
     return Scaffold(
@@ -204,7 +185,7 @@ class _TelaEmpresasCadastroCnpjjaState
                 children: [
                   /// HEADER
                   Text(
-                    "Lista de Empresas CNPJÁ",
+                    "Empresas Sócios",
                     style: TextStyle(
                       fontSize: 30,
                       color: Cores.verde_escuro,
@@ -217,7 +198,7 @@ class _TelaEmpresasCadastroCnpjjaState
                   /// TOTAL GERAL
                   Text(
                     "${_totalEmpresasParceiros()} "
-                        "${_totalEmpresasParceiros() == 1 ? 'empresa cadastrada' : 'empresas cadastradas'}",
+                    "${_totalEmpresasParceiros() == 1 ? 'empresa cadastrada' : 'empresas cadastradas'}",
                     style: const TextStyle(fontSize: 15),
                   ),
 
@@ -237,43 +218,34 @@ class _TelaEmpresasCadastroCnpjjaState
                     child: ListView.builder(
                       itemCount: empresasFiltradas.length,
                       itemBuilder: (context, index) {
-                        final empresa =  empresasFiltradas[index];
+                        final empresa = empresasFiltradas[index];
 
-                        final empresasSocios = _empresasOrdenadasDosSocios(empresa);
+                        final empresasSocios = _empresasOrdenadasDosSocios(
+                          empresa,
+                        );
 
                         return GestureDetector(
-                          onTap: ()=>
-
-                            GoRoute(
-                              path: '/empresa-resumo',
-                              builder: (context, state) {
-                                final empresa = state.extra as Prospectar?;
-                                return TelaEmpresasResumo(empresa: empresa);
-                              },
-                            ),
+                          onTap: () {
+                            context.push(
+                              '/empresa-resumo',
+                              extra: empresa,
+                            );
+                          },
                           child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              ...empresasSocios.map((empresaSocio) {
+                                final empresaConvertida = EmpresasConciliadora(
+                                  razaoSocial: empresaSocio.nomeEmpresaSocio,
+                                  cnpj: empresaSocio.cnpjEmpresaSocio,
+                                );
 
-                              ...empresasSocios.map(
-                                    (empresaSocio) {
-                                  final empresaConvertida =
-                                  EmpresasConciliadora(
-                                    razaoSocial:
-                                    empresaSocio
-                                        .nomeEmpresaSocio,
-                                    cnpj: empresaSocio
-                                        .cnpjEmpresaSocio,
-                                  );
-
-                                  return EmpresaCardSimplesCnpjaWidget(
-                                    empresa: empresaConvertida,
-                                    listaEmpresasConciliadora:
-                                    listaEmpresasConciliadora,
-                                  );
-                                },
-                              ),
+                                return EmpresaCardSimplesCnpjaWidget(
+                                  empresa: empresaConvertida,
+                                  listaEmpresasConciliadora:
+                                      listaEmpresasConciliadora,
+                                );
+                              }),
                             ],
                           ),
                         );

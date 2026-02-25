@@ -29,7 +29,7 @@ class _TelaEmpresasCadastroState
   final TextEditingController _filtroController =
   TextEditingController();
 
-  MenuItem _selected = MenuItem.empresasCadastro;
+  MenuItem _selected = MenuItem.empresaSocio;
 
   @override
   void initState() {

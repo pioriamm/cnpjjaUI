@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:proj_flutter/model/enum_MenuItem.dart';
 import '../../helprs/Cores.dart';
 import '../tela_empresas.dart';
-import '../tela_empresasCadastroCnpjja.dart';
+import '../tela_empresasSocio.dart';
 import '../tela_socio.dart';
 import '../tela_pesquisa.dart';
 import '../tela_socioCadastro.dart';
@@ -38,16 +38,23 @@ class _SideBarWidgetState extends State<SideBarWidget> {
           _menuItem(
             context: context,
             icon: Icons.home_outlined,
-            title: "Pesquisa",
+            title: "Dashboard",
             item: MenuItem.pesquisa,
             page: "pesquisa",
           ),
           _menuItem(
             context: context,
+            icon: Icons.apartment_outlined,
+            title: "Empresas",
+            item: MenuItem.empresas,
+            page: "empresas",
+          ),
+          _menuItem(
+            context: context,
             icon: Icons.apartment,
-            title: "Lista Empresas CNPJÁ",
-            item: MenuItem.empresasCadastro,
-            page: "empresascnpja",
+            title: "Empresas Sócios",
+            item: MenuItem.empresaSocio,
+            page: "empresa-socio",
           ),
           _menuItem(
             context: context,
@@ -57,13 +64,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             page: "socios",
           ),
 
-          _menuItem(
-            context: context,
-            icon: Icons.apartment_outlined,
-            title: "Empresas",
-            item: MenuItem.empresas,
-            page: "empresas",
-          ),
+
           const SizedBox(height: 30),
           const Divider(color: Colors.white24),
           const SizedBox(height: 30),
