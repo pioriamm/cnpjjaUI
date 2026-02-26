@@ -1,3 +1,4 @@
+import 'package:cnpjjaUi/view/widgets/pilula_conciliadora.dart';
 import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
 import '../../helprs/cores.dart';
@@ -69,13 +70,7 @@ class EmpresaCardSimplesCnpjaWidget extends StatelessWidget {
           ),
 
           eConciliadora
-              ? Container(
-                  width: 110,
-                  height: 35,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(color: Cores.verde_claro_W40, borderRadius: BorderRadius.circular(20)),
-                  child: Image.asset('assets/img/conciliadora_icon.jpeg', width: 70, height: 35, fit: BoxFit.cover),
-                )
+              ? PilulaConciliadora()
               : Container(
                   width: 110,
                   height: 35,

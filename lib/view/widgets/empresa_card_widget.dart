@@ -1,3 +1,4 @@
+import 'package:cnpjjaUi/view/widgets/pilula_conciliadora.dart';
 import 'package:flutter/material.dart';
 import '../../helprs/cores.dart';
 import '../../model/empresa_socio.dart';
@@ -91,14 +92,9 @@ class EmpresaCardWidget extends StatelessWidget {
                     children: [
                       _tag(cnpj),
                       _tag(cnae, icon: Icons.sell_outlined),
-
-                      /// 🔥 TAG CONCILIADORA DIRETO DA API
+                      SizedBox(width: 200,),
                       if (conciliadora)
-                        _tag(
-                          "Conciliadora",
-                          icon: Icons.verified,
-                          cor: Cores.verde_claro,
-                        ),
+                        PilulaConciliadora()
                     ],
                   ),
 
@@ -187,21 +183,20 @@ class EmpresaCardWidget extends StatelessWidget {
                     final EmpresaSocio emp = empresas[index];
 
                     /// 🔥 AGORA USA DIRETO A PROPRIEDADE
-                    final bool existe =
-                        emp.eConciliadora ?? false;
+                    final bool existe = emp.eConciliadora ?? false;
 
                     return EmpresaItem(
                       emp: emp,
                       razaoSocial: razaoSocial,
                       opcoes: Row(
                         children: [
-                          if (existe)
+                          existe?
                             ImageIconButton(
                               imagePath:
                               'assets/img/conciliadora_icon.jpeg',
                               onPressed: () {},
                             )
-                          else
+                          :
                             ImageIconButton(
                               imagePath:
                               'assets/img/pipedrive_icon.png',
