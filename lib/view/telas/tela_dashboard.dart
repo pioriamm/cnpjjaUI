@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:cnpjjaUi/model/enum_MenuItem.dart';
+import 'package:cnpjjaUi/model/enum_menu_item.dart';
 import 'package:cnpjjaUi/model/prospec.dart';
-import 'package:cnpjjaUi/modelview/buscarApiMongo.dart';
-import 'package:cnpjjaUi/view/tela_empresas.dart';
-import 'package:cnpjjaUi/view/tela_socio.dart';
-import 'package:cnpjjaUi/view/widgets/FiltroBuscaWidget.dart';
-import 'package:cnpjjaUi/view/widgets/IndicadorCardMonetaryWidget.dart';
-import 'package:cnpjjaUi/view/widgets/IndicadorCardWidget.dart';
-import 'package:cnpjjaUi/view/widgets/SideBarWidget.dart';
+import 'package:cnpjjaUi/repositorio/api_service.dart';
+import 'package:cnpjjaUi/view/telas/tela_empresas.dart';
+import 'package:cnpjjaUi/view/telas/tela_socio.dart';
+import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
+import 'package:cnpjjaUi/view/widgets/indicador_card_monetary_widget.dart';
+import 'package:cnpjjaUi/view/widgets/indicador_card_widget.dart';
+import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
 import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
-import 'package:cnpjjaUi/view/widgets/dialogs/NovoSocioDialog.dart';
-import '../helprs/Cores.dart';
+import 'package:cnpjjaUi/view/widgets/novo_socio_dialog.dart';
+import '../../helprs/cores.dart';
 
 class TelaDashBoard extends StatefulWidget {
 
@@ -44,7 +44,7 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
     });
 
     try {
-      final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
+      final resultado = await ApiService.buscarEmpresasBaseCnpjja();
 
       setState(() {
         empresas = resultado;

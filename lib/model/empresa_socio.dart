@@ -1,13 +1,14 @@
-import 'package:cnpjjaUi/model/Email.dart';
-import 'package:cnpjjaUi/model/Telefone.dart';
-import 'package:cnpjjaUi/model/StatusEmpresa.dart';
-import 'package:cnpjjaUi/model/Cnae.dart';
+import 'package:cnpjjaUi/model/email.dart';
+import 'package:cnpjjaUi/model/telefone.dart';
+import 'package:cnpjjaUi/model/status_empresa.dart';
+import 'package:cnpjjaUi/model/cnae.dart';
 import 'package:cnpjjaUi/model/person.dart';
 
 class EmpresaSocio {
   final String? idEmpresaSocio;
   final String? nomeEmpresaSocio;
   final String? cnpjEmpresaSocio;
+  final bool? eConciliadora;
   final Cnae cnae;
 
   final List<Person>? membrosEmpresaSocio;
@@ -23,11 +24,12 @@ class EmpresaSocio {
     this.telefone,
     this.email,
     this.status,
-    required this.cnae,
+    required this.cnae, this.eConciliadora,
   });
 
   factory EmpresaSocio.fromJson(Map<String, dynamic> json) {
     return EmpresaSocio(
+      eConciliadora: json["eConciliadora"],
       idEmpresaSocio: json['id_empresa_socio'],
       nomeEmpresaSocio: json['nome_empresa_socio'],
       cnpjEmpresaSocio: json['cnpj_empresa_socio'],

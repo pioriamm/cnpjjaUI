@@ -1,16 +1,16 @@
 
 
-import 'package:cnpjjaUi/model/EmpresaSocio.dart';
+import 'package:cnpjjaUi/model/empresa_socio.dart';
 
-class Membro {
+class Membros {
   final String? idMembro;
   final String? nomeMembro;
   final List<EmpresaSocio>? empresas;
 
-  Membro({this.idMembro, this.nomeMembro, this.empresas});
+  Membros({this.idMembro, this.nomeMembro, this.empresas});
 
-  factory Membro.fromJson(Map<String, dynamic> json) {
-    return Membro(
+  factory Membros.fromJson(Map<String, dynamic> json) {
+    return Membros(
       idMembro: json['id_membro'],
       nomeMembro: json['nome_membro'],
       empresas: (json['empresas'] as List?)?.map((e) => EmpresaSocio.fromJson(e)).toList(),

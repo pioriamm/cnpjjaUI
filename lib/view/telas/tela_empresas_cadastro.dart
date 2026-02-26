@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
-import 'package:cnpjjaUi/model/EmpresasConciliadora.dart';
-import 'package:cnpjjaUi/model/enum_MenuItem.dart';
-import 'package:cnpjjaUi/modelview/buscarApiMongo.dart';
-import 'package:cnpjjaUi/view/widgets/EmpresaCardSimplesWidget.dart';
-import 'package:cnpjjaUi/view/widgets/FiltroBuscaWidget.dart';
-import 'package:cnpjjaUi/view/widgets/SideBarWidget.dart';
+import 'package:cnpjjaUi/model/empresas_conciliadora.dart';
+import 'package:cnpjjaUi/model/enum_menu_item.dart';
+import 'package:cnpjjaUi/repositorio/api_service.dart';
+import 'package:cnpjjaUi/view/widgets/empresa_card_simples_widget.dart';
+import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
+import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
 import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
-import 'package:cnpjjaUi/view/widgets/dialogs/NovaEmpresaDialog.dart';
-import '../helprs/Cores.dart';
+import 'package:cnpjjaUi/view/widgets/nova_empresa_dialog.dart';
+import '../../helprs/cores.dart';
 
 class TelaEmpresasCadastro extends StatefulWidget {
   const TelaEmpresasCadastro({super.key});
@@ -54,7 +54,7 @@ class _TelaEmpresasCadastroState
 
     try {
       final resultado =
-      await BuscarApiMongo.buscarBaseConciliadora();
+      await ApiService.buscarBaseConciliadora();
 
       /// ordena por razão social
       resultado.sort(
