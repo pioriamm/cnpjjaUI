@@ -1,5 +1,5 @@
 
-import 'package:cnpjjaUi/model/Dados.dart';
+import 'package:cnpjjaUi/model/dados.dart';
 
 class Prospectar {
   final String? id;

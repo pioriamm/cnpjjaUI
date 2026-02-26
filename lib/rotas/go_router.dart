@@ -1,15 +1,16 @@
+import 'package:cnpjjaUi/view/telas/tela_empresas_resumo.dart';
+import 'package:cnpjjaUi/view/telas/tela_empresas_socio.dart';
+import 'package:cnpjjaUi/view/telas/tela_socio_cadastro.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:html' as html;
 import '../model/prospec.dart';
-import '../view/tela_empresas.dart';
-import '../view/tela_empresasCadastro.dart';
-import '../view/tela_empresasSocio.dart';
-import '../view/tela_empresasResumo.dart';
-import '../view/tela_dashboard.dart';
-import '../view/tela_socio.dart';
-import '../view/tela_pesquisarBase.dart';
-import '../view/tela_socioCadastro.dart';
+import '../view/telas/tela_empresas.dart';
+import '../view/telas/tela_empresas_cadastro.dart';
+import '../view/telas/tela_dashboard.dart';
+import '../view/telas/tela_socio.dart';
+import '../view/telas/tela_pesquisarBase.dart';
+
 
 CustomTransitionPage buildPageWithTransition({
   required GoRouterState state,

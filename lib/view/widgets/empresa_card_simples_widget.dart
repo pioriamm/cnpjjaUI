@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
-import 'package:cnpjjaUi/model/EmpresasConciliadora.dart';
-import '../../helprs/Cores.dart';
-import 'BotaoCnpjJa.dart';
+import 'package:cnpjjaUi/model/empresas_conciliadora.dart';
+import '../../helprs/cores.dart';
+import 'botao_cnpja.dart';
 
 class EmpresaCardSimplesWidget extends StatelessWidget {
   final EmpresasConciliadora empresa;

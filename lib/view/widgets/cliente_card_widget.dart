@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
-import 'package:cnpjjaUi/model/EmpresaSocio.dart';
+import 'package:cnpjjaUi/model/empresa_socio.dart';
 
-import '../../helprs/Cores.dart';
+import '../../helprs/cores.dart';
 import '../../helprs/tooltip_controller.dart';
 
 class ClienteCardWidget extends StatefulWidget {

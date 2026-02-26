@@ -1,31 +1,29 @@
 import 'package:flutter/material.dart';
 
-import 'package:cnpjjaUi/view/widgets/ClienteCardWidget.dart';
-import 'package:cnpjjaUi/view/widgets/FiltroBuscaWidget.dart';
-import 'package:cnpjjaUi/helprs/Cores.dart';
-import 'package:cnpjjaUi/view/widgets/SideBarWidget.dart';
-import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
-import 'package:cnpjjaUi/view/widgets/dialogs/NovoSocioDialog.dart';
+import 'package:cnpjjaUi/helprs/cores.dart';
+import 'package:cnpjjaUi/view/widgets/cliente_card_widget.dart';
+import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
+import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
 
-import '../model/Dados.dart';
-import '../model/Membo.dart';
-import '../model/enum_MenuItem.dart';
-import '../model/prospec.dart';
-import '../modelview/buscarApiMongo.dart';
+import '../../model/dados.dart';
+import '../../model/membo.dart';
+import '../../model/enum_menu_item.dart';
+import '../../model/prospec.dart';
+import '../../repositorio/api_service.dart';
 
-class TelaSocioCadastro extends StatefulWidget {
-  const TelaSocioCadastro({super.key});
+class TelaSocio extends StatefulWidget {
+  const TelaSocio({super.key});
 
   @override
-  State<TelaSocioCadastro> createState() => _TelaSocioCadastroState();
+  State<TelaSocio> createState() => _TelaSocioState();
 }
 
-class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
-  MenuItem _selected = MenuItem.sociosCadastro;
+class _TelaSocioState extends State<TelaSocio> {
+  MenuItem _selected = MenuItem.socios;
 
   List<Prospectar> empresas = [];
-  List<Membro> socios = [];
-  List<Membro> sociosFiltrados = [];
+  List<Membros> socios = [];
+  List<Membros> sociosFiltrados = [];
 
   bool carregando = true;
   String? erro;
@@ -45,7 +43,7 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
   }
 
   /// ===============================
-  /// CARREGA SÓCIOS
+  /// CARREGA E FLATTEN DOS SÓCIOS
   /// ===============================
   Future<void> _carregarEmpresas() async {
     setState(() {
@@ -54,14 +52,15 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
     });
 
     try {
-      final resultado = await BuscarApiMongo.buscarEmpresasBaseCnpjja();
+      final resultado = await ApiService.buscarEmpresasBaseCnpjja();
 
-      final List<Membro> todosSocios = resultado
+      final List<Membros> todosSocios = resultado
           .expand<Dados>((p) => p.dados ?? <Dados>[])
-          .expand<Membro>((d) => d.membros ?? <Membro>[])
+          .expand<Membros>((d) => d.membros ?? <Membros>[])
           .toList();
 
-      final sociosUnicosMap = <String, Membro>{};
+      /// remove duplicados
+      final sociosUnicosMap = <String, Membros>{};
 
       for (final socio in todosSocios) {
         final chave = socio.idMembro ?? socio.nomeMembro ?? '';
@@ -148,28 +147,6 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
                         ),
                       ),
                       const Spacer(),
-                      BotaoPadrao(
-                        acao: () async {
-                          await showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (_) =>
-                            const NovoSocioDialog(),
-                          );
-                        },
-                        cor: Cores.verde_escuro,
-                        conteudo: [
-                          Icon(Icons.add, color: Cores.branco),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Novo Sócio",
-                            style: TextStyle(
-                              color: Cores.branco,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
 
@@ -191,7 +168,7 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
 
                   const SizedBox(height: 15),
 
-                  /// LISTA CONTROLADA
+                  /// LISTA (ESTADOS CONTROLADOS AQUI)
                   Expanded(
                     child: Builder(
                       builder: (_) {

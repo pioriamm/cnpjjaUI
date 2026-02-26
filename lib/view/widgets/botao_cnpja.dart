@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cnpjjaUi/modelview/buscarApiMongo.dart';
+import 'package:cnpjjaUi/repositorio/api_service.dart';
 
-import '../../helprs/Cores.dart';
-import '../../model/EmpresasConciliadora.dart';
+import '../../helprs/cores.dart';
+import '../../model/empresas_conciliadora.dart';
 
 class BotaoCnpjJa extends StatefulWidget {
   final EmpresasConciliadora empresasConciliadora;
@@ -26,10 +26,10 @@ class _BotaoCnpjJaState extends State<BotaoCnpjJa> {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () async {
-            final resultado = await BuscarApiMongo.pesquisarCnpjja(widget.empresasConciliadora.cnpj!);
+            final resultado = await ApiService.pesquisarCnpjja(widget.empresasConciliadora.cnpj!);
 
             if (resultado == 200) {
-              final status = await BuscarApiMongo.atualizarStatusEmpresa(widget.empresasConciliadora.id);
+              final status = await ApiService.atualizarStatusEmpresa(widget.empresasConciliadora.id);
             }
           },
           child: AnimatedContainer(

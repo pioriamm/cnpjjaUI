@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cnpjjaUi/helprs/Cores.dart';
+import 'package:cnpjjaUi/helprs/cores.dart';
 
-import '../botao_padrao.dart';
+import 'botao_padrao.dart';
 
 class NovoSocioDialog extends StatefulWidget {
   const NovoSocioDialog({super.key});

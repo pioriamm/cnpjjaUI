@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:cnpjjaUi/helprs/formatadores.dart';
 import 'package:cnpjjaUi/model/prospec.dart';
 
-import '../model/EmpresasConciliadora.dart';
+import '../model/empresas_conciliadora.dart';
 
-class BuscarApiMongo {
+class ApiService {
   static Future<List<Prospectar>> buscarEmpresasBaseCnpjja() async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/mongo/buscarDados'),

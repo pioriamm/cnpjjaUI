@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cnpjjaUi/model/enum_MenuItem.dart';
-import '../../helprs/Cores.dart';
-import '../tela_empresas.dart';
-import '../tela_empresasSocio.dart';
-import '../tela_socio.dart';
-import '../tela_dashboard.dart';
-import '../tela_socioCadastro.dart';
+import 'package:cnpjjaUi/model/enum_menu_item.dart';
+import '../../helprs/cores.dart';
+
 
 class SideBarWidget extends StatefulWidget {
   final MenuItem selectedItem;
@@ -73,7 +69,6 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             page: "carregar-base",
           ),
 
-
           const SizedBox(height: 30),
           const Divider(color: Colors.white24),
           const SizedBox(height: 30),
@@ -84,7 +79,6 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             item: MenuItem.sociosCadastro,
             page: "castrar_socios",
           ),
-
 
           const Spacer(),
           const Padding(
@@ -123,7 +117,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
           borderRadius: BorderRadius.circular(10),
           onTap: () {
             widget.onItemSelected(item);
-            context.go('/$page?reload=${DateTime.now().millisecondsSinceEpoch}',);
+            context.go('/$page?reload=${DateTime.now().millisecondsSinceEpoch}');
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),

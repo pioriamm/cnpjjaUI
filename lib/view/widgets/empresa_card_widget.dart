@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cnpjjaUi/model/EmpresasConciliadora.dart';
-import '../../helprs/Cores.dart';
-import '../../model/EmpresaSocio.dart';
-import '../../model/Membo.dart';
-import 'EmpresaItem.dart';
-import 'ImageIconButtonWidget.dart';
+import '../../helprs/cores.dart';
+import '../../model/empresa_socio.dart';
+import '../../model/membo.dart';
+import 'empresa_item.dart';
+import 'Image_icon_button_widget.dart';
 
 class EmpresaCardWidget extends StatelessWidget {
   final String razaoSocial;
@@ -12,14 +11,12 @@ class EmpresaCardWidget extends StatelessWidget {
   final String cnpj;
   final String cnae;
   final String atividade;
-
   final String telefone;
-
   final String email;
   final List<String> socios;
   final VoidCallback? pipedrive;
-  final List<Membro>? empresasVinculadas;
-  final List<EmpresasConciliadora> listaEmpresaBaseConciliadora;
+  final List<Membros>? empresasVinculadas;
+  final bool conciliadora;
 
   const EmpresaCardWidget({
     super.key,
@@ -31,9 +28,9 @@ class EmpresaCardWidget extends StatelessWidget {
     required this.telefone,
     required this.email,
     required this.socios,
-    this.pipedrive,
     required this.empresasVinculadas,
-    required this.listaEmpresaBaseConciliadora,
+    required this.conciliadora,
+    this.pipedrive,
   });
 
   @override
@@ -54,7 +51,6 @@ class EmpresaCardWidget extends StatelessWidget {
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// ÍCONE
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -90,11 +86,19 @@ class EmpresaCardWidget extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  Row(
+                  Wrap(
+                    spacing: 10,
                     children: [
                       _tag(cnpj),
-                      const SizedBox(width: 10),
                       _tag(cnae, icon: Icons.sell_outlined),
+
+                      /// 🔥 TAG CONCILIADORA DIRETO DA API
+                      if (conciliadora)
+                        _tag(
+                          "Conciliadora",
+                          icon: Icons.verified,
+                          cor: Cores.verde_claro,
+                        ),
                     ],
                   ),
 
@@ -112,47 +116,13 @@ class EmpresaCardWidget extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  /// CONTATOS + SOCIOS
                   Wrap(
                     spacing: 20,
                     runSpacing: 6,
                     children: [
-                      /// TELEFONE (AGORA TEXT)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.phone, size: 16),
-                          const SizedBox(width: 6),
-                          ConstrainedBox(
-                            constraints:
-                            const BoxConstraints(maxWidth: 200),
-                            child: Text(
-                              telefone,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                      _infoItem(Icons.phone, telefone, 200),
+                      _infoItem(Icons.email_outlined, email, 220),
 
-                      /// EMAIL
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.email_outlined, size: 16),
-                          const SizedBox(width: 6),
-                          ConstrainedBox(
-                            constraints:
-                            const BoxConstraints(maxWidth: 220),
-                            child: Text(
-                              email,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      /// SÓCIOS
-                      /// SÓCIOS EM CHIPS (CORRETO)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -170,15 +140,13 @@ class EmpresaCardWidget extends StatelessWidget {
                               ),
                             ],
                           ),
-
                           const SizedBox(height: 6),
-
                           Wrap(
                             spacing: 8,
                             runSpacing: 6,
                             children: socios
                                 .where((s) => s.trim().isNotEmpty)
-                                .map((s) => _chipSocio(s))
+                                .map(_chipSocio)
                                 .toList(),
                           ),
                         ],
@@ -218,17 +186,13 @@ class EmpresaCardWidget extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final EmpresaSocio emp = empresas[index];
 
-                    final existe =
-                    listaEmpresaBaseConciliadora.any(
-                          (empresa) =>
-                      empresa.cnpj == emp.cnpjEmpresaSocio,
-                    );
+                    /// 🔥 AGORA USA DIRETO A PROPRIEDADE
+                    final bool existe =
+                        emp.eConciliadora ?? false;
 
                     return EmpresaItem(
                       emp: emp,
                       razaoSocial: razaoSocial,
-                      ListaEmpresaBaseConciliadora:
-                      listaEmpresaBaseConciliadora,
                       opcoes: Row(
                         children: [
                           if (existe)
@@ -256,13 +220,13 @@ class EmpresaCardWidget extends StatelessWidget {
     );
   }
 
-  /// TAG
-  Widget _tag(String texto, {IconData? icon}) {
+  Widget _tag(String texto,
+      {IconData? icon, Color? cor}) {
     return Container(
       padding:
       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.blueGrey.shade50,
+        color: cor ?? Colors.blueGrey.shade50,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -281,9 +245,28 @@ class EmpresaCardWidget extends StatelessWidget {
     );
   }
 
+  Widget _infoItem(
+      IconData icon, String texto, double maxWidth) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16),
+        const SizedBox(width: 6),
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Text(
+            texto,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _chipSocio(String nome) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding:
+      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(20),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cnpjjaUi/helprs/Cores.dart';
+import 'package:cnpjjaUi/helprs/cores.dart';
 
 class IndicadorCardWidget extends StatefulWidget {
   final IconData icon;
