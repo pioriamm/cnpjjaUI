@@ -91,7 +91,7 @@ class _TelaEmpresasCadastroState
                 .toLowerCase()
                 .contains(busca) ||
             (empresa.cnpj ?? '').contains(busca) ||
-            (empresa.iId?.oid ?? '')
+            (empresa.id ?? '')
                 .toLowerCase()
                 .contains(busca);
       }).toList();

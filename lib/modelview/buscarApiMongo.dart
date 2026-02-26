@@ -27,7 +27,7 @@ class BuscarApiMongo {
     final url = Uri.parse('${dotenv.env['API_URL']}/cnpjja/popularBase');
 
     var cnpjLimpo = Formatadores.limparCnpj(cnpj);
-
+    print("realizando chamada no endpoint ${url}");
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -35,7 +35,7 @@ class BuscarApiMongo {
         {"cnpj": cnpjLimpo}
       ]),
     );
-
+    print("resultado ${response.body}");
     return response.statusCode;
   }
 
@@ -61,6 +61,8 @@ class BuscarApiMongo {
 
     final baseUrl = dotenv.env['API_URL']!;
 
+    print("atualizando o  id :  ${id}");
+
     final url = Uri.parse(
       '$baseUrl/empresas-conciliadora/$id/pesquisado',
     );
@@ -68,7 +70,7 @@ class BuscarApiMongo {
     print('PUT -> $url');
 
     final response = await http.put(url);
-
+    print("atualizando o  id :  ${response}");
     return response.statusCode;
   }
 }

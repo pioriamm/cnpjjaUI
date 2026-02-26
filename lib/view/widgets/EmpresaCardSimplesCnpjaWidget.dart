@@ -117,7 +117,7 @@ class EmpresaCardSimplesCnpjaWidget extends StatelessWidget {
                     ),
                     _info(Icons.sell_outlined, emp.cnaDescricao),
                     _info(Icons.numbers, emp.cna?.toString()),
-                    _info(Icons.fingerprint, emp.iId?.oid),
+                    _info(Icons.fingerprint, emp.id),
                   ],
                 ),
               ),

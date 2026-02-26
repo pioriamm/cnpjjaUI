@@ -141,7 +141,7 @@ class _TelaPesquisarBaseState extends State<TelaPesquisarBase> {
                               cnaDescricao: empresaConciliadora.cnaDescricao ?? "",
                               pesquisado: empresaConciliadora.pesquisado ?? false,
                               conciliadora: empresaConciliadora.conciliadora ?? false,
-                              id: empresaConciliadora.iId?.oid ?? "",
+                              id: empresaConciliadora.id ?? "",
                             );
                           },
                         );

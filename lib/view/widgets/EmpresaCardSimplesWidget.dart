@@ -183,7 +183,7 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
 
           _info(Icons.numbers, emp.cna?.toString()),
 
-          _info(Icons.fingerprint, emp.iId?.oid),
+          _info(Icons.fingerprint, emp.id),
 
           const SizedBox(height: 12),
 

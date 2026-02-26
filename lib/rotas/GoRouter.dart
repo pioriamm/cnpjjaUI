@@ -61,6 +61,7 @@ final GoRouter appRouter = GoRouter(
       ),
     ),
 
+
     GoRoute(
       path: '/empresa-resumo',
       pageBuilder: (context, state) {

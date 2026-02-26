@@ -122,10 +122,8 @@ class _SideBarWidgetState extends State<SideBarWidget> {
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
-            if (!isSelected) {
-              widget.onItemSelected(item);
-              context.go('/${page}');
-            }
+            widget.onItemSelected(item);
+            context.go('/$page?reload=${DateTime.now().millisecondsSinceEpoch}',);
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),

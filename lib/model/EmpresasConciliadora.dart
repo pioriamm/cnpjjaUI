@@ -1,5 +1,5 @@
 class EmpresasConciliadora {
-  Id? iId;
+  String? id;
   String? cnpj;
   String? razaoSocial;
   String? alias;
@@ -9,7 +9,7 @@ class EmpresasConciliadora {
   bool? conciliadora;
 
   EmpresasConciliadora(
-      {this.iId,
+      {this.id,
         this.cnpj,
         this.razaoSocial,
         this.alias,
@@ -19,7 +19,7 @@ class EmpresasConciliadora {
         this.conciliadora});
 
   EmpresasConciliadora.fromJson(Map<String, dynamic> json) {
-    iId = json['_id'] != null ? new Id.fromJson(json['_id']) : null;
+    id = json['id'] ;
     cnpj = json['cnpj'];
     razaoSocial = json['razaoSocial'];
     alias = json['alias'];
@@ -31,9 +31,7 @@ class EmpresasConciliadora {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.iId != null) {
-      data['_id'] = this.iId!.toJson();
-    }
+    data['id'] = this.id;
     data['cnpj'] = this.cnpj;
     data['razaoSocial'] = this.razaoSocial;
     data['alias'] = this.alias;
@@ -45,18 +43,3 @@ class EmpresasConciliadora {
   }
 }
 
-class Id {
-  String? oid;
-
-  Id({this.oid});
-
-  Id.fromJson(Map<String, dynamic> json) {
-    oid = json['$oid'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['$oid'] = this.oid;
-    return data;
-  }
-}

@@ -1,6 +1,7 @@
 import 'package:cnpjjaUi/helprs/Cores.dart';
 import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:go_router/go_router.dart';
 import '../modelview/buscarApiMongo.dart';
 
 class EmpresaCardWidget extends StatelessWidget {
@@ -97,14 +98,11 @@ class EmpresaCardWidget extends StatelessWidget {
 
               if (cnae.isNotEmpty) _tag(cnae),
 
-              if (conciliadora) _tag("Conciliadora"),
+              if (conciliadora) _tag("Conciliadora", cor: Cores.verde_claro),
 
               pesquisado
-                  ? _tag("Pesquisado")
-                  : _tag(
-                "Pesquisar",
-                chamar: () =>
-                    _pesquisarEmpresa(context),
+                  ? _tag("Pesquisado", cor: Cores.verde_claro)
+                  : _tag("Pesquisar", chamar: () => _pesquisarEmpresa(context),
               ),
             ],
           ),
@@ -137,7 +135,9 @@ class EmpresaCardWidget extends StatelessWidget {
         ),
       );
 
+      print("Chamando API...");
       final result = await BuscarApiMongo.pesquisarCnpjja(cnpj);
+      print("Resultado API: $result");
 
       if (!context.mounted) return;
 
@@ -148,12 +148,17 @@ class EmpresaCardWidget extends StatelessWidget {
 
         messenger.showSnackBar(
           const SnackBar(
-            content: Text("Empresa pesquisada com sucesso"),
-            backgroundColor: Colors.green,
+            content: Text("Empresa pesquisada com sucesso, atualiza a sua tela"),
+            backgroundColor: Colors.amber,
           ),
         );
+
+        context.go('/carregar-base');
       }
-    } catch (e) {
+    } catch (e, s) {
+      print(e);
+      print(s);
+
       if (!context.mounted) return;
 
       messenger
@@ -168,12 +173,11 @@ class EmpresaCardWidget extends StatelessWidget {
   }
 
   /// TAG reutilizável
-  Widget _tag(String text, {VoidCallback? chamar}) {
+  Widget _tag(String text, {VoidCallback? chamar, Color? cor}) {
     final child = Container(
-      padding:
-      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
+        color: cor ?? Colors.grey.shade300,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
