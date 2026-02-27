@@ -1,3 +1,4 @@
+import 'package:cnpjjaUi/view/widgets/pilula_conciliadora.dart';
 import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
 import '../../helprs/cores.dart';
@@ -5,8 +6,9 @@ import '../../model/empresa_socio.dart';
 
 class EmpresaCardSimplesCnpjaWidget extends StatelessWidget {
   final EmpresaSocio empresa;
+  final String empresaPai;
 
-  const EmpresaCardSimplesCnpjaWidget({super.key, required this.empresa});
+  const EmpresaCardSimplesCnpjaWidget({super.key, required this.empresa, required this.empresaPai});
 
   Widget _info(IconData icon, String? texto) {
     if (texto == null || texto.isEmpty) {
@@ -43,7 +45,7 @@ class EmpresaCardSimplesCnpjaWidget extends StatelessWidget {
         boxShadow: [BoxShadow(blurRadius: 6, color: Colors.black.withOpacity(0.05))],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(10),
@@ -57,25 +59,39 @@ class EmpresaCardSimplesCnpjaWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(emp.nomeEmpresaSocio ?? '', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                Text(emp.nomeEmpresaSocio ?? '', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
 
-                const SizedBox(height: 8),
-
-                _info(Icons.badge_outlined, Formatadores.formatarCnpj(emp.cnpjEmpresaSocio ?? '')),
-
+                const SizedBox(height: 20),
+                _info(Icons.work, Formatadores.formatarCnpj(emp.cnpjEmpresaSocio ?? '')),
+                _info(Icons.badge_outlined, Formatadores.formatarCnae(emp.cnae!.id.toString())),
                 _info(Icons.sell_outlined, emp.cnae?.descricao),
+                SizedBox(height: 20,),
+                Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Cores.verde_escuro),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            "Dados originados da empresa raiz: ",
+                            style: TextStyle(color: Cores.verde_escuro,fontWeight: FontWeight.normal),
+                          ),
+                          Text(
+                            "${empresaPai}",
+                            style: TextStyle(color: Cores.verde_escuro,fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
 
           eConciliadora
-              ? Container(
-                  width: 110,
-                  height: 35,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(color: Cores.verde_claro_W40, borderRadius: BorderRadius.circular(20)),
-                  child: Image.asset('assets/img/conciliadora_icon.jpeg', width: 70, height: 35, fit: BoxFit.cover),
-                )
+              ? PilulaConciliadora()
               : Container(
                   width: 110,
                   height: 35,

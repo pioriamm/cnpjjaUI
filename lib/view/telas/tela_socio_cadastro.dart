@@ -31,7 +31,7 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
     super.initState();
 
     Future.microtask(() {
-      context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja(context: context);
+      context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja();
     });
   }
 
@@ -45,143 +45,145 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
   Widget build(BuildContext context) {
     final tela = MediaQuery.of(context).size;
 
-    return Scaffold(
-      body: Row(
-        children: [
-          /// SIDEBAR
-          SizedBox(
-            width: tela.width * 0.2,
-            child: SideBarWidget(selectedItem: _selected, onItemSelected: (item) => setState(() => _selected = item)),
-          ),
+    return SelectionArea(
+      child: Scaffold(
+        body: Row(
+          children: [
+            /// SIDEBAR
+            SizedBox(
+              width: tela.width * 0.2,
+              child: SideBarWidget(selectedItem: _selected, onItemSelected: (item) => setState(() => _selected = item)),
+            ),
 
-          /// CONTEÚDO
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
-              child: Consumer<BuscarBaseCnpjaProvider>(
-                builder: (_, provider, __) {
-                  /// ===============================
-                  /// EXTRAIR TODOS OS SÓCIOS
-                  /// ===============================
-                  final todosSocios = provider.listaProspecao
-                      .expand((p) => p.dados ?? [])
-                      .expand((d) => d.membros ?? [])
-                      .toList();
+            /// CONTEÚDO
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
+                child: Consumer<BuscarBaseCnpjaProvider>(
+                  builder: (_, provider, __) {
+                    /// ===============================
+                    /// EXTRAIR TODOS OS SÓCIOS
+                    /// ===============================
+                    final todosSocios = provider.listaProspecao
+                        .expand((p) => p.dados ?? [])
+                        .expand((d) => d.membros ?? [])
+                        .toList();
 
-                  /// remover duplicados
-                  final mapaUnico = <String, Membros>{};
+                    /// remover duplicados
+                    final mapaUnico = <String, Membros>{};
 
-                  for (final socio in todosSocios) {
-                    final chave = socio.idMembro ?? socio.nomeMembro ?? '';
+                    for (final socio in todosSocios) {
+                      final chave = socio.idMembro ?? socio.nomeMembro ?? '';
 
-                    if (chave.isNotEmpty) {
-                      mapaUnico[chave] = socio;
+                      if (chave.isNotEmpty) {
+                        mapaUnico[chave] = socio;
+                      }
                     }
-                  }
 
-                  final sociosUnicos = mapaUnico.values.toList()
-                    ..sort((a, b) => (a.nomeMembro ?? '').toLowerCase().compareTo((b.nomeMembro ?? '').toLowerCase()));
+                    final sociosUnicos = mapaUnico.values.toList()
+                      ..sort((a, b) => (a.nomeMembro ?? '').toLowerCase().compareTo((b.nomeMembro ?? '').toLowerCase()));
 
-                  /// ===============================
-                  /// FILTRO
-                  /// ===============================
-                  final sociosFiltrados = sociosUnicos.where((socio) {
-                    final nome = socio.nomeMembro?.toLowerCase() ?? '';
+                    /// ===============================
+                    /// FILTRO
+                    /// ===============================
+                    final sociosFiltrados = sociosUnicos.where((socio) {
+                      final nome = socio.nomeMembro?.toLowerCase() ?? '';
 
-                    return nome.contains(filtroTexto);
-                  }).toList();
+                      return nome.contains(filtroTexto);
+                    }).toList();
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// HEADER
-                      Row(
-                        children: [
-                          Text(
-                            "Sócios",
-                            style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.bold),
-                          ),
-                          const Spacer(),
-                          BotaoPadrao(
-                            acao: () async {
-                              await showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (_) => const NovoSocioDialog(),
-                              );
-                            },
-                            cor: Cores.verde_escuro,
-                            conteudo: [
-                              Icon(Icons.add, color: Cores.branco),
-                              const SizedBox(width: 8),
-                              Text("Novo Sócio", style: TextStyle(color: Cores.branco, fontSize: 16)),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Text("${sociosFiltrados.length} sócios cadastrados", style: const TextStyle(fontSize: 15)),
-
-                      const SizedBox(height: 15),
-
-                      /// FILTRO
-                      FiltroBuscaWidget(
-                        controller: _filtroController,
-                        hintText: 'Filtrar por nome...',
-                        onChanged: (v) {
-                          setState(() {
-                            filtroTexto = v.toLowerCase();
-                          });
-                        },
-                      ),
-
-                      const SizedBox(height: 15),
-
-                      /// LISTA
-                      Expanded(
-                        child: Builder(
-                          builder: (_) {
-                            if (provider.isLoading) {
-                              return const Center(child: CircularProgressIndicator());
-                            }
-
-                            if (provider?.erro != null) {
-                              return Center(child: Text("Erro: ${provider.erro}"));
-                            }
-
-                            if (sociosFiltrados.isEmpty) {
-                              return const Center(child: Text("Nenhum sócio encontrado"));
-                            }
-
-                            return ListView.builder(
-                              itemCount: sociosFiltrados.length,
-                              itemBuilder: (context, index) {
-                                final socio = sociosFiltrados[index];
-
-                                return ClienteCardWidget(
-                                  nome: socio.nomeMembro ?? '',
-                                  cpf: socio.idMembro ?? "",
-                                  telefone: '',
-                                  email: '',
-                                  quantidadeEmpresas: socio.empresas?.length ?? 0,
-                                  onEdit: () {},
-                                  onDelete: () {},
-                                  empresas: socio.empresas ?? [],
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// HEADER
+                        Row(
+                          children: [
+                            Text(
+                              "Sócios",
+                              style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.bold),
+                            ),
+                            const Spacer(),
+                            BotaoPadrao(
+                              acao: () async {
+                                await showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => const NovoSocioDialog(),
                                 );
                               },
-                            );
+                              cor: Cores.verde_escuro,
+                              conteudo: [
+                                Icon(Icons.add, color: Cores.branco),
+                                const SizedBox(width: 8),
+                                Text("Novo Sócio", style: TextStyle(color: Cores.branco, fontSize: 16)),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        Text("${sociosFiltrados.length} sócios cadastrados", style: const TextStyle(fontSize: 15)),
+
+                        const SizedBox(height: 15),
+
+                        /// FILTRO
+                        FiltroBuscaWidget(
+                          controller: _filtroController,
+                          hintText: 'Filtrar por nome...',
+                          onChanged: (v) {
+                            setState(() {
+                              filtroTexto = v.toLowerCase();
+                            });
                           },
                         ),
-                      ),
-                    ],
-                  );
-                },
+
+                        const SizedBox(height: 15),
+
+                        /// LISTA
+                        Expanded(
+                          child: Builder(
+                            builder: (_) {
+                              if (provider.isLoading) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+
+                              if (provider?.erro != null) {
+                                return Center(child: Text("Erro: ${provider.erro}"));
+                              }
+
+                              if (sociosFiltrados.isEmpty) {
+                                return const Center(child: Text("Nenhum sócio encontrado"));
+                              }
+
+                              return ListView.builder(
+                                itemCount: sociosFiltrados.length,
+                                itemBuilder: (context, index) {
+                                  final socio = sociosFiltrados[index];
+
+                                  return ClienteCardWidget(
+                                    nome: socio.nomeMembro ?? '',
+                                    cpf: socio.idMembro ?? "",
+                                    telefone: '',
+                                    email: '',
+                                    quantidadeEmpresas: socio.empresas?.length ?? 0,
+                                    onEdit: () {},
+                                    onDelete: () {},
+                                    empresas: socio.empresas ?? [],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

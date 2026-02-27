@@ -40,11 +40,11 @@ class EmpresaCardNovoWidget extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          /// HEADER
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 width: 42,
@@ -53,7 +53,7 @@ class EmpresaCardNovoWidget extends StatelessWidget {
                 child: const Icon(Icons.business),
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: 20, ),
 
               Expanded(
                 child: Column(
@@ -72,45 +72,31 @@ class EmpresaCardNovoWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
                     ),
+                    SizedBox(height: 10),
+                    Tag(
+                      child: Text(
+                        Formatadores.formatarCnpj(cnpj),
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    if (cnae.isNotEmpty)
+                      Tag(
+                        child: Text(
+                          Formatadores.formatarCnae(cnae),
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+
+                    Text(cnaDescricao.isEmpty ? "-" : cnaDescricao),
                   ],
                 ),
               ),
 
-              Icon(Icons.keyboard_arrow_down, color: Colors.grey.shade600),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          /// TAGS
-          Wrap(
-            spacing: 8,
-            runSpacing: 6,
-            children: [
-              Tag(
-                child: Text(
-                  Formatadores.formatarCnpj(cnpj),
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ),
-
-              if (cnae.isNotEmpty)
-                Tag(
-                  child: Text(cnae, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
-                ),
-
-              if (conciliadora)
-                Tag(
-                  cor: Cores.verde_claro,
-                  child: const Text("Conciliadora", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12)),
-                ),
-
               pesquisado
-                  ? Tag(
-                      cor: Cores.verde_claro,
-                      child: const Text("Pesquisado", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12)),
-                    )
+                  ? Icon(Icons.verified, color: Cores.verde_claro)
                   : Consumer<PesquisaAtualizarBaseStatusProvider>(
                       builder: (_, provider, __) {
                         return Tag(
@@ -133,12 +119,16 @@ class EmpresaCardNovoWidget extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 10),
-
-          Text(
-            cnaDescricao.isEmpty ? "-" : cnaDescricao,
-            style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey.shade800),
-          ),
+          if (conciliadora)
+            SizedBox(height: 20,),
+            Tag(
+              cor: Colors.grey.shade300,
+              child: Text(
+                "     A empresa ${razaoSocial}, já se enconta na basd da Conciliadora     ", overflow: TextOverflow
+                  .ellipsis,
+                style: TextStyle(fontSize: 12,color: Cores.verde_escuro, fontWeight: FontWeight.normal),
+              ),
+            ),
         ],
       ),
     );
