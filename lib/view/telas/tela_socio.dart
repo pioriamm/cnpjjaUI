@@ -111,119 +111,121 @@ class _TelaSocioState extends State<TelaSocio> {
   Widget build(BuildContext context) {
     final tela = MediaQuery.of(context).size;
 
-    return Scaffold(
-      body: Row(
-        children: [
-          /// SIDEBAR
-          SizedBox(
-            width: tela.width * 0.2,
-            child: SideBarWidget(
-              selectedItem: _selected,
-              onItemSelected: (item) {
-                setState(() => _selected = item);
-              },
-            ),
-          ),
-
-          /// CONTEÚDO
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: tela.width * 0.09,
-                vertical: 50,
+    return SelectionArea(
+      child: Scaffold(
+        body: Row(
+          children: [
+            /// SIDEBAR
+            SizedBox(
+              width: tela.width * 0.2,
+              child: SideBarWidget(
+                selectedItem: _selected,
+                onItemSelected: (item) {
+                  setState(() => _selected = item);
+                },
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// HEADER
-                  Row(
-                    children: [
-                      Text(
-                        "Sócios",
-                        style: TextStyle(
-                          fontSize: 30,
-                          color: Cores.verde_escuro,
-                          fontWeight: FontWeight.bold,
+            ),
+
+            /// CONTEÚDO
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: tela.width * 0.09,
+                  vertical: 50,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// HEADER
+                    Row(
+                      children: [
+                        Text(
+                          "Sócios",
+                          style: TextStyle(
+                            fontSize: 30,
+                            color: Cores.verde_escuro,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const Spacer(),
-                    ],
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Text(
-                    "${sociosFiltrados.length} sócios cadastrados",
-                    style: const TextStyle(fontSize: 15),
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  /// FILTRO
-                  FiltroBuscaWidget(
-                    controller: _filtroController,
-                    onChanged: _filtrar,
-                    hintText: 'Filtrar por nome...',
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  /// LISTA (ESTADOS CONTROLADOS AQUI)
-                  Expanded(
-                    child: Builder(
-                      builder: (_) {
-                        /// ERRO
-                        if (erro != null) {
-                          return Center(
-                            child: Text("Erro: $erro"),
-                          );
-                        }
-
-                        /// LOADING
-                        if (carregando) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        /// VAZIO
-                        if (sociosFiltrados.isEmpty) {
-                          return const Center(
-                            child: Text("Nenhum sócio encontrado"),
-                          );
-                        }
-
-                        /// LISTA NORMAL
-                        return ListView.builder(
-                          itemCount: sociosFiltrados.length,
-                          itemBuilder: (context, index) {
-                            final socio = sociosFiltrados[index];
-
-                            return ClienteCardWidget(
-                              nome: socio.nomeMembro ?? '',
-                              cpf: socio.idMembro ?? "",
-                              telefone: '',
-                              email: '',
-                              quantidadeEmpresas:
-                              socio.empresas?.length ?? 0,
-                              onEdit: () {
-                                print("Editar ${socio.nomeMembro}");
-                              },
-                              onDelete: () {
-                                print("Excluir ${socio.nomeMembro}");
-                              },
-                              empresas: socio.empresas ?? [],
-                            );
-                          },
-                        );
-                      },
+                        const Spacer(),
+                      ],
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 8),
+
+                    Text(
+                      "${sociosFiltrados.length} sócios cadastrados",
+                      style: const TextStyle(fontSize: 15),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    /// FILTRO
+                    FiltroBuscaWidget(
+                      controller: _filtroController,
+                      onChanged: _filtrar,
+                      hintText: 'Filtrar por nome...',
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    /// LISTA (ESTADOS CONTROLADOS AQUI)
+                    Expanded(
+                      child: Builder(
+                        builder: (_) {
+                          /// ERRO
+                          if (erro != null) {
+                            return Center(
+                              child: Text("Erro: $erro"),
+                            );
+                          }
+
+                          /// LOADING
+                          if (carregando) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          /// VAZIO
+                          if (sociosFiltrados.isEmpty) {
+                            return const Center(
+                              child: Text("Nenhum sócio encontrado"),
+                            );
+                          }
+
+                          /// LISTA NORMAL
+                          return ListView.builder(
+                            itemCount: sociosFiltrados.length,
+                            itemBuilder: (context, index) {
+                              final socio = sociosFiltrados[index];
+
+                              return ClienteCardWidget(
+                                nome: socio.nomeMembro ?? '',
+                                cpf: socio.idMembro ?? "",
+                                telefone: '',
+                                email: '',
+                                quantidadeEmpresas:
+                                socio.empresas?.length ?? 0,
+                                onEdit: () {
+                                  print("Editar ${socio.nomeMembro}");
+                                },
+                                onDelete: () {
+                                  print("Excluir ${socio.nomeMembro}");
+                                },
+                                empresas: socio.empresas ?? [],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

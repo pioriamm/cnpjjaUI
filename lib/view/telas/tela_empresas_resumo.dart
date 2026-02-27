@@ -36,69 +36,70 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
 
     /// ✅ AGORA JÁ VEM TIPADO DO MODEL
     final List<Telefone> telefones = empresa?.telefone ?? [];
-
     final List<Membros> membros = empresa?.membros ?? [];
 
-    return Scaffold(
-      body: Row(
-        children: [
-          /// SIDEBAR
-          SizedBox(
-            width: tela.width * 0.2,
-            child: SideBarWidget(selectedItem: _selected, onItemSelected: (item) => setState(() => _selected = item)),
-          ),
+    return SelectionArea(
+      child: Scaffold(
+        body: Row(
+          children: [
+            /// SIDEBAR
+            SizedBox(
+              width: tela.width * 0.2,
+              child: SideBarWidget(selectedItem: _selected, onItemSelected: (item) => setState(() => _selected = item)),
+            ),
 
-          /// CONTEÚDO
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// HEADER
-                  Text(
-                    "Resumo da Empresa",
-                    style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.w700),
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        Theme(
-                          data: Theme.of(context).copyWith(
-                            dividerColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                          ),
-                          child: EmpresaCardWidget(
-                            razaoSocial: empresa?.empresaRaiz ?? '',
-                            nomeFantasia: (empresa?.alias?.isNotEmpty ?? false)
-                                ? empresa!.alias!
-                                : empresa?.empresaRaiz ?? '',
-                            cnpj: empresa?.cnpjRaizId != null ? Formatadores.formatarCnpj(empresa!.cnpjRaizId!) : '',
-                            cnae: empresa?.cnae?.id != null
-                                ? Formatadores.formatarCnae(empresa!.cnae!.id.toString())
-                                : '',
-                            atividade: empresa?.cnae?.descricao ?? '',
-                            telefone: telefones.map((tel) => "(${tel.area ?? ''}) ${tel.number ?? ''}").join(' • '),
-                            email: (empresa?.email?.isNotEmpty ?? false)
-                                ? empresa!.email!.first.address ?? ''
-                                : 'Sem informações',
-                            socios: membros.map((m) => m.nomeMembro ?? '').toList(),
-                            conciliadora: empresa?.eConciliadora ?? false,
-                            empresasVinculadas: membros,
-                          ),
-                        ),
-                      ],
+            /// CONTEÚDO
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// HEADER
+                    Text(
+                      "Resumo da Empresa",
+                      style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.w700),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 15),
+
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          Theme(
+                            data: Theme.of(context).copyWith(
+                              dividerColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                            ),
+                            child: EmpresaCardWidget(
+                              razaoSocial: empresa?.empresaRaiz ?? '',
+                              nomeFantasia: (empresa?.alias?.isNotEmpty ?? false)
+                                  ? empresa!.alias!
+                                  : empresa?.empresaRaiz ?? '',
+                              cnpj: empresa?.cnpjRaizId != null ? Formatadores.formatarCnpj(empresa!.cnpjRaizId!) : '',
+                              cnae: empresa?.cnae?.id != null
+                                  ? Formatadores.formatarCnae(empresa!.cnae!.id.toString())
+                                  : '',
+                              atividade: empresa?.cnae?.descricao ?? '',
+                              telefone: telefones.map((tel) => "(${tel.area ?? ''}) ${tel.number ?? ''}").join(' • '),
+                              email: (empresa?.email?.isNotEmpty ?? false)
+                                  ? empresa!.email!.first.address ?? ''
+                                  : 'Sem informações',
+                              socios: membros.map((m) => m.nomeMembro ?? '').toList(),
+                              conciliadora: empresa?.eConciliadora ?? false,
+                              empresasVinculadas: membros,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

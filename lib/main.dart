@@ -1,4 +1,3 @@
-
 import 'package:cnpjjaUi/modelview/busca_base_conciliadora_provider.dart';
 import 'package:cnpjjaUi/rotas/go_router.dart';
 import 'package:flutter/material.dart';
@@ -14,36 +13,31 @@ Future<void> main() async {
   usePathUrlStrategy();
   runApp(
     MultiProvider(
-      providers:
-      [
-        ChangeNotifierProvider(create: (_) => PesquisaAtualizarBaseStatusProvider(),),
-        ChangeNotifierProvider(create: (_) => BuscarBaseConciliadoraProvider(),),
-        ChangeNotifierProvider(create: (_) => BuscarBaseCnpjaProvider(),),
+      providers: [
+        ChangeNotifierProvider(create: (_) => PesquisaAtualizarBaseStatusProvider()),
+        ChangeNotifierProvider(create: (_) => BuscarBaseConciliadoraProvider()),
+        ChangeNotifierProvider(create: (_) => BuscarBaseCnpjaProvider()),
       ],
       child: const MyApp(),
     ),
   );
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp.router(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Inter',
+      theme: ThemeData(
+        fontFamily: 'Inter',
+        dividerColor: Colors.transparent,
         progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: Color(0xFF87b526), // cor do loader
-      ),),
+          color: Color(0xFF87b526), // cor do loader
+        ),
+      ),
       routerConfig: appRouter,
     );
   }
 }
-
-
-
-
-
-
