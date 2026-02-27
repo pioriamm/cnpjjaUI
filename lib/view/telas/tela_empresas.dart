@@ -30,7 +30,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
 
     /// chama provider ao abrir tela
     Future.microtask(() {
-      context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja(context: context);
+      context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja();
     });
   }
 

@@ -1,20 +1,35 @@
+import 'package:cnpjjaUi/helprs/configuracoes.dart';
 import 'package:flutter/material.dart';
 
 import '../model/prospec.dart';
 import '../repositorio/api_service.dart';
 
 class BuscarBaseCnpjaProvider extends ChangeNotifier {
-
   bool isLoading = false;
   List<Prospectar> listaProspecao = [];
   String? erro;
 
-  Future<void> buscarDadosCnpja({
-    required BuildContext context,
-  }) async {
+  DateTime? _lastFetch;
+  static  Duration _cacheDuration = Duration(minutes: Configuracoes.cache);
 
-    final messenger = ScaffoldMessenger.of(context);
+  Future<void> buscarDadosCnpja() async {
 
+    final now = DateTime.now();
+
+    if (_lastFetch != null && now.difference(_lastFetch!) < _cacheDuration && listaProspecao.isNotEmpty) {
+      return;
+    }
+
+    await _executarBusca();
+  }
+
+
+  Future<void> refresh() async {
+    _lastFetch = null;
+    await _executarBusca();
+  }
+
+  Future<void> _executarBusca() async {
     isLoading = true;
     erro = null;
     notifyListeners();
@@ -23,20 +38,9 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
       final result = await ApiService.buscarEmpresasBaseCnpjja();
 
       listaProspecao = result;
-
+      _lastFetch = DateTime.now();
     } catch (e) {
       erro = e.toString();
-
-      if (context.mounted) {
-        messenger
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text("Erro: $e"),
-              backgroundColor: Colors.red,
-            ),
-          );
-      }
     } finally {
       isLoading = false;
       notifyListeners();
