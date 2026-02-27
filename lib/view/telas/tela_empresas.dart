@@ -114,7 +114,6 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                             itemCount: empresasFiltradas.length,
                             itemBuilder: (context, index) {
                               final empresa = empresasFiltradas[index];
-
                               final empresaAtual = empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
 
                               return EmpresaCardWidget(

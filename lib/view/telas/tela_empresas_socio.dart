@@ -30,7 +30,6 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
   void initState() {
     super.initState();
 
-    /// chama provider ao abrir
     Future.microtask(() {
       context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja(context: context);
     });
@@ -73,12 +72,10 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
                         return dados.membros?.expand((m) => m.empresas ?? []).toList() ?? [];
                       })
                       .where((empresaSocio) {
-                        /// filtro texto
                         final matchTexto =
                             (empresaSocio.nomeEmpresaSocio ?? '').toLowerCase().contains(filtroTexto) ||
                             (empresaSocio.cnpjEmpresaSocio ?? '').contains(filtroTexto);
 
-                        /// cliente
                         final ehCliente = empresaSocio.eConciliadora ?? false;
 
                         bool matchCliente = true;
@@ -117,7 +114,7 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
 
                       const SizedBox(height: 15),
 
-                      /// ================= BUSCA + DROPDOWN =================
+                      /// BUSCA + FILTRO
                       Row(
                         children: [
                           Expanded(
@@ -145,9 +142,7 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<FiltroCliente>(
                                 value: _filtroCliente,
-                                isExpanded: false,
                                 icon: const Icon(Icons.keyboard_arrow_down),
-                                style: const TextStyle(fontSize: 16, color: Colors.black87),
                                 items: const [
                                   DropdownMenuItem(value: FiltroCliente.todos, child: Text('Todos')),
                                   DropdownMenuItem(value: FiltroCliente.cliente, child: Text('É cliente')),
@@ -155,6 +150,7 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
                                 ],
                                 onChanged: (value) {
                                   if (value == null) return;
+
                                   setState(() {
                                     _filtroCliente = value;
                                   });
@@ -167,7 +163,7 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
 
                       const SizedBox(height: 15),
 
-                      /// ================= LISTA =================
+                      /// LISTA
                       Expanded(
                         child: Builder(
                           builder: (_) {
@@ -188,28 +184,25 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
                               itemBuilder: (context, index) {
                                 final empresaSocio = empresasSociosFiltradas[index];
 
-                                final prospectarPai = provider.listaProspecao.firstWhere(
-                                      (p) {
-                                    final dados = p.dados?.isNotEmpty == true ? p.dados!.first : null;
-                                    if (dados == null) return false;
+                                /// encontra empresa pai
+                                final prospectarPai = provider.listaProspecao.firstWhere((p) {
+                                  final dados = p.dados?.isNotEmpty == true ? p.dados!.first : null;
 
-                                    return dados.membros
-                                        ?.expand((m) => m.empresas ?? [])
-                                        .any((e) =>
-                                    e.cnpjEmpresaSocio == empresaSocio.cnpjEmpresaSocio) ??
-                                        false;
-                                  },
-                                );
+                                  if (dados == null) {
+                                    return false;
+                                  }
+
+                                  return dados.membros
+                                          ?.expand((m) => m.empresas ?? [])
+                                          .any((e) => e.cnpjEmpresaSocio == empresaSocio.cnpjEmpresaSocio) ??
+                                      false;
+                                });
 
                                 return GestureDetector(
-                                  onTap: () {
-                                    context.push(
-                                      '/empresa-resumo',
-                                      extra: prospectarPai,
-                                    );
-                                  },
+                                  onTap: () => context.push('/empresa-resumo', extra: prospectarPai),
                                   child: EmpresaCardSimplesCnpjaWidget(
                                     empresa: empresaSocio,
+                                    empresaPai: prospectarPai.dados?.first!.empresaRaiz?? "",
                                   ),
                                 );
                               },

@@ -1,3 +1,4 @@
+import 'package:cnpjjaUi/view/widgets/tag.dart';
 import 'package:flutter/material.dart';
 
 import '../../helprs/cores.dart';
@@ -49,13 +50,10 @@ class _EmpresaItemState extends State<EmpresaItem> {
                 children: [
                   /// NOME
                   Text(emp.nomeEmpresaSocio ?? '', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-
-                  const SizedBox(height: 6),
-
                   /// CNPJ
                   Row(
                     children: [
-                      Icon(Icons.badge_outlined, size: 16, color: Colors.grey.shade700),
+                      Icon(Icons.work, size: 16, color: Colors.grey.shade700),
                       const SizedBox(width: 6),
                       Text(
                         Formatadores.formatarCnpj(emp.cnpjEmpresaSocio ?? ''),
@@ -64,24 +62,7 @@ class _EmpresaItemState extends State<EmpresaItem> {
                     ],
                   ),
 
-                  const SizedBox(height: 6),
-
-                  /// CNAE + TAG CONCILIADORA
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          emp.cnae?.descricao ?? 'CNAE não informado',
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      ),
-
-                      const SizedBox(width: 10),
-
-                    ],
-                  ),
-
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 20),
 
                   /// TELEFONES
                   if (emp.telefone?.isNotEmpty ?? false)
@@ -105,9 +86,6 @@ class _EmpresaItemState extends State<EmpresaItem> {
                         ),
                       ],
                     ),
-
-                  const SizedBox(height: 4),
-
                   /// EMAILS
                   if (emp.email?.isNotEmpty ?? false)
                     Row(
@@ -123,8 +101,37 @@ class _EmpresaItemState extends State<EmpresaItem> {
                         ),
                       ],
                     ),
+                  const SizedBox(height: 20),
 
-                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Icon(Icons.sell_outlined,size: 15,),
+                      SizedBox(width: 10,),
+                      Expanded(
+
+                        child: Text(
+                          Formatadores.formatarCnae(emp.cnae.id.toString()),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                    ],
+                  ),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          emp.cnae?.descricao ?? 'CNAE não informado',
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+
+                    ],
+                  ),
+                  const SizedBox(height: 20),
 
                   /// INFO RAIZ
                   Row(
