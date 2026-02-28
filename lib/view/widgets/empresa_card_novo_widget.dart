@@ -96,7 +96,7 @@ class EmpresaCardNovoWidget extends StatelessWidget {
               ),
 
               pesquisado
-                  ? Icon(Icons.verified, color: Cores.verde_claro)
+                  ? Icon(Icons.search_rounded, color: Cores.cinza)
                   : Consumer<PesquisaAtualizarBaseStatusProvider>(
                       builder: (_, provider, __) {
                         return Tag(
@@ -123,10 +123,17 @@ class EmpresaCardNovoWidget extends StatelessWidget {
             SizedBox(height: 20,),
             Tag(
               cor: Colors.grey.shade300,
-              child: Text(
-                "     A empresa ${razaoSocial}, já se enconta na basd da Conciliadora     ", overflow: TextOverflow
-                  .ellipsis,
-                style: TextStyle(fontSize: 12,color: Cores.verde_escuro, fontWeight: FontWeight.normal),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  razaoSocial.length < 50
+                  ? Text("A empresa ${razaoSocial}, já se enconta na basd da Conciliadora",overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 12,color: Cores.verde_escuro, fontWeight: FontWeight.normal),)
+                  : Text("A empresa ${razaoSocial.substring(0,50)}..., já se enconta na basd da Conciliadora",
+                    overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 12,color: Cores.verde_escuro, fontWeight: FontWeight.normal),),
+                  SizedBox(width: 10,),
+                  Icon(Icons.verified, color: Cores.verde_claro),
+                ],
               ),
             ),
         ],
