@@ -1,3 +1,5 @@
+import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:cnpjjaUi/view/widgets/titulo_contador.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -111,7 +113,7 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
 
                         const SizedBox(height: 8),
 
-                        Text("$totalParceiros empresas cadastradas", style: const TextStyle(fontSize: 15)),
+                        TituloContador(lista: totalParceiros, titulo: 'empresas cadastradas.',),
 
                         const SizedBox(height: 15),
 
@@ -223,3 +225,5 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
     );
   }
 }
+
+

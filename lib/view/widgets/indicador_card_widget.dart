@@ -3,7 +3,7 @@ import 'package:cnpjjaUi/helprs/cores.dart';
 
 class IndicadorCardWidget extends StatefulWidget {
   final IconData icon;
-  final int valor;
+  final String valor;
   final String titulo;
   final Widget tela;
 
@@ -16,10 +16,12 @@ class IndicadorCardWidget extends StatefulWidget {
   });
 
   @override
-  State<IndicadorCardWidget> createState() => _IndicadorCardWidgetState();
+  State<IndicadorCardWidget> createState() =>
+      _IndicadorCardWidgetState();
 }
 
-class _IndicadorCardWidgetState extends State<IndicadorCardWidget> {
+class _IndicadorCardWidgetState
+    extends State<IndicadorCardWidget> {
   bool isHovering = false;
 
   @override
@@ -27,23 +29,28 @@ class _IndicadorCardWidgetState extends State<IndicadorCardWidget> {
     final Color corHover = Cores.verde_claro;
     final Color corNormalIcon = Cores.verde_escuro;
 
-    return InkWell(
-      onTap: ()=> Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 250),
-          pageBuilder: (_, animation, __) => FadeTransition(
-            opacity: animation,
-            child: widget.tela,
-          ),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          onEnter: (_) => setState(() => isHovering = true),
-          onExit: (_) => setState(() => isHovering = false),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => isHovering = true),
+        onExit: (_) => setState(() => isHovering = false),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                transitionDuration:
+                const Duration(milliseconds: 250),
+                pageBuilder: (_, animation, __) =>
+                    FadeTransition(
+                      opacity: animation,
+                      child: widget.tela,
+                    ),
+              ),
+            );
+          },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeOutCubic,
@@ -55,8 +62,9 @@ class _IndicadorCardWidgetState extends State<IndicadorCardWidget> {
 
             width: 297,
             padding: const EdgeInsets.all(20),
+
             decoration: BoxDecoration(
-              color: Colors.grey.shade100, // permanece igual
+              color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: Colors.grey.shade300),
               boxShadow: [
@@ -64,24 +72,29 @@ class _IndicadorCardWidgetState extends State<IndicadorCardWidget> {
                   color: Colors.black.withOpacity(
                       isHovering ? 0.18 : 0.05),
                   blurRadius: isHovering ? 24 : 8,
-                  offset: Offset(0, isHovering ? 16 : 3),
+                  offset:
+                  Offset(0, isHovering ? 16 : 3),
                 ),
               ],
             ),
 
             /// CONTEÚDO
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+              CrossAxisAlignment.start,
               children: [
+
                 /// ÍCONE
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
+                  duration:
+                  const Duration(milliseconds: 200),
                   child: Icon(
                     widget.icon,
                     key: ValueKey(isHovering),
                     size: 28,
-                    color:
-                    isHovering ? corHover : corNormalIcon,
+                    color: isHovering
+                        ? corHover
+                        : corNormalIcon,
                   ),
                 ),
 
@@ -89,21 +102,24 @@ class _IndicadorCardWidgetState extends State<IndicadorCardWidget> {
 
                 /// VALOR
                 AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 200),
+                  duration:
+                  const Duration(milliseconds: 200),
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color:
-                    isHovering ? corHover : Colors.black,
+                    color: isHovering
+                        ? corHover
+                        : Colors.black,
                   ),
-                  child: Text(widget.valor.toString()),
+                  child: Text(widget.valor),
                 ),
 
                 const SizedBox(height: 6),
 
                 /// TÍTULO
                 AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 200),
+                  duration:
+                  const Duration(milliseconds: 200),
                   style: TextStyle(
                     fontSize: 14,
                     color: isHovering

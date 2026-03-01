@@ -47,4 +47,9 @@ class Formatadores {
     return numero;
   }
 
+  static String formatarNumeroMilhas(int valor) {
+    final formatter = NumberFormat('#,##0', 'pt_BR');
+    return formatter.format(valor);
+  }
+
 }

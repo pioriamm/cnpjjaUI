@@ -9,7 +9,7 @@ import '../view/telas/tela_empresas.dart';
 import '../view/telas/tela_empresas_cadastro.dart';
 import '../view/telas/tela_dashboard.dart';
 import '../view/telas/tela_socio.dart';
-import '../view/telas/tela_pesquisarBase.dart';
+import '../view/telas/tela_carregar_base.dart';
 
 
 CustomTransitionPage buildPageWithTransition({
@@ -57,7 +57,7 @@ final GoRouter appRouter = GoRouter(
       path: '/carregar-base',
       pageBuilder: (context, state) => buildPageWithTransition(
         state: state,
-        child: TelaPesquisarBase(),
+        child: TelaCarregarBase(),
         title: 'Carregar Base',
       ),
     ),

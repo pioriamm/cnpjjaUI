@@ -1,4 +1,5 @@
 import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
+import 'package:cnpjjaUi/view/widgets/titulo_contador.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../model/enum_menu_item.dart';
@@ -6,14 +7,14 @@ import 'package:cnpjjaUi/helprs/cores.dart';
 import '../../modelview/busca_base_conciliadora_provider.dart';
 import '../widgets/empresa_card_novo_widget.dart';
 
-class TelaPesquisarBase extends StatefulWidget {
-  const TelaPesquisarBase({super.key});
+class TelaCarregarBase extends StatefulWidget {
+  const TelaCarregarBase({super.key});
 
   @override
-  State<TelaPesquisarBase> createState() => _TelaPesquisarBaseState();
+  State<TelaCarregarBase> createState() => _TelaCarregarBaseState();
 }
 
-class _TelaPesquisarBaseState extends State<TelaPesquisarBase> {
+class _TelaCarregarBaseState extends State<TelaCarregarBase> {
   MenuItem _selected = MenuItem.pesquisarBase;
 
   @override
@@ -65,12 +66,8 @@ class _TelaPesquisarBaseState extends State<TelaPesquisarBase> {
       
                     /// CONTADOR AUTOMÁTICO
                     Consumer<BuscarBaseConciliadoraProvider>(
-                      builder: (_, provider, __) {
-                        return Text(
-                          "${provider.quantidadePendentes} Empresas Pendentes de Pesquisa",
-                          style: const TextStyle(fontSize: 15),
-                        );
-                      },
+                      builder: (_, provider, __) => TituloContador(lista: provider.quantidadePendentes,
+                        titulo: ' Empresas Pendentes de Pesquisa.',)
                     ),
       
                     const SizedBox(height: 15),

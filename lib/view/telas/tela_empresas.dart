@@ -1,3 +1,4 @@
+import 'package:cnpjjaUi/view/widgets/titulo_contador.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -81,9 +82,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                         ),
       
                         const SizedBox(height: 8),
-      
-                        Text("${empresasFiltradas.length} empresas cadastradas", style: const TextStyle(fontSize: 15)),
-      
+                        TituloContador(lista: empresasFiltradas.length, titulo: ' empresas cadastradas.',),
                         const SizedBox(height: 15),
       
                         /// FILTRO

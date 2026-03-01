@@ -1,7 +1,10 @@
+import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:cnpjjaUi/modelview/buscar_base_cnpja_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import 'package:cnpjjaUi/model/enum_menu_item.dart';
-import 'package:cnpjjaUi/model/prospec.dart';
-import 'package:cnpjjaUi/repositorio/api_service.dart';
 import 'package:cnpjjaUi/view/telas/tela_empresas.dart';
 import 'package:cnpjjaUi/view/telas/tela_socio.dart';
 import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
@@ -10,184 +13,227 @@ import 'package:cnpjjaUi/view/widgets/indicador_card_widget.dart';
 import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
 import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
 import 'package:cnpjjaUi/view/widgets/novo_socio_dialog.dart';
+
 import '../../helprs/cores.dart';
 
+
 class TelaDashBoard extends StatefulWidget {
-
-
-
-  TelaDashBoard({super.key});
+  const TelaDashBoard({super.key});
 
   @override
   State<TelaDashBoard> createState() => _TelaDashBoardState();
 }
 
 class _TelaDashBoardState extends State<TelaDashBoard> {
-  List<Prospectar> empresas = [];
-  List<Prospectar> empresasFiltradas = [];
-  bool carregando = true;
-  String? erro;
   MenuItem _selected = MenuItem.pesquisa;
-
-
   final TextEditingController _filtroController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _carregarEmpresas();
+    Future.microtask(() =>
+        context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja());
   }
-  Future<void> _carregarEmpresas() async {
-    setState(() {
-      carregando = true;
-      erro = null;
-    });
 
-    try {
-      final resultado = await ApiService.buscarEmpresasBaseCnpjja();
-
-      setState(() {
-        empresas = resultado;
-        empresasFiltradas = List.from(resultado);
-      });
-    } catch (e) {
-      setState(() {
-        erro = e.toString();
-      });
-    } finally {
-      setState(() {
-        carregando = false;
-      });
-    }
+  @override
+  void dispose() {
+    _filtroController.dispose();
+    super.dispose();
   }
+
+  String formatarNumero(num valor) {
+    return NumberFormat('#,##0', 'pt_BR').format(valor);
+  }
+
   @override
   Widget build(BuildContext context) {
-    var tela = MediaQuery.of(context).size;
-    var ticketMedido = (empresasFiltradas.length * 150.55);
+    final tela = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Row(
         children: [
           /// SIDEBAR
-          Container(
+          SizedBox(
             width: tela.width * 0.2,
-            height: double.infinity,
             child: SideBarWidget(
               selectedItem: _selected,
               onItemSelected: (item) {
-                setState(() {
-                  _selected = item;
-                });
+                setState(() => _selected = item);
               },
             ),
           ),
 
-          /// CONTEÚDO PRINCIPAL
+          /// CONTEÚDO
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: (tela.width * 0.09), vertical: 50),
+              padding: EdgeInsets.symmetric(
+                  horizontal: tela.width * 0.09, vertical: 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// HEADER
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Cores.verde_escuro,
-                        borderRadius: BorderRadius.circular(10),),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 50),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Pesquisa de Sócios e Empresas",
-                            style: TextStyle(fontSize: 30, color: Cores.branco, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            "Busque por nome do sócio, CPF ou CNPJ para encontrar empresas vinculadas. ",
-                            style: TextStyle(fontSize: 15, color: Cores.cinza),
-                          ),
-                          SizedBox(height: 35),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: FiltroBuscaWidget(
-                                  controller: _filtroController,
-                                  hintText: 'Nome do sócio, CPF (000.000.000-00) ou CNPJ...',
-                                ),
-                              ),
-                              SizedBox(width: 20),
-                              BotaoPadrao(
-                                acao: () async {
-                                  final resultado = await showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (_) => const NovoSocioDialog(),
-                                  );
 
-                                  if (resultado != null) {
-                                    print(resultado);
-                                  }
-                                },
-                                cor: Cores.verde_claro,
-                                conteudo: [Text("Pesquisar", style: TextStyle(color: Cores.branco, fontSize: 16))],
-                              ),
-                            ],
+                  /// HEADER
+                  _buildHeader(),
+
+                  const SizedBox(height: 30),
+
+                  /// CARDS
+                  Consumer<BuscarBaseCnpjaProvider>(
+                    builder: (context, provider, _) {
+
+                      return Wrap(
+                        spacing: 30,
+                        runSpacing: 30,
+                        children: [
+
+                          /// Ticket Médio
+                          provider.isLoading
+                              ? _loadingCard()
+                              : IndicadorCardMonetaryWidget(
+                            icon: Icons.sell_outlined,
+                            valor: provider.ticketMedio,
+                            titulo: "Ticket Médio",
+                          ),
+
+                          /// Sócios
+                          provider.isLoading
+                              ? _loadingCard()
+                              : IndicadorCardWidget(
+                            icon: Icons.badge,
+                            valor: Formatadores.formatarNumeroMilhas(provider.totalSocios),
+                            titulo:
+                            "Sócios cadastrados",
+                            tela: const TelaSocio(),
+                          ),
+
+                          /// Empresas
+                          provider.isLoading
+                              ? _loadingCard()
+                              : IndicadorCardWidget(
+                            icon: Icons.apartment,
+                            valor: Formatadores.formatarNumeroMilhas(provider.totalEmpresas),
+                            titulo:
+                            "Empresas cadastradas",
+                            tela: const TelaEmpresas(),
+                          ),
+
+                          provider.isLoading
+                              ? _loadingCard()
+                              : const IndicadorCardWidget(
+                            icon: Icons.trending_up,
+                            valor: "5",
+                            titulo: "Vínculos registrados",
+                            tela: TelaEmpresas(),
+                          ),
+
+                          provider.isLoading
+                              ? _loadingCard()
+                              : IndicadorCardWidget(
+                            icon: Icons.ads_click,
+                            valor: Formatadores.formatarNumeroMilhas(provider.sociosDiretos),
+                            titulo: "Oportunidades Diretas",
+                            tela: const TelaEmpresas(),
+                          ),
+
+                          provider.isLoading
+                              ? _loadingCard()
+                              : IndicadorCardWidget(
+                            icon: Icons.account_tree,
+                            valor: Formatadores.formatarNumeroMilhas(provider.sociosIndiretos),
+                            titulo: "Oportunidades Indiretas",
+                            tela: const TelaEmpresas(),
                           ),
                         ],
-                      ),
-                    ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 30,
-                    runSpacing: 30,
-                    alignment: WrapAlignment.start,
-                    runAlignment: WrapAlignment.end,
-                    children: [
-                      IndicadorCardMonetaryWidget(
-                        icon: Icons.sell_outlined,
-                        valor: ticketMedido,
-                        titulo: "Ticket Médio",
-                      ),
-                       IndicadorCardWidget(
-                        icon: Icons.badge,
-                        valor: empresas
-                            .expand((e) => e.dados ?? [])
-                            .expand((d) => d.membros ?? [])
-                            .length,
-                        titulo: "Sócios cadastrados", tela: TelaSocio(),
-                      ),
-                       IndicadorCardWidget(
-                        icon: Icons.apartment,
-                        valor: empresas.length,
-                        titulo: "Empresas cadastradas", tela: TelaEmpresas(),
-                      ),
-                      const IndicadorCardWidget(
-                        icon: Icons.trending_up,
-                        valor: 5,
-                        titulo: "Vínculos registrados", tela: TelaEmpresas(),
-                      ),
-                      const IndicadorCardWidget(
-                        icon: Icons.ads_click,
-                        valor: 5,
-                        titulo: "Oportuniades Diretas", tela: TelaEmpresas(),
-                      ),
-                      const IndicadorCardWidget(
-                        icon: Icons.account_tree,
-                        valor: 5,
-                        titulo: "Oportunidades Indiretas", tela: TelaEmpresas(),
-                      ),
-
-                    ],
-                  )
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// =========================
+  /// HEADER
+  /// =========================
+  Widget _buildHeader() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Cores.verde_escuro,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 50),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Pesquisa de Sócios e Empresas",
+            style: TextStyle(
+                fontSize: 30,
+                color: Cores.branco,
+                fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "Busque por nome do sócio, CPF ou CNPJ para encontrar empresas vinculadas.",
+            style: TextStyle(fontSize: 15, color: Cores.cinza),
+          ),
+          const SizedBox(height: 35),
+          Row(
+            children: [
+              Expanded(
+                child: FiltroBuscaWidget(
+                  controller: _filtroController,
+                  hintText: 'Nome do sócio, CPF ou CNPJ...',
+                ),
+              ),
+              const SizedBox(width: 20),
+              BotaoPadrao(
+                acao: () async {
+                  await showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => const NovoSocioDialog(),
+                  );
+                },
+                cor: Cores.verde_claro,
+                conteudo: [
+                  Text(
+                    "Pesquisar",
+                    style:
+                    TextStyle(color: Cores.branco, fontSize: 16),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// =========================
+  /// LOADING CARD
+  /// =========================
+  Widget _loadingCard() {
+    return Container(
+      width: 260,
+      height: 140,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 4))
+        ],
+      ),
+      child: const Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:cnpjjaUi/view/widgets/titulo_contador.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cnpjjaUi/helprs/cores.dart';
@@ -152,11 +153,7 @@ class _TelaSocioState extends State<TelaSocio> {
                     ),
 
                     const SizedBox(height: 8),
-
-                    Text(
-                      "${sociosFiltrados.length} sócios cadastrados",
-                      style: const TextStyle(fontSize: 15),
-                    ),
+                    TituloContador(lista: sociosFiltrados.length, titulo: ' sócios cadastrados',),
 
                     const SizedBox(height: 15),
 

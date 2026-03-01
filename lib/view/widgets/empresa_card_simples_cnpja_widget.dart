@@ -77,8 +77,10 @@ class EmpresaCardSimplesCnpjaWidget extends StatelessWidget {
                             "Dados originados da empresa raiz: ",
                             style: TextStyle(color: Cores.verde_escuro,fontWeight: FontWeight.normal),
                           ),
-                          Text(
-                            "${empresaPai}",
+                          empresaPai.length < 50
+                              ?  Text("${empresaPai}", style: TextStyle(color: Cores.verde_escuro,fontWeight: FontWeight.bold),
+                          ) : Text(
+                            "${empresaPai.substring(0,50)}",
                             style: TextStyle(color: Cores.verde_escuro,fontWeight: FontWeight.bold),
                           ),
                         ],
