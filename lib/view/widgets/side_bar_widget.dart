@@ -41,7 +41,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
           _menuItem(
             context: context,
             icon: Icons.apartment_outlined,
-            title: "Empresas",
+            title: "Base Conciliadora",
             item: MenuItem.empresas,
             page: "empresas",
           ),

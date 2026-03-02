@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BotaoPadrao extends StatelessWidget {
-  final VoidCallback acao;
+  final VoidCallback? acao;
   final Color cor;
   final List<Widget> conteudo;
 

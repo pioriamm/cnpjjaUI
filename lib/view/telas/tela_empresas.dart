@@ -88,7 +88,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Empresas",
+                          "Empresas da Base Conciliadora",
                           style: TextStyle(
                             fontSize: 30,
                             color: Cores.verde_escuro,
@@ -101,15 +101,45 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                           titulo: ' empresas carregadas.',
                         ),
                         const SizedBox(height: 15),
-                        FiltroBuscaWidget(
-                          controller: _filtroController,
-                          hintText:
-                          'Filtrar por razão social, nome fantasia ou CNPJ...',
-                          onChanged: (valor) {
-                            setState(() {
-                              filtro = valor;
-                            });
-                          },
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FiltroBuscaWidget(
+                                controller: _filtroController,
+                                hintText:
+                                'Filtrar por razão social, CNPJ...',
+                                onChanged: (valor) {
+                                  setState(() {
+                                    filtro = valor;
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            SizedBox(
+                              height: 50,
+                              child: provider.isLoading
+                                  ? const SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                                  : BotaoPadrao(
+                                acao: provider.isLast
+                                    ? null
+                                    : () {
+                                  provider.buscarDadosCnpja();
+                                },
+                                cor: Cores.verde_claro,
+                                conteudo: [
+                                  const Icon(Icons.add, color: Colors.white, size: 20),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 15),
 
@@ -177,28 +207,6 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                                       empresaAtual.eConciliadora ?? false,
                                     );
                                   }
-
-
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 20),
-                                    child: Center(
-                                      child: provider.isLoading
-                                          ? const SizedBox(
-                                        width: 24,
-                                        height: 24,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                      )
-                                          : BotaoPadrao(
-                                        acao: () {
-                                          provider.buscarDadosCnpja();
-                                        },
-                                        cor: Cores.verde_escuro,
-                                        conteudo: const [
-                                          Text("+ 50", style: TextStyle(color: Colors.white, fontSize: 20)),
-                                        ],
-                                      ),
-                                    ),
-                                  );
                                 },
                               ),
                             ),
