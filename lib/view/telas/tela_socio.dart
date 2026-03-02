@@ -22,19 +22,24 @@ class TelaSocio extends StatefulWidget {
 class _TelaSocioState extends State<TelaSocio> {
   MenuItem _selected = MenuItem.socios;
 
-  List<Prospectar> empresas = [];
   List<Membros> socios = [];
   List<Membros> sociosFiltrados = [];
 
-  bool carregando = true;
+  bool carregando = false;
+  bool isLast = false;
+
+  int currentPage = 0;
+  final int pageSize = 50;
+
   String? erro;
 
-  final TextEditingController _filtroController = TextEditingController();
+  final TextEditingController _filtroController =
+  TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _carregarEmpresas();
+    _carregarPagina(reset: true);
   }
 
   @override
@@ -44,49 +49,64 @@ class _TelaSocioState extends State<TelaSocio> {
   }
 
   /// ===============================
-  /// CARREGA E FLATTEN DOS SÓCIOS
+  /// CARREGAR PAGINA
   /// ===============================
-  Future<void> _carregarEmpresas() async {
+  Future<void> _carregarPagina({bool reset = false}) async {
+    if (carregando) return;
+    if (isLast && !reset) return;
+
+    if (reset) {
+      currentPage = 0;
+      isLast = false;
+      socios.clear();
+      sociosFiltrados.clear();
+    }
+
     setState(() {
       carregando = true;
       erro = null;
     });
 
     try {
-      final resultado = await ApiService.buscarEmpresasBaseCnpjja();
+      final pageResponse =
+      await ApiService.buscarEmpresasBaseCnpjja(
+        page: currentPage,
+        size: pageSize,
+      );
 
-      final List<Membros> todosSocios = resultado
-          .expand<Dados>((p) => p.dados ?? <Dados>[])
-          .expand<Membros>((d) => d.membros ?? <Membros>[])
+      final novosSocios = pageResponse.content
+          .expand<Dados>((p) => p.dados ?? [])
+          .expand<Membros>((d) => d.membros ?? [])
           .toList();
 
-      /// remove duplicados
-      final sociosUnicosMap = <String, Membros>{};
+      /// Remove duplicados
+      final mapa = <String, Membros>{
+        for (var s in socios)
+          (s.idMembro ?? s.nomeMembro ?? ''): s
+      };
 
-      for (final socio in todosSocios) {
-        final chave = socio.idMembro ?? socio.nomeMembro ?? '';
+      for (final socio in novosSocios) {
+        final chave =
+            socio.idMembro ?? socio.nomeMembro ?? '';
         if (chave.isNotEmpty) {
-          sociosUnicosMap[chave] = socio;
+          mapa[chave] = socio;
         }
       }
 
-      final sociosUnicos = sociosUnicosMap.values.toList();
+      socios = mapa.values.toList();
 
-      sociosUnicos.sort(
-            (a, b) => (a.nomeMembro ?? '')
-            .toLowerCase()
-            .compareTo((b.nomeMembro ?? '').toLowerCase()),
-      );
+      socios.sort((a, b) =>
+          (a.nomeMembro ?? '')
+              .toLowerCase()
+              .compareTo((b.nomeMembro ?? '').toLowerCase()));
 
-      setState(() {
-        empresas = resultado;
-        socios = sociosUnicos;
-        sociosFiltrados = List.from(sociosUnicos);
-      });
+      sociosFiltrados = List.from(socios);
+
+      isLast = pageResponse.last;
+      currentPage++;
+
     } catch (e) {
-      setState(() {
-        erro = e.toString();
-      });
+      erro = e.toString();
     } finally {
       setState(() {
         carregando = false;
@@ -102,7 +122,8 @@ class _TelaSocioState extends State<TelaSocio> {
 
     setState(() {
       sociosFiltrados = socios.where((socio) {
-        final nome = socio.nomeMembro?.toLowerCase() ?? '';
+        final nome =
+            socio.nomeMembro?.toLowerCase() ?? '';
         return nome.contains(texto);
       }).toList();
     });
@@ -116,18 +137,15 @@ class _TelaSocioState extends State<TelaSocio> {
       child: Scaffold(
         body: Row(
           children: [
-            /// SIDEBAR
             SizedBox(
               width: tela.width * 0.2,
               child: SideBarWidget(
                 selectedItem: _selected,
-                onItemSelected: (item) {
-                  setState(() => _selected = item);
-                },
+                onItemSelected: (item) =>
+                    setState(() => _selected = item),
               ),
             ),
 
-            /// CONTEÚDO
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -135,29 +153,27 @@ class _TelaSocioState extends State<TelaSocio> {
                   vertical: 50,
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
                   children: [
-                    /// HEADER
-                    Row(
-                      children: [
-                        Text(
-                          "Sócios",
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: Cores.verde_escuro,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
-                      ],
+                    Text(
+                      "Sócios",
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Cores.verde_escuro,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
 
                     const SizedBox(height: 8),
-                    TituloContador(lista: sociosFiltrados.length, titulo: ' sócios cadastrados',),
+
+                    TituloContador(
+                      lista: sociosFiltrados.length,
+                      titulo: ' sócios carregados',
+                    ),
 
                     const SizedBox(height: 15),
 
-                    /// FILTRO
                     FiltroBuscaWidget(
                       controller: _filtroController,
                       onChanged: _filtrar,
@@ -166,51 +182,91 @@ class _TelaSocioState extends State<TelaSocio> {
 
                     const SizedBox(height: 15),
 
-                    /// LISTA (ESTADOS CONTROLADOS AQUI)
                     Expanded(
                       child: Builder(
                         builder: (_) {
-                          /// ERRO
                           if (erro != null) {
                             return Center(
-                              child: Text("Erro: $erro"),
-                            );
+                                child:
+                                Text("Erro: $erro"));
                           }
 
-                          /// LOADING
-                          if (carregando) {
+                          if (carregando &&
+                              socios.isEmpty) {
                             return const Center(
-                              child: CircularProgressIndicator(),
-                            );
+                                child:
+                                CircularProgressIndicator());
                           }
 
-                          /// VAZIO
                           if (sociosFiltrados.isEmpty) {
                             return const Center(
-                              child: Text("Nenhum sócio encontrado"),
-                            );
+                                child: Text(
+                                    "Nenhum sócio encontrado"));
                           }
 
-                          /// LISTA NORMAL
                           return ListView.builder(
-                            itemCount: sociosFiltrados.length,
-                            itemBuilder: (context, index) {
-                              final socio = sociosFiltrados[index];
+                            itemCount:
+                            sociosFiltrados.length +
+                                (isLast ? 0 : 1),
+                            itemBuilder:
+                                (context, index) {
+                              if (index <
+                                  sociosFiltrados
+                                      .length) {
+                                final socio =
+                                sociosFiltrados[
+                                index];
 
-                              return ClienteCardWidget(
-                                nome: socio.nomeMembro ?? '',
-                                cpf: socio.idMembro ?? "",
-                                telefone: '',
-                                email: '',
-                                quantidadeEmpresas:
-                                socio.empresas?.length ?? 0,
-                                onEdit: () {
-                                  print("Editar ${socio.nomeMembro}");
-                                },
-                                onDelete: () {
-                                  print("Excluir ${socio.nomeMembro}");
-                                },
-                                empresas: socio.empresas ?? [],
+                                return ClienteCardWidget(
+                                  nome: socio
+                                      .nomeMembro ??
+                                      '',
+                                  cpf: socio
+                                      .idMembro ??
+                                      "",
+                                  telefone: '',
+                                  email: '',
+                                  quantidadeEmpresas:
+                                  socio.empresas
+                                      ?.length ??
+                                      0,
+                                  onEdit: () {},
+                                  onDelete: () {},
+                                  empresas:
+                                  socio.empresas ??
+                                      [],
+                                );
+                              }
+
+                              /// BOTÃO CARREGAR MAIS
+                              return Padding(
+                                padding:
+                                const EdgeInsets
+                                    .symmetric(
+                                    vertical:
+                                    20),
+                                child: Center(
+                                  child:
+                                  ElevatedButton(
+                                    onPressed:
+                                    carregando
+                                        ? null
+                                        : () =>
+                                        _carregarPagina(),
+                                    child: carregando
+                                        ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child:
+                                      CircularProgressIndicator(
+                                        strokeWidth:
+                                        2,
+                                      ),
+                                    )
+                                        : const Text(
+                                        "Carregar mais 50"),
+                                  ),
+                                ),
                               );
                             },
                           );

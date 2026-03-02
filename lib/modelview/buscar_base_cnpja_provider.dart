@@ -1,3 +1,4 @@
+import 'package:cnpjjaUi/model/dados.dart';
 import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/configuracoes.dart';
 
@@ -6,19 +7,24 @@ import '../repositorio/api_service.dart';
 
 class BuscarBaseCnpjaProvider extends ChangeNotifier {
   bool isLoading = false;
+  bool isLast = false;
+
   List<Prospectar> listaProspecao = [];
   String? erro;
+
+  int _currentPage = 0;
+  final int _pageSize = 50;
 
   DateTime? _lastFetch;
   static Duration _cacheDuration =
   Duration(minutes: Configuracoes.cache);
 
-  /// =========================
-  /// CACHE COMPUTADO (performance)
-  /// =========================
+
   int? _totalSociosCache;
   int? _sociosDiretosCache;
   int? _sociosIndiretosCache;
+
+  List<dynamic> get empresasFlatten => listaProspecao.expand((p) => p.dados ?? []).toList();
 
   void _invalidateMetrics() {
     _totalSociosCache = null;
@@ -26,18 +32,15 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
     _sociosIndiretosCache = null;
   }
 
-  /// =========================
-  /// EMPRESAS
-  /// =========================
+
   int get totalEmpresas => listaProspecao.length;
 
   /// =========================
-  /// SÓCIOS DIRETOS (únicos)
+  /// MÉTRICAS (mantidas)
   /// =========================
+
   int get sociosDiretos {
-    if (_sociosDiretosCache != null) {
-      return _sociosDiretosCache!;
-    }
+    if (_sociosDiretosCache != null) return _sociosDiretosCache!;
 
     final ids = listaProspecao
         .expand((e) => e.dados ?? [])
@@ -50,13 +53,8 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
     return _sociosDiretosCache!;
   }
 
-  /// =========================
-  /// SÓCIOS INDIRETOS (únicos)
-  /// =========================
   int get sociosIndiretos {
-    if (_sociosIndiretosCache != null) {
-      return _sociosIndiretosCache!;
-    }
+    if (_sociosIndiretosCache != null) return _sociosIndiretosCache!;
 
     final ids = listaProspecao
         .expand((e) => e.dados ?? [])
@@ -71,13 +69,8 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
     return _sociosIndiretosCache!;
   }
 
-  /// =========================
-  /// TOTAL SÓCIOS ÚNICOS
-  /// =========================
   int get totalSocios {
-    if (_totalSociosCache != null) {
-      return _totalSociosCache!;
-    }
+    if (_totalSociosCache != null) return _totalSociosCache!;
 
     final ids = <String>{};
 
@@ -103,48 +96,66 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
     return _totalSociosCache!;
   }
 
-  /// =========================
-  /// MÉTRICAS
-  /// =========================
   double get ticketMedio => totalEmpresas * 150.50;
 
   /// =========================
-  /// BUSCA COM CACHE
+  /// PAGINAÇÃO
   /// =========================
-  Future<void> buscarDadosCnpja() async {
-    final now = DateTime.now();
 
-    if (_lastFetch != null &&
-        now.difference(_lastFetch!) < _cacheDuration &&
-        listaProspecao.isNotEmpty) {
-      return;
+  Future<void> buscarDadosCnpja({bool reset = false}) async {
+    if (isLoading) return;
+    if (isLast && !reset) return;
+
+    if (reset) {
+      _currentPage = 0;
+      isLast = false;
+      listaProspecao.clear();
     }
 
-    await _executarBusca();
-  }
-
-  Future<void> refresh() async {
-    _lastFetch = null;
-    await _executarBusca();
-  }
-
-  Future<void> _executarBusca() async {
     isLoading = true;
     erro = null;
     notifyListeners();
 
     try {
-      final result = await ApiService.buscarEmpresasBaseCnpjja();
+      final pageResponse =
+      await ApiService.buscarEmpresasBaseCnpjja(
+        page: _currentPage,
+        size: _pageSize,
+      );
 
-      listaProspecao = result;
-      _lastFetch = DateTime.now();
+      listaProspecao.addAll(pageResponse.content);
 
-      _invalidateMetrics(); // limpa cache calculado
+      isLast = pageResponse.last;
+      _currentPage++;
+
+      _invalidateMetrics();
+
     } catch (e) {
       erro = e.toString();
-    } finally {
-      isLoading = false;
-      notifyListeners();
     }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> refresh() async {
+    await buscarDadosCnpja(reset: true);
+  }
+}
+
+class PageResponse<T> {
+  final List<T> content;
+  final bool last;
+
+  PageResponse({
+    required this.content,
+    required this.last,
+  });
+
+  factory PageResponse.fromJson(Map<String, dynamic> json, T Function(Map<String, dynamic>) fromJsonT,) {
+    return PageResponse(
+      content: (json['content'] as List).map((e) => fromJsonT(e)).toList(),
+      last: json['last'] ?? true,
+    );
   }
 }

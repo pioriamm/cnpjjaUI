@@ -1,15 +1,18 @@
-import 'package:cnpjjaUi/view/widgets/titulo_contador.dart';
+import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:cnpjjaUi/helprs/cores.dart';
+
+import 'package:cnpjjaUi/model/membo.dart';
 import 'package:cnpjjaUi/model/enum_menu_item.dart';
-import 'package:cnpjjaUi/model/prospec.dart';
+
+import 'package:cnpjjaUi/view/widgets/titulo_contador.dart';
 import 'package:cnpjjaUi/view/widgets/empresa_card_widget.dart';
 import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
 import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
 
-import '../../helprs/cores.dart';
 import '../../modelview/buscar_base_cnpja_provider.dart';
 
 class TelaEmpresas extends StatefulWidget {
@@ -21,17 +24,14 @@ class TelaEmpresas extends StatefulWidget {
 
 class _TelaEmpresasState extends State<TelaEmpresas> {
   final TextEditingController _filtroController = TextEditingController();
-
   MenuItem _selected = MenuItem.empresas;
   String filtro = '';
 
   @override
   void initState() {
     super.initState();
-
-    /// chama provider ao abrir tela
     Future.microtask(() {
-      context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja();
+      context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja(reset: true);
     });
   }
 
@@ -49,94 +49,159 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
       child: Scaffold(
         body: Row(
           children: [
-            /// SIDEBAR
             SizedBox(
               width: tela.width * 0.2,
-              child: SideBarWidget(selectedItem: _selected, onItemSelected: (item) => setState(() => _selected = item)),
+              child: SideBarWidget(
+                selectedItem: _selected,
+                onItemSelected: (item) => setState(() => _selected = item),
+              ),
             ),
-      
-            /// CONTEÚDO
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
+                padding: EdgeInsets.symmetric(
+                  horizontal: tela.width * 0.09,
+                  vertical: 50,
+                ),
                 child: Consumer<BuscarBaseCnpjaProvider>(
                   builder: (_, provider, __) {
-                    /// filtra localmente
-                    final empresasFiltradas = provider.listaProspecao.where((empresa) {
-                      final dados = empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
-      
-                      if (dados == null) return false;
-      
-                      return dados.empresaRaiz?.toLowerCase().contains(filtro.toLowerCase()) == true ||
-                          dados.alias?.toLowerCase().contains(filtro.toLowerCase()) == true ||
-                          dados.cnpjRaizId?.contains(filtro) == true;
+                    final lista = provider.listaProspecao;
+
+                    final empresasFiltradas = lista.where((empresa) {
+                      if (empresa.dados == null || empresa.dados!.isEmpty) {
+                        return false;
+                      }
+
+                      final dados = empresa.dados!.first;
+                      final filtroLower = filtro.toLowerCase();
+
+                      return (dados.empresaRaiz ?? '')
+                          .toLowerCase()
+                          .contains(filtroLower) ||
+                          (dados.alias ?? '')
+                              .toLowerCase()
+                              .contains(filtroLower) ||
+                          (dados.cnpjRaizId ?? '')
+                              .contains(filtro);
                     }).toList();
-      
+
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        /// HEADER
                         Text(
                           "Empresas",
-                          style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.w700),
+                          style: TextStyle(
+                            fontSize: 30,
+                            color: Cores.verde_escuro,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-      
                         const SizedBox(height: 8),
-                        TituloContador(lista: empresasFiltradas.length, titulo: ' empresas cadastradas.',),
+                        TituloContador(
+                          lista: empresasFiltradas.length,
+                          titulo: ' empresas carregadas.',
+                        ),
                         const SizedBox(height: 15),
-      
-                        /// FILTRO
                         FiltroBuscaWidget(
                           controller: _filtroController,
-                          hintText: 'Filtrar por razão social, nome fantasia ou CNPJ...',
+                          hintText:
+                          'Filtrar por razão social, nome fantasia ou CNPJ...',
                           onChanged: (valor) {
                             setState(() {
                               filtro = valor;
                             });
                           },
                         ),
-      
                         const SizedBox(height: 15),
-      
-                        /// LOADING
-                        if (provider.isLoading)
-                          const Expanded(child: Center(child: CircularProgressIndicator()))
+
+                        /// LOADING INICIAL
+                        if (provider.isLoading && lista.isEmpty)
+                          const Expanded(
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+
                         /// ERRO
                         else if (provider.erro != null)
-                          Expanded(child: Center(child: Text("Erro: ${provider.erro}")))
+                          Expanded(
+                            child: Center(
+                              child: Text("Erro: ${provider.erro}"),
+                            ),
+                          )
+
                         /// VAZIO
                         else if (empresasFiltradas.isEmpty)
-                          const Expanded(child: Center(child: Text("Nenhuma empresa encontrada")))
-                        /// LISTA
-                        else
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: empresasFiltradas.length,
-                              itemBuilder: (context, index) {
-                                final empresa = empresasFiltradas[index];
-                                final empresaAtual = empresa.dados?.isNotEmpty == true ? empresa.dados!.first : null;
-      
-                                return EmpresaCardWidget(
-                                  razaoSocial: empresaAtual?.empresaRaiz ?? '',
-                                  nomeFantasia: empresaAtual?.alias ?? '',
-                                  cnpj: Formatadores.formatarCnpj("${empresaAtual?.cnpjRaizId}"),
-                                  cnae: Formatadores.formatarCnae("${empresaAtual?.cnae?.id ?? ''}") ?? '',
-                                  atividade: empresaAtual?.cnae?.descricao ?? '',
-                                  telefone:
-                                      empresaAtual?.telefone
-                                          ?.map((tel) => "(${tel.area ?? ''}) ${tel.number ?? ''}")
-                                          .join(' • ') ??
-                                      '',
-                                  email: empresaAtual?.email?.isNotEmpty == true
-                                      ? empresaAtual!.email!.first.address ?? ''
-                                      : 'Sem informações',
-                                  socios: empresaAtual?.membros?.map((m) => m.nomeMembro ?? '').toList() ?? [],
-                                  empresasVinculadas: empresaAtual?.membros ?? [],
-                                  conciliadora: empresaAtual!.eConciliadora!,
-                                );
-                              },
+                            const Expanded(
+                              child: Center(
+                                child: Text("Nenhuma empresa encontrada"),
+                              ),
+                            )
+
+                          /// LISTA
+                          else
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount:
+                                empresasFiltradas.length + (provider.isLast ? 0 : 1),
+                                itemBuilder: (context, index) {
+
+                                  if (index < empresasFiltradas.length) {
+
+                                    final wrapper = empresasFiltradas[index];
+
+                                    if (wrapper.dados == null || wrapper.dados!.isEmpty) {
+                                      return const SizedBox();
+                                    }
+
+                                    final empresaAtual = wrapper.dados!.first;
+
+                                    return EmpresaCardWidget(
+                                      razaoSocial: empresaAtual.empresaRaiz ?? '',
+                                      nomeFantasia: empresaAtual.alias ?? '',
+                                      cnpj: Formatadores.formatarCnpj(
+                                          empresaAtual.cnpjRaizId ?? ''),
+                                      cnae: Formatadores.formatarCnae(
+                                          "${empresaAtual.cnae?.id ?? ''}"),
+                                      atividade: empresaAtual.cnae?.descricao ?? '',
+                                      telefone: (empresaAtual.telefone ?? [])
+                                          .map<String>((tel) =>
+                                      "(${tel.area ?? ''}) ${tel.number ?? ''}")
+                                          .join(' • '),
+                                      email: (empresaAtual.email ?? []).isNotEmpty
+                                          ? empresaAtual.email!.first.address ?? ''
+                                          : 'Sem informações',
+                                      socios: (empresaAtual.membros ?? [])
+                                          .map((m) => m.nomeMembro ?? '')
+                                          .toList(),
+                                      empresasVinculadas:
+                                      empresaAtual.membros ?? [],
+                                      conciliadora:
+                                      empresaAtual.eConciliadora ?? false,
+                                    );
+                                  }
+
+
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 20),
+                                    child: Center(
+                                      child: provider.isLoading
+                                          ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      )
+                                          : BotaoPadrao(
+                                        acao: () {
+                                          provider.buscarDadosCnpja();
+                                        },
+                                        cor: Cores.verde_escuro,
+                                        conteudo: const [
+                                          Text("+ 50", style: TextStyle(color: Colors.white, fontSize: 20)),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          ),
                       ],
                     );
                   },

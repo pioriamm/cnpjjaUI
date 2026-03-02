@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cnpjjaUi/modelview/buscar_base_cnpja_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:cnpjjaUi/helprs/formatadores.dart';
@@ -7,36 +8,45 @@ import 'package:cnpjjaUi/model/prospec.dart';
 import '../model/empresas_conciliadora.dart';
 
 class ApiService {
-  static Future<List<Prospectar>> buscarEmpresasBaseCnpjja() async {
-    final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/mongo/buscarDados'),
-      headers: {"Content-Type": "application/json"},
-    );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonList = jsonDecode(response.body);
-      return jsonList
-          .map<Prospectar>((empresa) => Prospectar.fromJson(empresa))
-          .toList();
-    } else {
-      throw Exception('Erro ao buscar dados: ${response.statusCode}');
-    }
-  }
 
   static Future<int> pesquisarCnpjja(String cnpj) async {
-    final url = Uri.parse('${dotenv.env['API_URL']}/cnpjja/popularBase');
+    try {
+      final baseUrl = dotenv.env['API_URL'];
 
-    var cnpjLimpo = Formatadores.limparCnpj(cnpj);
-    print("realizando chamada no endpoint ${url}");
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode([
-        {"cnpj": cnpjLimpo}
-      ]),
-    );
-    print("resultado ${response.body}");
-    return response.statusCode;
+      if (baseUrl == null || baseUrl.isEmpty) {
+        throw Exception('API_URL não configurada no .env');
+      }
+
+      final url = Uri.parse('$baseUrl/cnpjja/popularBase');
+
+      final cnpjLimpo = Formatadores.limparCnpj(cnpj);
+
+      if (cnpjLimpo.isEmpty) {
+        throw Exception('CNPJ inválido');
+      }
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode([
+          {"cnpj": cnpjLimpo}
+        ]),
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return response.statusCode;
+      } else {
+        throw Exception(
+          'Erro na API: ${response.statusCode} - ${response.body}',
+        );
+      }
+
+    } catch (e) {
+      throw Exception('Falha ao pesquisar CNPJ: $e');
+    }
   }
 
   static Future<List<EmpresasConciliadora>> buscarBaseConciliadora() async {
@@ -61,16 +71,39 @@ class ApiService {
 
     final baseUrl = dotenv.env['API_URL']!;
 
-    print("atualizando o  id :  ${id}");
-
     final url = Uri.parse(
       '$baseUrl/empresas-conciliadora/$id/pesquisado',
     );
-
-    print('PUT -> $url');
-
     final response = await http.put(url);
-    print("atualizando o  id :  ${response}");
     return response.statusCode;
+  }
+
+  static Future<PageResponse<Prospectar>> buscarEmpresasBaseCnpjja({
+    required int page,
+    required int size,
+  }) async {
+
+    final url = Uri.parse(
+      '${dotenv.env['API_URL']}/mongo/buscarDados?page=$page&size=$size',
+    );
+
+    final response = await http.get(url);
+
+
+    if (response.statusCode == 200) {
+
+      final Map<String, dynamic> jsonMap =
+      jsonDecode(response.body);
+
+      var result =  PageResponse<Prospectar>.fromJson(
+        jsonMap,
+            (e) => Prospectar.fromJson(e),
+      );
+
+      return result;
+
+    } else {
+      throw Exception("Erro ao buscar empresas");
+    }
   }
 }
