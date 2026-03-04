@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/cores.dart';
+import 'package:flutter/material.dart';
 
 import 'botao_padrao.dart';
 
@@ -19,9 +19,7 @@ class _NovoSocioDialogState extends State<NovoSocioDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         width: 420,
         padding: const EdgeInsets.all(24),
@@ -35,10 +33,7 @@ class _NovoSocioDialogState extends State<NovoSocioDialog> {
               children: [
                 const Text(
                   "Novo Sócio",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -60,24 +55,43 @@ class _NovoSocioDialogState extends State<NovoSocioDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-
-                BotaoPadrao(acao: ()=>Navigator.pop(context), cor: Cores.branco, conteudo: [Text("Cancelar",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Cores.verde_escuro),)
-                ],),
+                BotaoPadrao(
+                  acao: () => Navigator.pop(context),
+                  cor: Cores.branco,
+                  conteudo: [
+                    Text(
+                      "Cancelar",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Cores.verde_escuro,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(width: 12),
-                BotaoPadrao(acao: () {
-                  final dados = {
-                    "nome": nomeController.text,
-                    "cpf": cpfController.text,
-                    "email": emailController.text,
-                    "telefone": telefoneController.text,
-                  };
+                BotaoPadrao(
+                  acao: () {
+                    final dados = {
+                      "nome": nomeController.text,
+                      "cpf": cpfController.text,
+                      "email": emailController.text,
+                      "telefone": telefoneController.text,
+                    };
 
-                  Navigator.pop(context, dados);
-                }, cor: Cores.verde_escuro, conteudo: [Text("Cadastrar "
-                    "sócio", style: TextStyle(color: Cores.branco, fontWeight: FontWeight.bold),)
-                ],),
-
+                    Navigator.pop(context, dados);
+                  },
+                  cor: Cores.verde_escuro,
+                  conteudo: [
+                    Text(
+                      "Cadastrar "
+                      "sócio",
+                      style: TextStyle(
+                        color: Cores.branco,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
@@ -86,11 +100,7 @@ class _NovoSocioDialogState extends State<NovoSocioDialog> {
     );
   }
 
-  Widget _campo(
-      String label,
-      String hint,
-      TextEditingController controller,
-      ) {
+  Widget _campo(String label, String hint, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Column(

@@ -1,4 +1,3 @@
-
 import 'package:cnpjjaUi/model/status.dart';
 
 class CnpjStatus {

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/cores.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:flutter/material.dart';
 
 class IndicadorCardMonetaryWidget extends StatefulWidget {
   final IconData icon;
@@ -15,10 +15,12 @@ class IndicadorCardMonetaryWidget extends StatefulWidget {
   });
 
   @override
-  State<IndicadorCardMonetaryWidget> createState() => _IndicadorCardMonetaryWidgetState();
+  State<IndicadorCardMonetaryWidget> createState() =>
+      _IndicadorCardMonetaryWidgetState();
 }
 
-class _IndicadorCardMonetaryWidgetState extends State<IndicadorCardMonetaryWidget> {
+class _IndicadorCardMonetaryWidgetState
+    extends State<IndicadorCardMonetaryWidget> {
   bool isHovering = false;
 
   @override
@@ -49,8 +51,7 @@ class _IndicadorCardMonetaryWidgetState extends State<IndicadorCardMonetaryWidge
             border: Border.all(color: Colors.grey.shade300),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(
-                    isHovering ? 0.18 : 0.05),
+                color: Colors.black.withOpacity(isHovering ? 0.18 : 0.05),
                 blurRadius: isHovering ? 24 : 8,
                 offset: Offset(0, isHovering ? 16 : 3),
               ),
@@ -68,8 +69,7 @@ class _IndicadorCardMonetaryWidgetState extends State<IndicadorCardMonetaryWidge
                   widget.icon,
                   key: ValueKey(isHovering),
                   size: 28,
-                  color:
-                  isHovering ? corHover : corNormalIcon,
+                  color: isHovering ? corHover : corNormalIcon,
                 ),
               ),
 
@@ -93,9 +93,7 @@ class _IndicadorCardMonetaryWidgetState extends State<IndicadorCardMonetaryWidge
                 duration: const Duration(milliseconds: 200),
                 style: TextStyle(
                   fontSize: 14,
-                  color: isHovering
-                      ? corHover
-                      : Colors.grey.shade600,
+                  color: isHovering ? corHover : Colors.grey.shade600,
                 ),
                 child: Text(widget.titulo),
               ),

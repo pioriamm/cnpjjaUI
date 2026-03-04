@@ -1,45 +1,42 @@
-import 'package:cnpjjaUi/model/dados.dart';
-import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/configuracoes.dart';
+import 'package:flutter/material.dart';
 
 import '../model/prospec.dart';
 import '../repositorio/api_service.dart';
 
 class BuscarBaseCnpjaProvider extends ChangeNotifier {
-  bool isLoading = false;
-  bool isLast = false;
 
-  List<Prospectar> listaProspecao = [];
-  String? erro;
-
-  int _currentPage = 0;
-  final int _pageSize = 50;
-
-  DateTime? _lastFetch;
-  static Duration _cacheDuration =
-  Duration(minutes: Configuracoes.cache);
-
+  /// =========================
+  /// PROPIEDADES
+  /// =========================
 
   int? _totalSociosCache;
   int? _sociosDiretosCache;
   int? _sociosIndiretosCache;
+  int _currentPage = 0;
+  final int _pageSize = 50;
 
-  List<dynamic> get empresasFlatten => listaProspecao.expand((p) => p.dados ?? []).toList();
+  bool isLoading = false;
+  bool isLast = false;
 
-  void _invalidateMetrics() {
-    _totalSociosCache = null;
-    _sociosDiretosCache = null;
-    _sociosIndiretosCache = null;
-  }
+  String? erro;
+  DateTime? _lastFetch;
+  static Duration _cacheDuration = Duration(minutes: Configuracoes.cache);
+  List<Prospectar> listaProspecao = [];
 
+
+
+  /// =========================
+  /// GETTERS
+  /// =========================
+
+
+  //Todas as empresas prospectadas
+  List<dynamic> get ListaEmpresasProspectadas => listaProspecao.expand((p) => p.dados ?? []).toList();
 
   int get totalEmpresas => listaProspecao.length;
 
-  /// =========================
-  /// MÉTRICAS (mantidas)
-  /// =========================
-
-  int get sociosDiretos {
+  int get sociosDiretosUnicos {
     if (_sociosDiretosCache != null) return _sociosDiretosCache!;
 
     final ids = listaProspecao
@@ -53,7 +50,8 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
     return _sociosDiretosCache!;
   }
 
-  int get sociosIndiretos {
+  int get sociosIndiretosUnicos {
+
     if (_sociosIndiretosCache != null) return _sociosIndiretosCache!;
 
     final ids = listaProspecao
@@ -70,6 +68,7 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
   }
 
   int get totalSocios {
+
     if (_totalSociosCache != null) return _totalSociosCache!;
 
     final ids = <String>{};
@@ -99,10 +98,11 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
   double get ticketMedio => totalEmpresas * 150.50;
 
   /// =========================
-  /// PAGINAÇÃO
+  /// METODOS
   /// =========================
 
   Future<void> buscarDadosCnpja({bool reset = false}) async {
+
     if (isLoading) return;
     if (isLast && !reset) return;
 
@@ -117,8 +117,7 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final pageResponse =
-      await ApiService.buscarEmpresasBaseCnpjja(
+      final pageResponse = await ApiService.buscarEmpresasBaseCnpjja(
         page: _currentPage,
         size: _pageSize,
       );
@@ -129,7 +128,6 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
       _currentPage++;
 
       _invalidateMetrics();
-
     } catch (e) {
       erro = e.toString();
     }
@@ -141,21 +139,11 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
   Future<void> refresh() async {
     await buscarDadosCnpja(reset: true);
   }
-}
 
-class PageResponse<T> {
-  final List<T> content;
-  final bool last;
-
-  PageResponse({
-    required this.content,
-    required this.last,
-  });
-
-  factory PageResponse.fromJson(Map<String, dynamic> json, T Function(Map<String, dynamic>) fromJsonT,) {
-    return PageResponse(
-      content: (json['content'] as List).map((e) => fromJsonT(e)).toList(),
-      last: json['last'] ?? true,
-    );
+  void _invalidateMetrics() {
+    _totalSociosCache = null;
+    _sociosDiretosCache = null;
+    _sociosIndiretosCache = null;
   }
+
 }

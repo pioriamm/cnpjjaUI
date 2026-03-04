@@ -1,16 +1,14 @@
-import 'package:cnpjjaUi/modelview/buscar_base_cnpja_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'package:cnpjjaUi/model/membo.dart';
+import 'package:cnpjjaUi/helprs/cores.dart';
 import 'package:cnpjjaUi/model/enum_menu_item.dart';
+import 'package:cnpjjaUi/model/membo.dart';
+import 'package:cnpjjaUi/modelview/buscar_base_cnpja_provider.dart';
+import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
 import 'package:cnpjjaUi/view/widgets/cliente_card_widget.dart';
 import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
-import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
-import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
 import 'package:cnpjjaUi/view/widgets/novo_socio_dialog.dart';
-import 'package:cnpjjaUi/helprs/cores.dart';
-
+import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TelaSocioCadastro extends StatefulWidget {
   const TelaSocioCadastro({super.key});
@@ -52,13 +50,19 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
             /// SIDEBAR
             SizedBox(
               width: tela.width * 0.2,
-              child: SideBarWidget(selectedItem: _selected, onItemSelected: (item) => setState(() => _selected = item)),
+              child: SideBarWidget(
+                selectedItem: _selected,
+                onItemSelected: (item) => setState(() => _selected = item),
+              ),
             ),
 
             /// CONTEÚDO
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
+                padding: EdgeInsets.symmetric(
+                  horizontal: tela.width * 0.09,
+                  vertical: 50,
+                ),
                 child: Consumer<BuscarBaseCnpjaProvider>(
                   builder: (_, provider, __) {
                     /// ===============================
@@ -81,7 +85,11 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
                     }
 
                     final sociosUnicos = mapaUnico.values.toList()
-                      ..sort((a, b) => (a.nomeMembro ?? '').toLowerCase().compareTo((b.nomeMembro ?? '').toLowerCase()));
+                      ..sort(
+                        (a, b) => (a.nomeMembro ?? '').toLowerCase().compareTo(
+                          (b.nomeMembro ?? '').toLowerCase(),
+                        ),
+                      );
 
                     /// ===============================
                     /// FILTRO
@@ -100,7 +108,11 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
                           children: [
                             Text(
                               "Sócios",
-                              style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Cores.verde_escuro,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const Spacer(),
                             BotaoPadrao(
@@ -115,7 +127,13 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
                               conteudo: [
                                 Icon(Icons.add, color: Cores.branco),
                                 const SizedBox(width: 8),
-                                Text("Novo Sócio", style: TextStyle(color: Cores.branco, fontSize: 16)),
+                                Text(
+                                  "Novo Sócio",
+                                  style: TextStyle(
+                                    color: Cores.branco,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -123,7 +141,10 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
 
                         const SizedBox(height: 8),
 
-                        Text("${sociosFiltrados.length} sócios cadastrados", style: const TextStyle(fontSize: 15)),
+                        Text(
+                          "${sociosFiltrados.length} sócios cadastrados",
+                          style: const TextStyle(fontSize: 15),
+                        ),
 
                         const SizedBox(height: 15),
 
@@ -145,15 +166,21 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
                           child: Builder(
                             builder: (_) {
                               if (provider.isLoading) {
-                                return const Center(child: CircularProgressIndicator());
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
                               }
 
                               if (provider?.erro != null) {
-                                return Center(child: Text("Erro: ${provider.erro}"));
+                                return Center(
+                                  child: Text("Erro: ${provider.erro}"),
+                                );
                               }
 
                               if (sociosFiltrados.isEmpty) {
-                                return const Center(child: Text("Nenhum sócio encontrado"));
+                                return const Center(
+                                  child: Text("Nenhum sócio encontrado"),
+                                );
                               }
 
                               return ListView.builder(
@@ -166,7 +193,8 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
                                     cpf: socio.idMembro ?? "",
                                     telefone: '',
                                     email: '',
-                                    quantidadeEmpresas: socio.empresas?.length ?? 0,
+                                    quantidadeEmpresas:
+                                        socio.empresas?.length ?? 0,
                                     onEdit: () {},
                                     onDelete: () {},
                                     empresas: socio.empresas ?? [],

@@ -1,14 +1,18 @@
+import 'package:cnpjjaUi/model/enum_menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cnpjjaUi/model/enum_menu_item.dart';
-import '../../helprs/cores.dart';
 
+import '../../helprs/cores.dart';
 
 class SideBarWidget extends StatefulWidget {
   final MenuItem selectedItem;
   final Function(MenuItem item) onItemSelected;
 
-  SideBarWidget({super.key, required this.selectedItem, required this.onItemSelected});
+  SideBarWidget({
+    super.key,
+    required this.selectedItem,
+    required this.onItemSelected,
+  });
 
   @override
   State<SideBarWidget> createState() => _SideBarWidgetState();
@@ -25,7 +29,11 @@ class _SideBarWidgetState extends State<SideBarWidget> {
           const SizedBox(height: 30),
           const Text(
             "conciliadora",
-            style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w600, letterSpacing: 1),
+            style: TextStyle(
+              color: Colors.white70,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1,
+            ),
           ),
 
           const SizedBox(height: 30),
@@ -83,7 +91,10 @@ class _SideBarWidgetState extends State<SideBarWidget> {
           const Spacer(),
           const Padding(
             padding: EdgeInsets.only(bottom: 16),
-            child: Text("v1.0 · Conciliadora", style: TextStyle(color: Colors.white54, fontSize: 12)),
+            child: Text(
+              "v1.0 · Conciliadora",
+              style: TextStyle(color: Colors.white54, fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -117,19 +128,27 @@ class _SideBarWidgetState extends State<SideBarWidget> {
           borderRadius: BorderRadius.circular(10),
           onTap: () {
             widget.onItemSelected(item);
-            context.go('/$page?reload=${DateTime.now().millisecondsSinceEpoch}');
+            context.go(
+              '/$page?reload=${DateTime.now().millisecondsSinceEpoch}',
+            );
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-            decoration: BoxDecoration(color: backgroundColor(), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+              color: backgroundColor(),
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Row(
               children: [
                 Icon(icon, color: isSelected ? Colors.white : Colors.white70),
                 const SizedBox(width: 12),
                 Text(
                   title,
-                  style: TextStyle(color: isSelected ? Colors.white : Colors.white70, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.white70,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),

@@ -1,15 +1,13 @@
-import 'package:cnpjjaUi/view/widgets/titulo_contador.dart';
-import 'package:flutter/material.dart';
-
 import 'package:cnpjjaUi/helprs/cores.dart';
 import 'package:cnpjjaUi/view/widgets/cliente_card_widget.dart';
 import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
 import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
+import 'package:cnpjjaUi/view/widgets/titulo_contador.dart';
+import 'package:flutter/material.dart';
 
 import '../../model/dados.dart';
-import '../../model/membo.dart';
 import '../../model/enum_menu_item.dart';
-import '../../model/prospec.dart';
+import '../../model/membo.dart';
 import '../../repositorio/api_service.dart';
 
 class TelaSocio extends StatefulWidget {
@@ -33,8 +31,7 @@ class _TelaSocioState extends State<TelaSocio> {
 
   String? erro;
 
-  final TextEditingController _filtroController =
-  TextEditingController();
+  final TextEditingController _filtroController = TextEditingController();
 
   @override
   void initState() {
@@ -68,8 +65,7 @@ class _TelaSocioState extends State<TelaSocio> {
     });
 
     try {
-      final pageResponse =
-      await ApiService.buscarEmpresasBaseCnpjja(
+      final pageResponse = await ApiService.buscarEmpresasBaseCnpjja(
         page: currentPage,
         size: pageSize,
       );
@@ -81,13 +77,11 @@ class _TelaSocioState extends State<TelaSocio> {
 
       /// Remove duplicados
       final mapa = <String, Membros>{
-        for (var s in socios)
-          (s.idMembro ?? s.nomeMembro ?? ''): s
+        for (var s in socios) (s.idMembro ?? s.nomeMembro ?? ''): s,
       };
 
       for (final socio in novosSocios) {
-        final chave =
-            socio.idMembro ?? socio.nomeMembro ?? '';
+        final chave = socio.idMembro ?? socio.nomeMembro ?? '';
         if (chave.isNotEmpty) {
           mapa[chave] = socio;
         }
@@ -95,16 +89,16 @@ class _TelaSocioState extends State<TelaSocio> {
 
       socios = mapa.values.toList();
 
-      socios.sort((a, b) =>
-          (a.nomeMembro ?? '')
-              .toLowerCase()
-              .compareTo((b.nomeMembro ?? '').toLowerCase()));
+      socios.sort(
+        (a, b) => (a.nomeMembro ?? '').toLowerCase().compareTo(
+          (b.nomeMembro ?? '').toLowerCase(),
+        ),
+      );
 
       sociosFiltrados = List.from(socios);
 
       isLast = pageResponse.last;
       currentPage++;
-
     } catch (e) {
       erro = e.toString();
     } finally {
@@ -122,8 +116,7 @@ class _TelaSocioState extends State<TelaSocio> {
 
     setState(() {
       sociosFiltrados = socios.where((socio) {
-        final nome =
-            socio.nomeMembro?.toLowerCase() ?? '';
+        final nome = socio.nomeMembro?.toLowerCase() ?? '';
         return nome.contains(texto);
       }).toList();
     });
@@ -141,8 +134,7 @@ class _TelaSocioState extends State<TelaSocio> {
               width: tela.width * 0.2,
               child: SideBarWidget(
                 selectedItem: _selected,
-                onItemSelected: (item) =>
-                    setState(() => _selected = item),
+                onItemSelected: (item) => setState(() => _selected = item),
               ),
             ),
 
@@ -153,8 +145,7 @@ class _TelaSocioState extends State<TelaSocio> {
                   vertical: 50,
                 ),
                 child: Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Sócios",
@@ -186,85 +177,60 @@ class _TelaSocioState extends State<TelaSocio> {
                       child: Builder(
                         builder: (_) {
                           if (erro != null) {
-                            return Center(
-                                child:
-                                Text("Erro: $erro"));
+                            return Center(child: Text("Erro: $erro"));
                           }
 
-                          if (carregando &&
-                              socios.isEmpty) {
+                          if (carregando && socios.isEmpty) {
                             return const Center(
-                                child:
-                                CircularProgressIndicator());
+                              child: CircularProgressIndicator(),
+                            );
                           }
 
                           if (sociosFiltrados.isEmpty) {
                             return const Center(
-                                child: Text(
-                                    "Nenhum sócio encontrado"));
+                              child: Text("Nenhum sócio encontrado"),
+                            );
                           }
 
                           return ListView.builder(
                             itemCount:
-                            sociosFiltrados.length +
-                                (isLast ? 0 : 1),
-                            itemBuilder:
-                                (context, index) {
-                              if (index <
-                                  sociosFiltrados
-                                      .length) {
-                                final socio =
-                                sociosFiltrados[
-                                index];
+                                sociosFiltrados.length + (isLast ? 0 : 1),
+                            itemBuilder: (context, index) {
+                              if (index < sociosFiltrados.length) {
+                                final socio = sociosFiltrados[index];
 
                                 return ClienteCardWidget(
-                                  nome: socio
-                                      .nomeMembro ??
-                                      '',
-                                  cpf: socio
-                                      .idMembro ??
-                                      "",
+                                  nome: socio.nomeMembro ?? '',
+                                  cpf: socio.idMembro ?? "",
                                   telefone: '',
                                   email: '',
                                   quantidadeEmpresas:
-                                  socio.empresas
-                                      ?.length ??
-                                      0,
+                                      socio.empresas?.length ?? 0,
                                   onEdit: () {},
                                   onDelete: () {},
-                                  empresas:
-                                  socio.empresas ??
-                                      [],
+                                  empresas: socio.empresas ?? [],
                                 );
                               }
 
                               /// BOTÃO CARREGAR MAIS
                               return Padding(
-                                padding:
-                                const EdgeInsets
-                                    .symmetric(
-                                    vertical:
-                                    20),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                ),
                                 child: Center(
-                                  child:
-                                  ElevatedButton(
-                                    onPressed:
-                                    carregando
+                                  child: ElevatedButton(
+                                    onPressed: carregando
                                         ? null
-                                        : () =>
-                                        _carregarPagina(),
+                                        : () => _carregarPagina(),
                                     child: carregando
                                         ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child:
-                                      CircularProgressIndicator(
-                                        strokeWidth:
-                                        2,
-                                      ),
-                                    )
-                                        : const Text(
-                                        "Carregar mais 50"),
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : const Text("Carregar mais 50"),
                                   ),
                                 ),
                               );

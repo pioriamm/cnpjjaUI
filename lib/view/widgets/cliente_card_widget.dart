@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
 import 'package:cnpjjaUi/model/empresa_socio.dart';
+import 'package:flutter/material.dart';
 
 import '../../helprs/cores.dart';
 import '../../helprs/tooltip_controller.dart';
@@ -32,11 +32,10 @@ class ClienteCardWidget extends StatefulWidget {
 }
 
 class _ClienteCardWidgetState extends State<ClienteCardWidget> {
-
-  String get inicial => widget.nome.isNotEmpty ? widget.nome[0].toUpperCase() : "?";
+  String get inicial =>
+      widget.nome.isNotEmpty ? widget.nome[0].toUpperCase() : "?";
 
   void _mostrarTooltip(BuildContext context) {
-
     final overlay = Overlay.of(context);
     final box = context.findRenderObject() as RenderBox;
     final position = box.localToGlobal(Offset.zero);
@@ -55,7 +54,6 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
     TooltipController.show(overlay, entry);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,10 +69,13 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
           /// Avatar
           CircleAvatar(
             radius: 24,
-            backgroundColor:  Cores.verde_escuro,
+            backgroundColor: Cores.verde_escuro,
             child: Text(
               inicial,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
 
@@ -85,7 +86,13 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.nome, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                Text(
+                  widget.nome,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(widget.cpf, style: TextStyle(color: Colors.grey.shade700)),
                 const SizedBox(height: 8),
@@ -96,7 +103,11 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
                   children: [
                     Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: [const Icon(Icons.phone, size: 16), const SizedBox(width: 4), Text(widget.telefone)],
+                      children: [
+                        const Icon(Icons.phone, size: 16),
+                        const SizedBox(width: 4),
+                        Text(widget.telefone),
+                      ],
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -109,7 +120,10 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
 
                     /// HOVER (abre apenas)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.blueGrey.shade100,
                         borderRadius: BorderRadius.circular(20),
@@ -118,7 +132,10 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
                         onEnter: (_) => _mostrarTooltip(context),
                         child: Text(
                           "${widget.quantidadeEmpresas} empresas",
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -131,8 +148,14 @@ class _ClienteCardWidgetState extends State<ClienteCardWidget> {
           /// Ações
           Row(
             children: [
-              IconButton(icon: const Icon(Icons.edit_outlined), onPressed: widget.onEdit),
-              IconButton(icon: const Icon(Icons.delete_outline), onPressed: widget.onDelete),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: widget.onEdit,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                onPressed: widget.onDelete,
+              ),
             ],
           ),
         ],
@@ -178,7 +201,9 @@ class _TooltipEmpresasState extends State<_TooltipEmpresas> {
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(18),
-              boxShadow: const [BoxShadow(blurRadius: 20, color: Colors.black26)],
+              boxShadow: const [
+                BoxShadow(blurRadius: 20, color: Colors.black26),
+              ],
             ),
             child: Column(
               children: [
@@ -187,9 +212,18 @@ class _TooltipEmpresasState extends State<_TooltipEmpresas> {
                   children: [
                     const Icon(Icons.drag_indicator),
                     const SizedBox(width: 8),
-                    const Text("Empresas do Sócio", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Text(
+                      "Empresas do Sócio",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const Spacer(),
-                    IconButton(icon: const Icon(Icons.close), onPressed: widget.onClose),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: widget.onClose,
+                    ),
                   ],
                 ),
 
@@ -205,7 +239,10 @@ class _TooltipEmpresasState extends State<_TooltipEmpresas> {
 
                       return Container(
                         padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(14)),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                         child: Row(
                           children: [
                             Container(
@@ -226,11 +263,21 @@ class _TooltipEmpresasState extends State<_TooltipEmpresas> {
                                     empresa.nomeEmpresaSocio ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
                                   ),
                                   const SizedBox(height: 6),
-                                  Text(Formatadores.formatarCnpj("${empresa.cnpjEmpresaSocio}") ?? ''
-                                      , style: TextStyle(color: Colors.grey.shade700)),
+                                  Text(
+                                    Formatadores.formatarCnpj(
+                                          "${empresa.cnpjEmpresaSocio}",
+                                        ) ??
+                                        '',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

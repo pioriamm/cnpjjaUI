@@ -1,6 +1,7 @@
 # 🚀 Projeto Prospectar Empresas
 
-Sistema web desenvolvido em **Flutter Web** para **prospecção empresarial**, análise de relacionamento societário e popularização de base de CNPJs através de integrações com APIs backend.
+Sistema web desenvolvido em **Flutter Web** para **prospecção empresarial**, análise de
+relacionamento societário e popularização de base de CNPJs através de integrações com APIs backend.
 
 ---
 
@@ -160,7 +161,7 @@ Content-Type: application/json
 ### Respostas esperadas
 
 | Status | Significado            |
-| ------ | ---------------------- |
+|--------|------------------------|
 | 200    | Processado com sucesso |
 | !=200  | Erro na consulta       |
 

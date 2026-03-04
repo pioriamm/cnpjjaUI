@@ -1,22 +1,20 @@
 import 'package:cnpjjaUi/helprs/formatadores.dart';
+import 'package:cnpjjaUi/model/enum_menu_item.dart';
 import 'package:cnpjjaUi/modelview/buscar_base_cnpja_provider.dart';
+import 'package:cnpjjaUi/view/telas/tela_empresas.dart';
+import 'package:cnpjjaUi/view/telas/tela_socio.dart';
+import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
+import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
+import 'package:cnpjjaUi/view/widgets/indicador_card_monetary_widget.dart';
 import 'package:cnpjjaUi/view/widgets/indicador_card_shimmer_widget.dart';
+import 'package:cnpjjaUi/view/widgets/indicador_card_widget.dart';
+import 'package:cnpjjaUi/view/widgets/novo_socio_dialog.dart';
+import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:cnpjjaUi/model/enum_menu_item.dart';
-import 'package:cnpjjaUi/view/telas/tela_empresas.dart';
-import 'package:cnpjjaUi/view/telas/tela_socio.dart';
-import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
-import 'package:cnpjjaUi/view/widgets/indicador_card_monetary_widget.dart';
-import 'package:cnpjjaUi/view/widgets/indicador_card_widget.dart';
-import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
-import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
-import 'package:cnpjjaUi/view/widgets/novo_socio_dialog.dart';
-
 import '../../helprs/cores.dart';
-
 
 class TelaDashBoard extends StatefulWidget {
   const TelaDashBoard({super.key});
@@ -32,8 +30,9 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja());
+    Future.microtask(
+      () => context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja(),
+    );
   }
 
   @override
@@ -68,11 +67,12 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: tela.width * 0.09, vertical: 50),
+                horizontal: tela.width * 0.09,
+                vertical: 50,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   /// HEADER
                   _buildHeader(),
 
@@ -81,12 +81,10 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
                   /// CARDS
                   Consumer<BuscarBaseCnpjaProvider>(
                     builder: (context, provider, _) {
-
-                      return  Wrap(
+                      return Wrap(
                         spacing: 30,
                         runSpacing: 30,
                         children: [
-
                           /// Ticket Médio
                           _buildAnimatedCard(
                             isLoading: provider.isLoading,
@@ -102,7 +100,9 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
                             isLoading: provider.isLoading,
                             child: IndicadorCardWidget(
                               icon: Icons.badge,
-                              valor: Formatadores.formatarNumeroMilhas(provider.totalSocios),
+                              valor: Formatadores.formatarNumeroMilhas(
+                                provider.totalSocios,
+                              ),
                               titulo: "Sócios cadastrados",
                               tela: const TelaSocio(),
                             ),
@@ -113,7 +113,9 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
                             isLoading: provider.isLoading,
                             child: IndicadorCardWidget(
                               icon: Icons.apartment,
-                              valor: Formatadores.formatarNumeroMilhas(provider.totalEmpresas),
+                              valor: Formatadores.formatarNumeroMilhas(
+                                provider.totalEmpresas,
+                              ),
                               titulo: "Empresas cadastradas",
                               tela: const TelaEmpresas(),
                             ),
@@ -133,7 +135,9 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
                             isLoading: provider.isLoading,
                             child: IndicadorCardWidget(
                               icon: Icons.ads_click,
-                              valor: Formatadores.formatarNumeroMilhas(provider.sociosDiretos),
+                              valor: Formatadores.formatarNumeroMilhas(
+                                provider.sociosDiretosUnicos,
+                              ),
                               titulo: "Oportunidades Diretas",
                               tela: const TelaEmpresas(),
                             ),
@@ -143,7 +147,9 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
                             isLoading: provider.isLoading,
                             child: IndicadorCardWidget(
                               icon: Icons.account_tree,
-                              valor: Formatadores.formatarNumeroMilhas(provider.sociosIndiretos),
+                              valor: Formatadores.formatarNumeroMilhas(
+                                provider.sociosIndiretosUnicos,
+                              ),
                               titulo: "Oportunidades Indiretas",
                               tela: const TelaEmpresas(),
                             ),
@@ -177,9 +183,10 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
           Text(
             "Pesquisa de Sócios e Empresas",
             style: TextStyle(
-                fontSize: 30,
-                color: Cores.branco,
-                fontWeight: FontWeight.bold),
+              fontSize: 30,
+              color: Cores.branco,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 10),
           Text(
@@ -208,9 +215,8 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
                 conteudo: [
                   Text(
                     "Pesquisar",
-                    style:
-                    TextStyle(color: Cores.branco, fontSize: 16),
-                  )
+                    style: TextStyle(color: Cores.branco, fontSize: 16),
+                  ),
                 ],
               ),
             ],
@@ -220,10 +226,7 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
     );
   }
 
-  Widget _buildAnimatedCard({
-    required bool isLoading,
-    required Widget child,
-  }) {
+  Widget _buildAnimatedCard({required bool isLoading, required Widget child}) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 400),
       switchInCurve: Curves.easeOutCubic,
@@ -232,21 +235,14 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
         return FadeTransition(
           opacity: animation,
           child: ScaleTransition(
-            scale: Tween(begin: 0.95, end: 1.0)
-                .animate(animation),
+            scale: Tween(begin: 0.95, end: 1.0).animate(animation),
             child: child,
           ),
         );
       },
       child: isLoading
-          ? const IndicadorCardShimmer(
-        key: ValueKey('loading'),
-      )
-          : Container(
-        key: const ValueKey('content'),
-        child: child,
-      ),
+          ? const IndicadorCardShimmer(key: ValueKey('loading'))
+          : Container(key: const ValueKey('content'), child: child),
     );
   }
-
 }

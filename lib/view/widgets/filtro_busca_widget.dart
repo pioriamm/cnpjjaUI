@@ -5,11 +5,11 @@ class FiltroBuscaWidget extends StatelessWidget {
   final Function(String)? onChanged;
   final String hintText;
 
-   const FiltroBuscaWidget({
+  const FiltroBuscaWidget({
     super.key,
     required this.controller,
     this.onChanged,
-     required this.hintText,
+    required this.hintText,
   });
 
   @override

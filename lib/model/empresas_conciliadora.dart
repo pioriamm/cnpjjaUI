@@ -7,19 +7,22 @@ class EmpresasConciliadora {
   String? cnaDescricao;
   bool? pesquisado;
   bool? conciliadora;
+  bool? ativoConciliadora;
 
-  EmpresasConciliadora(
-      {this.id,
-        this.cnpj,
-        this.razaoSocial,
-        this.alias,
-        this.cna,
-        this.cnaDescricao,
-        this.pesquisado,
-        this.conciliadora});
+  EmpresasConciliadora({
+    this.id,
+    this.cnpj,
+    this.razaoSocial,
+    this.alias,
+    this.cna,
+    this.cnaDescricao,
+    this.pesquisado,
+    this.conciliadora,
+    this.ativoConciliadora
+  });
 
   EmpresasConciliadora.fromJson(Map<String, dynamic> json) {
-    id = json['id'] ;
+    id = json['id'];
     cnpj = json['cnpj'];
     razaoSocial = json['razaoSocial'];
     alias = json['alias'];
@@ -31,6 +34,7 @@ class EmpresasConciliadora {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['ativoConciliadora'] = this.ativoConciliadora;
     data['id'] = this.id;
     data['cnpj'] = this.cnpj;
     data['razaoSocial'] = this.razaoSocial;
@@ -42,4 +46,3 @@ class EmpresasConciliadora {
     return data;
   }
 }
-

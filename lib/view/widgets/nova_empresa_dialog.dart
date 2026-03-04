@@ -27,9 +27,7 @@ class _NovaEmpresaDialogState extends State<NovaEmpresaDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.all(40),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: SizedBox(
         width: 720,
         height: 650,
@@ -43,8 +41,7 @@ class _NovaEmpresaDialogState extends State<NovaEmpresaDialog> {
                 children: [
                   const Text(
                     "Nova Empresa",
-                    style:
-                    TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -66,13 +63,10 @@ class _NovaEmpresaDialogState extends State<NovaEmpresaDialog> {
                     Row(
                       children: [
                         Expanded(
-                          child: _campo("CNPJ *",
-                              "00.000.000/0000-00", cnpj),
+                          child: _campo("CNPJ *", "00.000.000/0000-00", cnpj),
                         ),
                         const SizedBox(width: 16),
-                        Expanded(
-                          child: _campo("CNAE *", "0000-0/00", cnae),
-                        ),
+                        Expanded(child: _campo("CNAE *", "0000-0/00", cnae)),
                       ],
                     ),
 
@@ -88,32 +82,26 @@ class _NovaEmpresaDialogState extends State<NovaEmpresaDialog> {
                       razaoSocial,
                     ),
 
-                    _campo(
-                      "Nome Fantasia",
-                      "Ex: SS Comércio",
-                      nomeFantasia,
-                    ),
+                    _campo("Nome Fantasia", "Ex: SS Comércio", nomeFantasia),
 
                     /// TELEFONE + EMAIL
                     Row(
                       children: [
                         Expanded(
                           child: _campo(
-                              "Telefone", "(00) 00000-0000", telefone),
+                            "Telefone",
+                            "(00) 00000-0000",
+                            telefone,
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child:
-                          _campo("E-mail", "contato@empresa.com", email),
+                          child: _campo("E-mail", "contato@empresa.com", email),
                         ),
                       ],
                     ),
 
-                    _campo(
-                      "Endereço",
-                      "Rua, número — Cidade/UF",
-                      endereco,
-                    ),
+                    _campo("Endereço", "Rua, número — Cidade/UF", endereco),
 
                     const SizedBox(height: 10),
 
@@ -138,8 +126,7 @@ class _NovaEmpresaDialogState extends State<NovaEmpresaDialog> {
                             });
                           },
                           title: Text(nome),
-                          controlAffinity:
-                          ListTileControlAffinity.leading,
+                          controlAffinity: ListTileControlAffinity.leading,
                         );
                       }).toList(),
                     ),
@@ -165,7 +152,9 @@ class _NovaEmpresaDialogState extends State<NovaEmpresaDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF123C3C),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 22, vertical: 14),
+                        horizontal: 22,
+                        vertical: 14,
+                      ),
                     ),
                     onPressed: () {
                       Navigator.pop(context);
@@ -182,8 +171,7 @@ class _NovaEmpresaDialogState extends State<NovaEmpresaDialog> {
   }
 
   /// CAMPO PADRÃO
-  Widget _campo(
-      String label, String hint, TextEditingController controller) {
+  Widget _campo(String label, String hint, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Column(

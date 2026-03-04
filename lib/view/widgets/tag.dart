@@ -5,12 +5,7 @@ class Tag extends StatefulWidget {
   final VoidCallback? chamar;
   final Color? cor;
 
-  const Tag({
-    super.key,
-    required this.child,
-    this.chamar,
-    this.cor,
-  });
+  const Tag({super.key, required this.child, this.chamar, this.cor});
 
   @override
   State<Tag> createState() => _TagState();

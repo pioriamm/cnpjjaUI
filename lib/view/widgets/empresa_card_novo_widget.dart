@@ -1,8 +1,9 @@
 import 'package:cnpjjaUi/helprs/cores.dart';
+import 'package:cnpjjaUi/helprs/formatadores.dart';
 import 'package:cnpjjaUi/view/widgets/tag.dart';
 import 'package:flutter/material.dart';
-import 'package:cnpjjaUi/helprs/formatadores.dart';
 import 'package:provider/provider.dart';
+
 import '../../modelview/atualizar_status_base_provider.dart';
 
 class EmpresaCardNovoWidget extends StatelessWidget {
@@ -49,11 +50,14 @@ class EmpresaCardNovoWidget extends StatelessWidget {
               Container(
                 width: 42,
                 height: 42,
-                decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: const Icon(Icons.business),
               ),
 
-              const SizedBox(width: 20, ),
+              const SizedBox(width: 20),
 
               Expanded(
                 child: Column(
@@ -63,14 +67,18 @@ class EmpresaCardNovoWidget extends StatelessWidget {
                       razaoSocial,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       alias,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey.shade700,
+                      ),
                     ),
                     SizedBox(height: 10),
                     Tag(
@@ -103,39 +111,65 @@ class EmpresaCardNovoWidget extends StatelessWidget {
                           chamar: provider.isLoading(id)
                               ? null
                               : () {
-                                  context.read<PesquisaAtualizarBaseStatusProvider>().pesquisarEmpresa(
-                                    context: context,
-                                    cnpj: cnpj,
-                                    id: id,
-                                    razaoSocial: razaoSocial,
-                                  );
+                                  context
+                                      .read<
+                                        PesquisaAtualizarBaseStatusProvider
+                                      >()
+                                      .pesquisarEmpresa(
+                                        context: context,
+                                        cnpj: cnpj,
+                                        id: id,
+                                        razaoSocial: razaoSocial,
+                                      );
                                 },
                           child: provider.isLoading(id)
-                              ? const SizedBox(height: 14, width: 14, child: CircularProgressIndicator(strokeWidth: 2))
-                              : const Text("Pesquisar", style: TextStyle(fontSize: 12)),
+                              ? const SizedBox(
+                                  height: 14,
+                                  width: 14,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  "Pesquisar",
+                                  style: TextStyle(fontSize: 12),
+                                ),
                         );
                       },
                     ),
             ],
           ),
 
-          if (conciliadora)
-            SizedBox(height: 20,),
-            Tag(
-              cor: Colors.grey.shade300,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  razaoSocial.length < 50
-                  ? Text("A empresa ${razaoSocial}, já se enconta na base da Conciliadora",overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 12,color: Cores.verde_escuro, fontWeight: FontWeight.normal),)
-                  : Text("A empresa ${razaoSocial.substring(0,50)}..., já se enconta na base da Conciliadora",
-                    overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 12,color: Cores.verde_escuro, fontWeight: FontWeight.normal),),
-                  SizedBox(width: 10,),
-                  Icon(Icons.verified, color: Cores.verde_claro),
-                ],
-              ),
+          if (conciliadora) SizedBox(height: 20),
+          Tag(
+            cor: Colors.grey.shade300,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                razaoSocial.length < 50
+                    ? Text(
+                        "A empresa ${razaoSocial}, já se enconta na base da Conciliadora",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Cores.verde_escuro,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      )
+                    : Text(
+                        "A empresa ${razaoSocial.substring(0, 50)}..., já se enconta na base da Conciliadora",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Cores.verde_escuro,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                SizedBox(width: 10),
+                Icon(Icons.verified, color: Cores.verde_claro),
+              ],
             ),
+          ),
         ],
       ),
     );

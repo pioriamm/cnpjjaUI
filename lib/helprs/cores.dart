@@ -1,15 +1,16 @@
 import 'dart:ui';
 
 class Cores {
-
- static Color verde_escuro = Color(0xFF103339);
- static Color verde_claro = Color(0xFF87b526);
- static Color verde_claro_W50 = Color(0xffabf117);
- static Color verde_claro_W40 = Color(0xffC2D500);
- static Color verde_claro_W100 = Color(0xffe5f3d2);
- static Color branco = Color(0xfffbfbfc);
- static Color cinza = Color(0xffbdbdc8);
- static Color verde_cnpjja = Color(0xff1A2B35);
- static Color vermelho = Color(0xfff40202);
- static Color amarelo = Color(0xff352e17);
+  static Color verde_escuro = Color(0xFF103339);
+  static Color verde_claro = Color(0xFF87b526);
+  static Color verde_claro_W50 = Color(0xffabf117);
+  static Color verde_claro_W40 = Color(0xffC2D500);
+  static Color verde_claro_W100 = Color(0xffe5f3d2);
+  static Color branco = Color(0xfffbfbfc);
+  static Color cinza = Color(0xffbdbdc8);
+  static Color verde_cnpjja = Color(0xff1A2B35);
+  static Color vermelho = Color(0xfff40202);
+  static Color statusCancelado = Color(0xFFB96A6A).withOpacity(0.10);
+  static Color amarelo = Color(0xff352e17);
+  static Color transparente = const Color(0x33E57373);
 }

@@ -1,16 +1,17 @@
+import 'dart:html' as html;
+
 import 'package:cnpjjaUi/view/telas/tela_empresas_resumo.dart';
 import 'package:cnpjjaUi/view/telas/tela_empresas_socio.dart';
 import 'package:cnpjjaUi/view/telas/tela_socio_cadastro.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:html' as html;
+
 import '../model/prospec.dart';
+import '../view/telas/tela_carregar_base.dart';
+import '../view/telas/tela_dashboard.dart';
 import '../view/telas/tela_empresas.dart';
 import '../view/telas/tela_empresas_cadastro.dart';
-import '../view/telas/tela_dashboard.dart';
 import '../view/telas/tela_socio.dart';
-import '../view/telas/tela_carregar_base.dart';
-
 
 CustomTransitionPage buildPageWithTransition({
   required GoRouterState state,
@@ -61,7 +62,6 @@ final GoRouter appRouter = GoRouter(
         title: 'Carregar Base',
       ),
     ),
-
 
     GoRoute(
       path: '/empresa-resumo',

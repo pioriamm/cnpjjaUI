@@ -5,15 +5,13 @@ class TituloContador extends StatelessWidget {
   final int lista;
   final String titulo;
 
-  const TituloContador({
-    super.key,
-    required this.lista, required this.titulo,
-  });
-
-
+  const TituloContador({super.key, required this.lista, required this.titulo});
 
   @override
   Widget build(BuildContext context) {
-    return Text("${Formatadores.formatarNumeroMilhas(lista)} ${titulo}", style: const TextStyle(fontSize: 15));
+    return Text(
+      "${Formatadores.formatarNumeroMilhas(lista)} ${titulo}",
+      style: const TextStyle(fontSize: 15),
+    );
   }
 }

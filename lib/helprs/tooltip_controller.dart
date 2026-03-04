@@ -4,8 +4,7 @@ class TooltipController {
   static OverlayEntry? _current;
 
   /// abre novo tooltip
-  static void show(
-      OverlayState overlay, OverlayEntry entry) {
+  static void show(OverlayState overlay, OverlayEntry entry) {
     hide();
     _current = entry;
     overlay.insert(entry);

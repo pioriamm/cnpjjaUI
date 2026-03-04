@@ -5,7 +5,6 @@ class Cnae {
   Cnae({this.id, this.descricao});
 
   factory Cnae.fromJson(Map<String, dynamic> json) {
-    return Cnae(id: json['id'],
-        descricao: json['text']);
+    return Cnae(id: json['id'], descricao: json['text']);
   }
 }

@@ -1,16 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
 import 'package:cnpjjaUi/model/empresas_conciliadora.dart';
+import 'package:flutter/material.dart';
+
 import '../../helprs/cores.dart';
 import 'botao_cnpja.dart';
 
 class EmpresaCardSimplesWidget extends StatelessWidget {
   final EmpresasConciliadora empresa;
 
-  const EmpresaCardSimplesWidget({
-    super.key,
-    required this.empresa,
-  });
+  const EmpresaCardSimplesWidget({super.key, required this.empresa});
 
   /// ================= INFO ROW
   Widget _info(IconData icon, String? texto) {
@@ -27,10 +25,7 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
           Expanded(
             child: Text(
               texto,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade800,
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
             ),
           ),
         ],
@@ -43,11 +38,8 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         backgroundColor: Cores.verde_escuro,
-        padding:
-        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: () {
         /// coloque aqui sua chamada do CNPJJA
@@ -77,10 +69,7 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
-          BoxShadow(
-            blurRadius: 6,
-            color: Colors.black.withOpacity(0.05),
-          )
+          BoxShadow(blurRadius: 6, color: Colors.black.withOpacity(0.05)),
         ],
       ),
       child: Column(
@@ -141,29 +130,24 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-
                         /// BOTÃO PESQUISAR
                         if (!(emp.pesquisado ?? false))
-                          BotaoCnpjJa(
-                            empresasConciliadora: empresa,
-                          ),
+                          BotaoCnpjJa(empresasConciliadora: empresa),
                         const SizedBox(width: 10),
                         if (emp.conciliadora == true)
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(50), // efeito pílula
+                            borderRadius: BorderRadius.circular(50),
+                            // efeito pílula
                             child: Image.asset(
                               'assets/img/conciliadora_icon.jpeg',
                               width: 70,
                               height: 35,
                               fit: BoxFit.cover,
                             ),
-                          )
+                          ),
                       ],
                     ),
                   ),
-
-
-
                 ],
               ),
             ],
@@ -186,8 +170,6 @@ class EmpresaCardSimplesWidget extends StatelessWidget {
           _info(Icons.fingerprint, emp.id),
 
           const SizedBox(height: 12),
-
-
         ],
       ),
     );

@@ -1,4 +1,1 @@
-enum Status {
-  inicial, processando, ok, erro
-
-}
+enum Status { inicial, processando, ok, erro }

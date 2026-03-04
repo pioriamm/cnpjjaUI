@@ -14,13 +14,11 @@ class PageResponse<T> {
   });
 
   factory PageResponse.fromJson(
-      Map<String, dynamic> json,
-      T Function(Map<String, dynamic>) fromJsonT,
-      ) {
+    Map<String, dynamic> json,
+    T Function(Map<String, dynamic>) fromJsonT,
+  ) {
     return PageResponse<T>(
-      content: (json['content'] as List)
-          .map((e) => fromJsonT(e))
-          .toList(),
+      content: (json['content'] as List).map((e) => fromJsonT(e)).toList(),
       last: json['last'],
       number: json['number'],
       totalPages: json['totalPages'],

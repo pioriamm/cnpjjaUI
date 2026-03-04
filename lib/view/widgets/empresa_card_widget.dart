@@ -1,10 +1,11 @@
 import 'package:cnpjjaUi/view/widgets/pilula_conciliadora.dart';
 import 'package:flutter/material.dart';
+
 import '../../helprs/cores.dart';
 import '../../model/empresa_socio.dart';
 import '../../model/membo.dart';
-import 'empresa_item.dart';
 import 'Image_icon_button_widget.dart';
+import 'empresa_item.dart';
 
 class EmpresaCardWidget extends StatelessWidget {
   final String razaoSocial;
@@ -18,6 +19,7 @@ class EmpresaCardWidget extends StatelessWidget {
   final VoidCallback? pipedrive;
   final List<Membros>? empresasVinculadas;
   final bool conciliadora;
+  final bool? ativoConciliadora;
 
   const EmpresaCardWidget({
     super.key,
@@ -32,6 +34,7 @@ class EmpresaCardWidget extends StatelessWidget {
     required this.empresasVinculadas,
     required this.conciliadora,
     this.pipedrive,
+    this.ativoConciliadora,
   });
 
   @override
@@ -40,13 +43,14 @@ class EmpresaCardWidget extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color:  Colors.grey.shade100,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: ExpansionTile(
         tilePadding: EdgeInsets.zero,
         childrenPadding: EdgeInsets.zero,
+        collapsedBackgroundColor: Colors.grey.shade100,
 
         /// ================= HEADER =================
         title: Row(
@@ -54,7 +58,10 @@ class EmpresaCardWidget extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Icon(Icons.apartment_outlined, color: Cores.verde_escuro),
             ),
 
@@ -64,11 +71,20 @@ class EmpresaCardWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(razaoSocial, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                  Text(
+                    razaoSocial,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
 
                   const SizedBox(height: 4),
 
-                  Text(nomeFantasia, style: TextStyle(color: Colors.grey.shade700)),
+                  Text(
+                    nomeFantasia,
+                    style: TextStyle(color: Colors.grey.shade700),
+                  ),
 
                   const SizedBox(height: 10),
 
@@ -77,8 +93,9 @@ class EmpresaCardWidget extends StatelessWidget {
                     children: [
                       _tag(cnpj),
                       _tag(cnae, icon: Icons.sell_outlined),
-                      SizedBox(width: 200),
                       if (conciliadora) PilulaConciliadora(),
+                      ativoConciliadora! ? const SizedBox() : PilulaConciliadora( cor: Cores.vermelho,),
+
                     ],
                   ),
 
@@ -108,14 +125,23 @@ class EmpresaCardWidget extends StatelessWidget {
                             children: const [
                               Icon(Icons.group_outlined, size: 16),
                               SizedBox(width: 6),
-                              Text("SÓCIOS", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                              Text(
+                                "SÓCIOS",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 6),
                           Wrap(
                             spacing: 8,
                             runSpacing: 6,
-                            children: socios.where((s) => s.trim().isNotEmpty).map(_chipSocio).toList(),
+                            children: socios
+                                .where((s) => s.trim().isNotEmpty)
+                                .map(_chipSocio)
+                                .toList(),
                           ),
                         ],
                       ),
@@ -163,8 +189,15 @@ class EmpresaCardWidget extends StatelessWidget {
                       opcoes: Row(
                         children: [
                           existe
-                              ? ImageIconButton(imagePath: 'assets/img/conciliadora_icon.jpeg', onPressed: () {})
-                              : ImageIconButton(imagePath: 'assets/img/pipedrive_icon.png', onPressed: pipedrive),
+                              ? ImageIconButton(
+                                  imagePath:
+                                      'assets/img/conciliadora_icon.jpeg',
+                                  onPressed: () {},
+                                )
+                              : ImageIconButton(
+                                  imagePath: 'assets/img/pipedrive_icon.png',
+                                  onPressed: pipedrive,
+                                ),
                         ],
                       ),
                     );
@@ -181,7 +214,10 @@ class EmpresaCardWidget extends StatelessWidget {
   Widget _tag(String texto, {IconData? icon, Color? cor}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(color: cor ?? Colors.blueGrey.shade50, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: cor ?? Colors.blueGrey.shade50,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -209,7 +245,10 @@ class EmpresaCardWidget extends StatelessWidget {
   Widget _chipSocio(String nome) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Text(nome, style: const TextStyle(fontSize: 13)),
     );
   }

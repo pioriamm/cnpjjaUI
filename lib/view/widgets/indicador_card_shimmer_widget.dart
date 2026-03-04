@@ -5,12 +5,10 @@ class IndicadorCardShimmer extends StatefulWidget {
   const IndicadorCardShimmer({super.key});
 
   @override
-  State<IndicadorCardShimmer> createState() =>
-      _IndicadorCardShimmerState();
+  State<IndicadorCardShimmer> createState() => _IndicadorCardShimmerState();
 }
 
-class _IndicadorCardShimmerState
-    extends State<IndicadorCardShimmer> {
+class _IndicadorCardShimmerState extends State<IndicadorCardShimmer> {
   bool isHovering = false;
 
   @override
@@ -34,11 +32,9 @@ class _IndicadorCardShimmerState
             border: Border.all(color: Colors.grey.shade300),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(
-                    isHovering ? 0.18 : 0.05),
+                color: Colors.black.withOpacity(isHovering ? 0.18 : 0.05),
                 blurRadius: isHovering ? 24 : 8,
-                offset:
-                Offset(0, isHovering ? 16 : 3),
+                offset: Offset(0, isHovering ? 16 : 3),
               ),
             ],
           ),
@@ -47,38 +43,27 @@ class _IndicadorCardShimmerState
             highlightColor: Colors.grey.shade100,
             period: const Duration(milliseconds: 1200),
             child: Column(
-              crossAxisAlignment:
-              CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 /// Ícone fake
                 Container(
                   width: 28,
                   height: 28,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                    BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                 ),
 
                 const SizedBox(height: 18),
 
                 /// Valor fake
-                Container(
-                  width: 120,
-                  height: 28,
-                  color: Colors.white,
-                ),
+                Container(width: 120, height: 28, color: Colors.white),
 
                 const SizedBox(height: 8),
 
                 /// Título fake
-                Container(
-                  width: 160,
-                  height: 14,
-                  color: Colors.white,
-                ),
+                Container(width: 160, height: 14, color: Colors.white),
               ],
             ),
           ),

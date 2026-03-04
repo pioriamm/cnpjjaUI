@@ -1,5 +1,3 @@
-
-
 import 'package:cnpjjaUi/model/empresa_socio.dart';
 
 class Membros {
@@ -13,7 +11,9 @@ class Membros {
     return Membros(
       idMembro: json['id_membro'],
       nomeMembro: json['nome_membro'],
-      empresas: (json['empresas'] as List?)?.map((e) => EmpresaSocio.fromJson(e)).toList(),
+      empresas: (json['empresas'] as List?)
+          ?.map((e) => EmpresaSocio.fromJson(e))
+          .toList(),
     );
   }
 }

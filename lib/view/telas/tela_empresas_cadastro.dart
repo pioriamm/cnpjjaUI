@@ -1,33 +1,30 @@
-import 'package:flutter/material.dart';
-import 'package:cnpjjaUi/helprs/formatadores.dart';
 import 'package:cnpjjaUi/model/empresas_conciliadora.dart';
 import 'package:cnpjjaUi/model/enum_menu_item.dart';
 import 'package:cnpjjaUi/repositorio/api_service.dart';
+import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
 import 'package:cnpjjaUi/view/widgets/empresa_card_simples_widget.dart';
 import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
-import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
-import 'package:cnpjjaUi/view/widgets/botao_padrao.dart';
 import 'package:cnpjjaUi/view/widgets/nova_empresa_dialog.dart';
+import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
+import 'package:flutter/material.dart';
+
 import '../../helprs/cores.dart';
 
 class TelaEmpresasCadastro extends StatefulWidget {
   const TelaEmpresasCadastro({super.key});
 
   @override
-  State<TelaEmpresasCadastro> createState() =>
-      _TelaEmpresasCadastroState();
+  State<TelaEmpresasCadastro> createState() => _TelaEmpresasCadastroState();
 }
 
-class _TelaEmpresasCadastroState
-    extends State<TelaEmpresasCadastro> {
+class _TelaEmpresasCadastroState extends State<TelaEmpresasCadastro> {
   List<EmpresasConciliadora> empresas = [];
   List<EmpresasConciliadora> empresasFiltradas = [];
 
   bool carregando = true;
   String? erro;
 
-  final TextEditingController _filtroController =
-  TextEditingController();
+  final TextEditingController _filtroController = TextEditingController();
 
   MenuItem _selected = MenuItem.empresaSocio;
 
@@ -53,15 +50,13 @@ class _TelaEmpresasCadastroState
     });
 
     try {
-      final resultado =
-      await ApiService.buscarBaseConciliadora();
+      final resultado = await ApiService.buscarBaseConciliadora();
 
       /// ordena por razão social
       resultado.sort(
-            (a, b) => (a.razaoSocial ?? '')
-            .toLowerCase()
-            .compareTo(
-            (b.razaoSocial ?? '').toLowerCase()),
+        (a, b) => (a.razaoSocial ?? '').toLowerCase().compareTo(
+          (b.razaoSocial ?? '').toLowerCase(),
+        ),
       );
 
       setState(() {
@@ -84,16 +79,10 @@ class _TelaEmpresasCadastroState
 
     setState(() {
       empresasFiltradas = empresas.where((empresa) {
-        return (empresa.razaoSocial ?? '')
-            .toLowerCase()
-            .contains(busca) ||
-            (empresa.alias ?? '')
-                .toLowerCase()
-                .contains(busca) ||
+        return (empresa.razaoSocial ?? '').toLowerCase().contains(busca) ||
+            (empresa.alias ?? '').toLowerCase().contains(busca) ||
             (empresa.cnpj ?? '').contains(busca) ||
-            (empresa.id ?? '')
-                .toLowerCase()
-                .contains(busca);
+            (empresa.id ?? '').toLowerCase().contains(busca);
       }).toList();
     });
   }
@@ -106,15 +95,11 @@ class _TelaEmpresasCadastroState
     final tela = MediaQuery.of(context).size;
 
     if (carregando) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (erro != null) {
-      return Scaffold(
-        body: Center(child: Text("Erro: $erro")),
-      );
+      return Scaffold(body: Center(child: Text("Erro: $erro")));
     }
 
     return Scaffold(
@@ -139,13 +124,11 @@ class _TelaEmpresasCadastroState
                 vertical: 50,
               ),
               child: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   /// HEADER
                   Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Lista de Empresas",
@@ -157,12 +140,10 @@ class _TelaEmpresasCadastroState
                       ),
                       BotaoPadrao(
                         acao: () async {
-                          final resultado =
-                          await showDialog(
+                          final resultado = await showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (_) =>
-                            const NovaEmpresaDialog(),
+                            builder: (_) => const NovaEmpresaDialog(),
                           );
 
                           if (resultado != null) {
@@ -171,14 +152,11 @@ class _TelaEmpresasCadastroState
                         },
                         cor: Cores.verde_escuro,
                         conteudo: [
-                          Icon(Icons.add,
-                              color: Cores.branco),
+                          Icon(Icons.add, color: Cores.branco),
                           const SizedBox(width: 8),
                           Text(
                             "Nova Empresa",
-                            style: TextStyle(
-                                color: Cores.branco,
-                                fontSize: 16),
+                            style: TextStyle(color: Cores.branco, fontSize: 16),
                           ),
                         ],
                       ),
@@ -200,7 +178,7 @@ class _TelaEmpresasCadastroState
                     controller: _filtroController,
                     onChanged: _filtrar,
                     hintText:
-                    'Filtrar por razão social, nome fantasia, CNPJ ou ID...',
+                        'Filtrar por razão social, nome fantasia, CNPJ ou ID...',
                   ),
 
                   const SizedBox(height: 15),
@@ -208,14 +186,10 @@ class _TelaEmpresasCadastroState
                   /// LISTA
                   Expanded(
                     child: ListView.builder(
-                      itemCount:
-                      empresasFiltradas.length,
+                      itemCount: empresasFiltradas.length,
                       itemBuilder: (context, index) {
-                        final empresa =
-                        empresasFiltradas[index];
-                        return EmpresaCardSimplesWidget(
-                          empresa: empresa,
-                        );
+                        final empresa = empresasFiltradas[index];
+                        return EmpresaCardSimplesWidget(empresa: empresa);
                       },
                     ),
                   ),

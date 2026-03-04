@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/cores.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
-import 'package:cnpjjaUi/model/telefone.dart';
-import 'package:cnpjjaUi/model/membo.dart';
 import 'package:cnpjjaUi/model/enum_menu_item.dart';
+import 'package:cnpjjaUi/model/membo.dart';
 import 'package:cnpjjaUi/model/prospec.dart';
+import 'package:cnpjjaUi/model/telefone.dart';
 import 'package:cnpjjaUi/view/widgets/empresa_card_widget.dart';
 import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
+import 'package:flutter/material.dart';
 
 class TelaEmpresasResumo extends StatefulWidget {
   final Prospectar? empresa;
@@ -45,20 +45,30 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
             /// SIDEBAR
             SizedBox(
               width: tela.width * 0.2,
-              child: SideBarWidget(selectedItem: _selected, onItemSelected: (item) => setState(() => _selected = item)),
+              child: SideBarWidget(
+                selectedItem: _selected,
+                onItemSelected: (item) => setState(() => _selected = item),
+              ),
             ),
 
             /// CONTEÚDO
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: tela.width * 0.09, vertical: 50),
+                padding: EdgeInsets.symmetric(
+                  horizontal: tela.width * 0.09,
+                  vertical: 50,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// HEADER
                     Text(
                       "Resumo da Empresa",
-                      style: TextStyle(fontSize: 30, color: Cores.verde_escuro, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Cores.verde_escuro,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
 
                     const SizedBox(height: 15),
@@ -74,19 +84,33 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
                             ),
                             child: EmpresaCardWidget(
                               razaoSocial: empresa?.empresaRaiz ?? '',
-                              nomeFantasia: (empresa?.alias?.isNotEmpty ?? false)
+                              nomeFantasia:
+                                  (empresa?.alias?.isNotEmpty ?? false)
                                   ? empresa!.alias!
                                   : empresa?.empresaRaiz ?? '',
-                              cnpj: empresa?.cnpjRaizId != null ? Formatadores.formatarCnpj(empresa!.cnpjRaizId!) : '',
+                              cnpj: empresa?.cnpjRaizId != null
+                                  ? Formatadores.formatarCnpj(
+                                      empresa!.cnpjRaizId!,
+                                    )
+                                  : '',
                               cnae: empresa?.cnae?.id != null
-                                  ? Formatadores.formatarCnae(empresa!.cnae!.id.toString())
+                                  ? Formatadores.formatarCnae(
+                                      empresa!.cnae!.id.toString(),
+                                    )
                                   : '',
                               atividade: empresa?.cnae?.descricao ?? '',
-                              telefone: telefones.map((tel) => "(${tel.area ?? ''}) ${tel.number ?? ''}").join(' • '),
+                              telefone: telefones
+                                  .map(
+                                    (tel) =>
+                                        "(${tel.area ?? ''}) ${tel.number ?? ''}",
+                                  )
+                                  .join(' • '),
                               email: (empresa?.email?.isNotEmpty ?? false)
                                   ? empresa!.email!.first.address ?? ''
                                   : 'Sem informações',
-                              socios: membros.map((m) => m.nomeMembro ?? '').toList(),
+                              socios: membros
+                                  .map((m) => m.nomeMembro ?? '')
+                                  .toList(),
                               conciliadora: empresa?.eConciliadora ?? false,
                               empresasVinculadas: membros,
                             ),

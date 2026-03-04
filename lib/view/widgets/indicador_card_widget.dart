@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/helprs/cores.dart';
+import 'package:flutter/material.dart';
 
 class IndicadorCardWidget extends StatefulWidget {
   final IconData icon;
@@ -16,12 +16,10 @@ class IndicadorCardWidget extends StatefulWidget {
   });
 
   @override
-  State<IndicadorCardWidget> createState() =>
-      _IndicadorCardWidgetState();
+  State<IndicadorCardWidget> createState() => _IndicadorCardWidgetState();
 }
 
-class _IndicadorCardWidgetState
-    extends State<IndicadorCardWidget> {
+class _IndicadorCardWidgetState extends State<IndicadorCardWidget> {
   bool isHovering = false;
 
   @override
@@ -41,13 +39,9 @@ class _IndicadorCardWidgetState
             Navigator.push(
               context,
               PageRouteBuilder(
-                transitionDuration:
-                const Duration(milliseconds: 250),
+                transitionDuration: const Duration(milliseconds: 250),
                 pageBuilder: (_, animation, __) =>
-                    FadeTransition(
-                      opacity: animation,
-                      child: widget.tela,
-                    ),
+                    FadeTransition(opacity: animation, child: widget.tela),
               ),
             );
           },
@@ -69,32 +63,25 @@ class _IndicadorCardWidgetState
               border: Border.all(color: Colors.grey.shade300),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(
-                      isHovering ? 0.18 : 0.05),
+                  color: Colors.black.withOpacity(isHovering ? 0.18 : 0.05),
                   blurRadius: isHovering ? 24 : 8,
-                  offset:
-                  Offset(0, isHovering ? 16 : 3),
+                  offset: Offset(0, isHovering ? 16 : 3),
                 ),
               ],
             ),
 
             /// CONTEÚDO
             child: Column(
-              crossAxisAlignment:
-              CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 /// ÍCONE
                 AnimatedSwitcher(
-                  duration:
-                  const Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   child: Icon(
                     widget.icon,
                     key: ValueKey(isHovering),
                     size: 28,
-                    color: isHovering
-                        ? corHover
-                        : corNormalIcon,
+                    color: isHovering ? corHover : corNormalIcon,
                   ),
                 ),
 
@@ -102,14 +89,11 @@ class _IndicadorCardWidgetState
 
                 /// VALOR
                 AnimatedDefaultTextStyle(
-                  duration:
-                  const Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: isHovering
-                        ? corHover
-                        : Colors.black,
+                    color: isHovering ? corHover : Colors.black,
                   ),
                   child: Text(widget.valor),
                 ),
@@ -118,13 +102,10 @@ class _IndicadorCardWidgetState
 
                 /// TÍTULO
                 AnimatedDefaultTextStyle(
-                  duration:
-                  const Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   style: TextStyle(
                     fontSize: 14,
-                    color: isHovering
-                        ? corHover
-                        : Colors.grey.shade600,
+                    color: isHovering ? corHover : Colors.grey.shade600,
                   ),
                   child: Text(widget.titulo),
                 ),

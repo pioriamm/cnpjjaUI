@@ -33,7 +33,6 @@ class _SidebarItemState extends State<SidebarItem> {
           ),
           child: Row(
             children: [
-
               AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
                 width: 4,
@@ -50,8 +49,7 @@ class _SidebarItemState extends State<SidebarItem> {
                   title: Text(
                     widget.title,
                     style: TextStyle(
-                      fontWeight:
-                      hover ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: hover ? FontWeight.bold : FontWeight.normal,
                       color: hover ? Colors.blue : Colors.black87,
                     ),
                   ),

@@ -1,3 +1,4 @@
+
 import 'cnae.dart';
 import 'email.dart';
 import 'membo.dart';
@@ -15,6 +16,7 @@ class Dados {
   final StatusEmpresa? status;
   final Cnae? cnae;
   final List<Membros>? membros;
+  final bool? ativoConciliadora;
 
   Dados({
     this.alias,
@@ -25,7 +27,9 @@ class Dados {
     this.telefone,
     this.status,
     this.membros,
-    this.cnae, required this.eConciliadora,
+    this.cnae,
+    this.eConciliadora,
+    this.ativoConciliadora,
   });
 
   factory Dados.fromJson(Map<String, dynamic> json) {
@@ -40,29 +44,27 @@ class Dados {
       cnpjRaizId: json['cnpj_raiz_id'] as String?,
       companiaId: json['compania_id'] as int?,
       empresaRaiz: json['empresa_raiz'] as String?,
+      ativoConciliadora: json['ativoConciliadora'] as bool,
 
       /// ✅ EMAIL TIPADO
       email: (json['email'] as List<dynamic>?)
-          ?.map<Email>((e) =>
-          Email.fromJson(e as Map<String, dynamic>))
+          ?.map<Email>((e) => Email.fromJson(e as Map<String, dynamic>))
           .toList(),
 
       /// ✅ TELEFONE TIPADO
       telefone: (json['telefone'] as List<dynamic>?)
-          ?.map<Telefone>((e) =>
-          Telefone.fromJson(e as Map<String, dynamic>))
+          ?.map<Telefone>((e) => Telefone.fromJson(e as Map<String, dynamic>))
           .toList(),
 
       status: json['status'] != null
-          ? StatusEmpresa.fromJson(
-          json['status'] as Map<String, dynamic>)
+          ? StatusEmpresa.fromJson(json['status'] as Map<String, dynamic>)
           : null,
 
       /// ✅ MEMBROS TIPADO (AQUI ESTAVA O PROBLEMA)
       membros: (json['membros'] as List<dynamic>?)
-          ?.map<Membros>((e) =>
-          Membros.fromJson(e as Map<String, dynamic>))
+          ?.map<Membros>((e) => Membros.fromJson(e as Map<String, dynamic>))
           .toList(),
+
     );
   }
 }

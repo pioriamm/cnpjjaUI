@@ -1,7 +1,6 @@
 import 'package:intl/intl.dart';
 
 class Formatadores {
-
   static String formatarCnpj(String cnpj) {
     final numeros = cnpj.replaceAll(RegExp(r'\D'), '');
 
@@ -9,11 +8,11 @@ class Formatadores {
 
     return numeros.replaceAllMapped(
       RegExp(r'^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$'),
-          (match) => "${match[1]}.${match[2]}.${match[3]}/${match[4]}-${match[5]}",
+      (match) => "${match[1]}.${match[2]}.${match[3]}/${match[4]}-${match[5]}",
     );
   }
 
- static String limparCnpj(String cnpj) {
+  static String limparCnpj(String cnpj) {
     return cnpj.replaceAll(RegExp(r'[.\-/]'), '');
   }
 
@@ -51,5 +50,4 @@ class Formatadores {
     final formatter = NumberFormat('#,##0', 'pt_BR');
     return formatter.format(valor);
   }
-
 }

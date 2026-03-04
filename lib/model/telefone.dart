@@ -6,6 +6,10 @@ class Telefone {
   Telefone({this.area, this.number, this.type});
 
   factory Telefone.fromJson(Map<String, dynamic> json) {
-    return Telefone(area: json['area'], number: json['number'], type: json['type']);
+    return Telefone(
+      area: json['area'],
+      number: json['number'],
+      type: json['type'],
+    );
   }
 }

@@ -39,10 +39,11 @@ flutter:
     - assets/img/conciliadora_logo.png
     - assets/img/cnpjja_icon.jpeg
     - assets/img/conciliadora_icon.jpeg
+    - assets/img/conciliadora_icon.png
 
 
   fonts:
-     - family: Inter
-       fonts:
-         - asset: assets/fonte/PlusJakartaSans.ttf
-         - asset: assets/fonte/Inter.ttf
+    - family: Inter
+      fonts:
+        - asset: assets/fonte/PlusJakartaSans.ttf
+        - asset: assets/fonte/Inter.ttf

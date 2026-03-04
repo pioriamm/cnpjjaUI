@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:cnpjjaUi/repositorio/api_service.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'busca_base_conciliadora_provider.dart';
@@ -22,22 +22,24 @@ class PesquisaAtualizarBaseStatusProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-
       final result = await ApiService.pesquisarCnpjja(cnpj);
 
       if (result == 200) {
         await ApiService.atualizarStatusEmpresa(id).then((valor) async {
-          await context.read<BuscarBaseConciliadoraProvider>().carregarBase(context: context);
+          await context.read<BuscarBaseConciliadoraProvider>().carregarBase(
+            context: context,
+          );
         });
       }
 
       erro = null;
-
     } catch (e) {
       erro = e.toString();
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text("Erro: $e"), backgroundColor: Colors.red));
+        ..showSnackBar(
+          SnackBar(content: Text("Erro: $e"), backgroundColor: Colors.red),
+        );
     }
 
     loadingId = null;
