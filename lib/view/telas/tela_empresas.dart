@@ -20,20 +20,36 @@ class TelaEmpresas extends StatefulWidget {
 
 class _TelaEmpresasState extends State<TelaEmpresas> {
   final TextEditingController _filtroController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
   MenuItem _selected = MenuItem.empresas;
   String filtro = '';
+  bool? filtroAtivo; // null = todos
 
   @override
   void initState() {
     super.initState();
+
     Future.microtask(() {
       context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja(reset: true);
+    });
+
+    _scrollController.addListener(() {
+      final provider = context.read<BuscarBaseCnpjaProvider>();
+
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        if (!provider.isLoading && !provider.isLast) {
+          provider.buscarDadosCnpja();
+        }
+      }
     });
   }
 
   @override
   void dispose() {
     _filtroController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -68,15 +84,24 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                       }
 
                       final dados = empresa.dados!.first;
+
                       final filtroLower = filtro.toLowerCase();
 
-                      return (dados.empresaRaiz ?? '').toLowerCase().contains(
-                            filtroLower,
-                          ) ||
-                          (dados.alias ?? '').toLowerCase().contains(
-                            filtroLower,
-                          ) ||
-                          (dados.cnpjRaizId ?? '').contains(filtro);
+                      final ativo = dados.ativoConciliadora ?? false;
+
+                      final filtroTexto =
+                          (dados.empresaRaiz ?? '')
+                              .toLowerCase()
+                              .contains(filtroLower) ||
+                              (dados.alias ?? '')
+                                  .toLowerCase()
+                                  .contains(filtroLower) ||
+                              (dados.cnpjRaizId ?? '').contains(filtro);
+
+                      final filtroStatus =
+                      filtroAtivo == null ? true : ativo == filtroAtivo;
+
+                      return filtroTexto && filtroStatus;
                     }).toList();
 
                     return Column(
@@ -93,9 +118,10 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                         const SizedBox(height: 8),
                         TituloContador(
                           lista: empresasFiltradas.length,
-                          titulo: ' empresas carregadas.',
+                          titulo: empresasFiltradas.length <2 ? ' empresa carregada.' : ' empresas carregadas.',
                         ),
                         const SizedBox(height: 15),
+
                         Row(
                           children: [
                             Expanded(
@@ -109,68 +135,77 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                                 },
                               ),
                             ),
+
                             const SizedBox(width: 12),
-                            SizedBox(
-                              height: 50,
-                              child: provider.isLoading
-                                  ? const SizedBox(
-                                      width: 40,
-                                      height: 40,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(8),
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      ),
-                                    )
-                                  : BotaoPadrao(
-                                      acao: provider.isLast
-                                          ? null
-                                          : () {
-                                              provider.buscarDadosCnpja();
-                                            },
-                                      cor: Cores.verde_claro,
-                                      conteudo: [
-                                        const Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                      ],
+
+                            Container(
+                              height: 46,
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xffE9E9E9),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<bool?>(
+                                  value: filtroAtivo,
+                                  icon: const Icon(Icons.keyboard_arrow_down),
+                                  borderRadius: BorderRadius.circular(12),
+                                  hint: const Text(
+                                    "Status",
+                                    style: TextStyle(fontWeight: FontWeight.w500),
+                                  ),
+                                  items: const [
+                                    DropdownMenuItem(
+                                      value: null,
+                                      child: Text("Todos"),
                                     ),
+                                    DropdownMenuItem(
+                                      value: true,
+                                      child: Text("Ativo"),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: false,
+                                      child: Text("Inativo"),
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      filtroAtivo = value;
+                                    });
+                                  },
+                                ),
+                              ),
                             ),
+
+                            const SizedBox(width: 12),
+
                           ],
                         ),
+
                         const SizedBox(height: 15),
 
-                        /// LOADING INICIAL
                         if (provider.isLoading && lista.isEmpty)
                           const Expanded(
                             child: Center(child: CircularProgressIndicator()),
                           )
-                        /// ERRO
                         else if (provider.erro != null)
                           Expanded(
                             child: Center(
                               child: Text("Erro: ${provider.erro}"),
                             ),
                           )
-                        /// VAZIO
                         else if (empresasFiltradas.isEmpty)
-                          const Expanded(
-                            child: Center(
-                              child: Text("Nenhuma empresa encontrada"),
-                            ),
-                          )
-                        /// LISTA
-                        else
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount:
-                                  empresasFiltradas.length +
-                                  (provider.isLast ? 0 : 1),
-                              itemBuilder: (context, index) {
-                                if (index < empresasFiltradas.length) {
+                            const Expanded(
+                              child: Center(
+                                child: Text("Nenhuma empresa encontrada"),
+                              ),
+                            )
+                          else
+                            Expanded(
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: empresasFiltradas.length,
+                                itemBuilder: (context, index) {
                                   final wrapper = empresasFiltradas[index];
 
                                   if (wrapper.dados == null ||
@@ -181,7 +216,8 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                                   final empresaAtual = wrapper.dados!.first;
 
                                   return EmpresaCardWidget(
-                                    ativoConciliadora: empresaAtual.ativoConciliadora ?? false,
+                                    ativoConciliadora:
+                                    empresaAtual.ativoConciliadora ?? false,
                                     razaoSocial: empresaAtual.empresaRaiz ?? '',
                                     nomeFantasia: empresaAtual.alias ?? '',
                                     cnpj: Formatadores.formatarCnpj(
@@ -191,29 +227,25 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                                       "${empresaAtual.cnae?.id ?? ''}",
                                     ),
                                     atividade:
-                                        empresaAtual.cnae?.descricao ?? '',
+                                    empresaAtual.cnae?.descricao ?? '',
                                     telefone: (empresaAtual.telefone ?? [])
-                                        .map<String>(
-                                          (tel) =>
-                                              "(${tel.area ?? ''}) ${tel.number ?? ''}",
-                                        )
+                                        .map<String>((tel) =>
+                                    "(${tel.area ?? ''}) ${tel.number ?? ''}")
                                         .join(' • '),
                                     email: (empresaAtual.email ?? []).isNotEmpty
-                                        ? empresaAtual.email!.first.address ??
-                                              ''
+                                        ? empresaAtual.email!.first.address ?? ''
                                         : 'Sem informações',
                                     socios: (empresaAtual.membros ?? [])
                                         .map((m) => m.nomeMembro ?? '')
                                         .toList(),
                                     empresasVinculadas:
-                                        empresaAtual.membros ?? [],
+                                    empresaAtual.membros ?? [],
                                     conciliadora:
-                                        empresaAtual.eConciliadora ?? false,
+                                    empresaAtual.eConciliadora ?? false,
                                   );
-                                }
-                              },
+                                },
+                              ),
                             ),
-                          ),
                       ],
                     );
                   },
