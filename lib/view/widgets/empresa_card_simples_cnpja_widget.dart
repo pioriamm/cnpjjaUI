@@ -140,7 +140,7 @@ class EmpresaCardSimplesCnpjaWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Text(
-                    "Não conciliada",
+                    "Prospectar",
                     style: TextStyle(fontSize: 12),
                   ),
                 ),

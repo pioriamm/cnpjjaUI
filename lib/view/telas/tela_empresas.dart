@@ -118,7 +118,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                         const SizedBox(height: 8),
                         TituloContador(
                           lista: empresasFiltradas.length,
-                          titulo: empresasFiltradas.length <2 ? ' empresa carregada.' : ' empresas carregadas.',
+                          titulo: empresasFiltradas.length < 2 ? ' empresa carregada.' : ' empresas carregadas.',
                         ),
                         const SizedBox(height: 15),
 
