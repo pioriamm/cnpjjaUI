@@ -112,7 +112,7 @@ class _TelaEmpresasResumoState extends State<TelaEmpresasResumo> {
                                   .map((m) => m.nomeMembro ?? '')
                                   .toList(),
                               conciliadora: empresa?.eConciliadora ?? false,
-                              empresasVinculadas: membros,
+                              empresasVinculadas: membros, ativoConciliadora: empresa.ativoConciliadora ?? false
                             ),
                           ),
                         ],

@@ -61,7 +61,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             page: "empresa-socio",
           ),
 
-          _menuItem(
+          /*_menuItem(
             context: context,
             icon: Icons.group_outlined,
             title: "Sócios",
@@ -86,7 +86,7 @@ class _SideBarWidgetState extends State<SideBarWidget> {
             title: "Cadastro Sócios",
             item: MenuItem.sociosCadastro,
             page: "castrar_socios",
-          ),
+          ),*/
 
           const Spacer(),
           const Padding(

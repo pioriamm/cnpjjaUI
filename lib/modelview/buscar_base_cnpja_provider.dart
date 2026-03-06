@@ -1,4 +1,3 @@
-import 'package:cnpjjaUi/helprs/configuracoes.dart';
 import 'package:flutter/material.dart';
 
 import '../model/prospec.dart';
@@ -7,83 +6,114 @@ import '../repositorio/api_service.dart';
 class BuscarBaseCnpjaProvider extends ChangeNotifier {
 
   /// =========================
-  /// PROPIEDADES
+  /// PAGINAÇÃO
   /// =========================
 
-  int? _totalSociosCache;
-  int? _sociosDiretosCache;
-  int? _sociosIndiretosCache;
-  int _currentPage = 0;
-  final int _pageSize = 50;
+  int paginaAtual = 0;
+  int totalPaginas = 0;
+
+  final int pageSize = 20;
+
+  /// =========================
+  /// ESTADO
+  /// =========================
 
   bool isLoading = false;
-  bool isLast = false;
-
   String? erro;
-  DateTime? _lastFetch;
-  static Duration _cacheDuration = Duration(minutes: Configuracoes.cache);
+
   List<Prospectar> listaProspecao = [];
 
-
-
   /// =========================
-  /// GETTERS
+  /// MÉTRICAS
   /// =========================
 
+  int totalEmpresas = 0;
+  int totalSocios = 0;
+  int sociosDiretosUnicos = 0;
+  int sociosIndiretosUnicos = 0;
 
-  //Todas as empresas prospectadas
-  List<dynamic> get ListaEmpresasProspectadas => listaProspecao.expand((p) => p.dados ?? []).toList();
+  double get ticketMedio => totalEmpresas * 150.50;
 
-  int get totalEmpresas => listaProspecao.length;
+  /// =========================
+  /// BUSCAR PAGINA
+  /// =========================
 
-  int get sociosDiretosUnicos {
-    if (_sociosDiretosCache != null) return _sociosDiretosCache!;
+  Future<void> buscarPagina(int pagina) async {
 
-    final ids = listaProspecao
-        .expand((e) => e.dados ?? [])
-        .expand((d) => d.membros ?? [])
-        .map((m) => m.idMembro)
-        .whereType<String>()
-        .toSet();
+    if (isLoading) return;
 
-    _sociosDiretosCache = ids.length;
-    return _sociosDiretosCache!;
+    if (pagina < 0) pagina = 0;
+
+    if (totalPaginas > 0 && pagina >= totalPaginas) {
+      pagina = totalPaginas - 1;
+    }
+
+    isLoading = true;
+    erro = null;
+
+    notifyListeners();
+
+    try {
+
+      final response = await ApiService.buscarEmpresasBaseCnpjja(
+        page: pagina,
+        size: pageSize,
+      );
+
+      listaProspecao = List<Prospectar>.from(response.content);
+
+      paginaAtual = response.number;
+      totalPaginas = response.totalPages;
+
+      _calcularMetricas();
+
+      print("paginaAtual: ${response.number}");
+      print("totalPaginas: ${response.totalPages}");
+      print("items: ${response.content.length}");
+
+    } catch (e) {
+
+      erro = e.toString();
+      listaProspecao = [];
+    }
+
+    isLoading = false;
+
+    notifyListeners();
   }
 
-  int get sociosIndiretosUnicos {
+  /// =========================
+  /// CALCULAR MÉTRICAS
+  /// =========================
 
-    if (_sociosIndiretosCache != null) return _sociosIndiretosCache!;
+  void _calcularMetricas() {
 
-    final ids = listaProspecao
-        .expand((e) => e.dados ?? [])
-        .expand((d) => d.membros ?? [])
-        .expand((m) => m.empresas ?? [])
-        .expand((emp) => emp.membrosEmpresaSocio ?? [])
-        .map((m) => m.id)
-        .whereType<String>()
-        .toSet();
+    totalEmpresas = 0;
+    totalSocios = 0;
+    sociosDiretosUnicos = 0;
+    sociosIndiretosUnicos = 0;
 
-    _sociosIndiretosCache = ids.length;
-    return _sociosIndiretosCache!;
-  }
-
-  int get totalSocios {
-
-    if (_totalSociosCache != null) return _totalSociosCache!;
-
-    final ids = <String>{};
+    final sociosDiretos = <String>{};
+    final sociosIndiretos = <String>{};
 
     for (final prospect in listaProspecao) {
+
+      totalEmpresas++;
+
       for (final dado in prospect.dados ?? []) {
+
         for (final membro in dado.membros ?? []) {
+
           if (membro.idMembro != null) {
-            ids.add(membro.idMembro!);
+            sociosDiretos.add(membro.idMembro!);
           }
 
           for (final empresa in membro.empresas ?? []) {
+
             for (final socio in empresa.membrosEmpresaSocio ?? []) {
+
               if (socio.id != null) {
-                ids.add(socio.id!);
+                sociosIndiretos.add(socio.id!);
               }
             }
           }
@@ -91,59 +121,26 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
       }
     }
 
-    _totalSociosCache = ids.length;
-    return _totalSociosCache!;
+    sociosDiretosUnicos = sociosDiretos.length;
+    sociosIndiretosUnicos = sociosIndiretos.length;
+
+    final todosSocios = <String>{}
+      ..addAll(sociosDiretos)
+      ..addAll(sociosIndiretos);
+
+    totalSocios = todosSocios.length;
   }
 
-  double get ticketMedio => totalEmpresas * 150.50;
-
   /// =========================
-  /// METODOS
+  /// REFRESH
   /// =========================
-
-  Future<void> buscarDadosCnpja({bool reset = false}) async {
-
-    if (isLoading) return;
-    if (isLast && !reset) return;
-
-    if (reset) {
-      _currentPage = 0;
-      isLast = false;
-      listaProspecao.clear();
-    }
-
-    isLoading = true;
-    erro = null;
-    notifyListeners();
-
-    try {
-      final pageResponse = await ApiService.buscarEmpresasBaseCnpjja(
-        page: _currentPage,
-        size: _pageSize,
-      );
-
-      listaProspecao.addAll(pageResponse.content);
-
-      isLast = pageResponse.last;
-      _currentPage++;
-
-      _invalidateMetrics();
-    } catch (e) {
-      erro = e.toString();
-    }
-
-    isLoading = false;
-    notifyListeners();
-  }
 
   Future<void> refresh() async {
-    await buscarDadosCnpja(reset: true);
-  }
 
-  void _invalidateMetrics() {
-    _totalSociosCache = null;
-    _sociosDiretosCache = null;
-    _sociosIndiretosCache = null;
-  }
+    if (paginaAtual < 0) {
+      paginaAtual = 0;
+    }
 
+    await buscarPagina(paginaAtual);
+  }
 }

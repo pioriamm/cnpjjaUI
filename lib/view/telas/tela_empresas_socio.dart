@@ -29,9 +29,8 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja();
-    });
+    //Future.microtask(() => context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja()
+    //);
   }
 
   @override

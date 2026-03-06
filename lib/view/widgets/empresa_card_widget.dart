@@ -19,7 +19,7 @@ class EmpresaCardWidget extends StatelessWidget {
   final VoidCallback? pipedrive;
   final List<Membros>? empresasVinculadas;
   final bool conciliadora;
-  final bool? ativoConciliadora;
+  final bool ativoConciliadora;
 
   const EmpresaCardWidget({
     super.key,
@@ -34,7 +34,7 @@ class EmpresaCardWidget extends StatelessWidget {
     required this.empresasVinculadas,
     required this.conciliadora,
     this.pipedrive,
-    this.ativoConciliadora,
+    required this.ativoConciliadora,
   });
 
   @override
@@ -94,7 +94,7 @@ class EmpresaCardWidget extends StatelessWidget {
                       _tag(cnpj),
                       _tag(cnae, icon: Icons.sell_outlined),
                       if (conciliadora) PilulaConciliadora(),
-                      ativoConciliadora! ? const SizedBox() : PilulaConciliadora( cor: Cores.vermelho,),
+                      ativoConciliadora ? const SizedBox() : PilulaConciliadora( cor: Cores.vermelho,),
 
                     ],
                   ),

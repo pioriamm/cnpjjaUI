@@ -28,9 +28,9 @@ class _TelaSocioCadastroState extends State<TelaSocioCadastro> {
   void initState() {
     super.initState();
 
-    Future.microtask(() {
+    /*Future.microtask(() {
       context.read<BuscarBaseCnpjaProvider>().buscarDadosCnpja();
-    });
+    });*/
   }
 
   @override
