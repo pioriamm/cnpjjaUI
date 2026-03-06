@@ -146,42 +146,42 @@ class _TelaEmpresasSocioState extends State<TelaEmpresasSocio> {
                                 },
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Container(
+                            const SizedBox(width: 15),
+                            SizedBox(
+                              width: 200,
                               height: 50,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<FiltroCliente>(
-                                  value: _filtroCliente,
-                                  icon: const Icon(Icons.keyboard_arrow_down),
-                                  items: const [
-                                    DropdownMenuItem(
-                                      value: FiltroCliente.todos,
-                                      child: Text('Todos'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: FiltroCliente.cliente,
-                                      child: Text('É cliente'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: FiltroCliente.naoCliente,
-                                      child: Text('Não é cliente'),
-                                    ),
-                                  ],
-                                  onChanged: (value) {
-                                    if (value == null) return;
-                                    setState(() {
-                                      _filtroCliente = value;
-                                    });
-                                  },
+                              child: DropdownButtonFormField<FiltroCliente>(
+                                value: _filtroCliente,
+                                icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.grey.shade200,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: BorderSide.none,
+                                  ),
                                 ),
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: FiltroCliente.todos,
+                                    child: Text("Todos"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: FiltroCliente.cliente,
+                                    child: Text("É cliente"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: FiltroCliente.naoCliente,
+                                    child: Text("Não é cliente"),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  if (value == null) return;
+                                  setState(() {
+                                    _filtroCliente = value;
+                                  });
+                                },
                               ),
                             ),
                           ],

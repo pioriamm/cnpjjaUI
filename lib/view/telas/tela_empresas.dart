@@ -82,7 +82,7 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                           : null;
 
                       final filtroLower = filtro.toLowerCase();
-                      final status = dados?.status?.text ?? '';
+                      final status = dados?.ativoConciliadora;
 
                       final matchTexto =
                           (dados?.empresaRaiz ?? '').toLowerCase().contains(filtroLower) ||
@@ -92,11 +92,11 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
                       bool matchStatus = true;
 
                       if (filtroStatus == 'ATIVAS') {
-                        matchStatus = status == 'Ativa';
+                        matchStatus = status == true;
                       }
 
                       if (filtroStatus == 'INATIVAS') {
-                        matchStatus = status != 'Ativa';
+                        matchStatus = status != true;
                       }
 
                       return matchTexto && matchStatus;
