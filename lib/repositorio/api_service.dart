@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import '../model/empresas_conciliadora.dart';
 
 class ApiService {
+
+
   static Future<int> pesquisarCnpjja(String cnpj) async {
     try {
       final baseUrl = dotenv.env['API_URL'];
@@ -43,6 +45,38 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Falha ao pesquisar CNPJ: $e');
+    }
+  }
+
+
+  static Future<Map<String, dynamic>> buscarAuditoria() async {
+    try {
+      final baseUrl = dotenv.env['API_URL'];
+
+      if (baseUrl == null || baseUrl.isEmpty) {
+        throw Exception('API_URL não configurada no .env');
+      }
+
+      final url = Uri.parse('$baseUrl/auditoria');
+
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        return data;
+
+      } else {
+        throw Exception(
+          'Erro na API: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Falha ao buscar auditoria: $e');
     }
   }
 

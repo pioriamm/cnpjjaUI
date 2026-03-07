@@ -24,17 +24,6 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
   List<Prospectar> listaProspecao = [];
 
   /// =========================
-  /// MÉTRICAS
-  /// =========================
-
-  int totalEmpresas = 0;
-  int totalSocios = 0;
-  int sociosDiretosUnicos = 0;
-  int sociosIndiretosUnicos = 0;
-
-  double get ticketMedio => totalEmpresas * 150.50;
-
-  /// =========================
   /// BUSCAR PAGINA
   /// =========================
 
@@ -65,12 +54,6 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
       paginaAtual = response.number;
       totalPaginas = response.totalPages;
 
-      _calcularMetricas();
-
-      print("paginaAtual: ${response.number}");
-      print("totalPaginas: ${response.totalPages}");
-      print("items: ${response.content.length}");
-
     } catch (e) {
 
       erro = e.toString();
@@ -82,54 +65,6 @@ class BuscarBaseCnpjaProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// =========================
-  /// CALCULAR MÉTRICAS
-  /// =========================
-
-  void _calcularMetricas() {
-
-    totalEmpresas = 0;
-    totalSocios = 0;
-    sociosDiretosUnicos = 0;
-    sociosIndiretosUnicos = 0;
-
-    final sociosDiretos = <String>{};
-    final sociosIndiretos = <String>{};
-
-    for (final prospect in listaProspecao) {
-
-      totalEmpresas++;
-
-      for (final dado in prospect.dados ?? []) {
-
-        for (final membro in dado.membros ?? []) {
-
-          if (membro.idMembro != null) {
-            sociosDiretos.add(membro.idMembro!);
-          }
-
-          for (final empresa in membro.empresas ?? []) {
-
-            for (final socio in empresa.membrosEmpresaSocio ?? []) {
-
-              if (socio.id != null) {
-                sociosIndiretos.add(socio.id!);
-              }
-            }
-          }
-        }
-      }
-    }
-
-    sociosDiretosUnicos = sociosDiretos.length;
-    sociosIndiretosUnicos = sociosIndiretos.length;
-
-    final todosSocios = <String>{}
-      ..addAll(sociosDiretos)
-      ..addAll(sociosIndiretos);
-
-    totalSocios = todosSocios.length;
-  }
 
   /// =========================
   /// REFRESH

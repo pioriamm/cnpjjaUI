@@ -1,5 +1,6 @@
 import 'package:cnpjjaUi/helprs/formatadores.dart';
 import 'package:cnpjjaUi/model/enum_menu_item.dart';
+import 'package:cnpjjaUi/modelview/auditoria_provider.dart';
 import 'package:cnpjjaUi/modelview/buscar_base_cnpja_provider.dart';
 import 'package:cnpjjaUi/view/telas/tela_empresas.dart';
 import 'package:cnpjjaUi/view/telas/tela_socio.dart';
@@ -23,9 +24,18 @@ class TelaDashBoard extends StatefulWidget {
 }
 
 class _TelaDashBoardState extends State<TelaDashBoard> {
-  MenuItem _selected = MenuItem.pesquisa;
 
+  MenuItem _selected = MenuItem.pesquisa;
   final TextEditingController _filtroController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      context.read<AuditoriaProvider>().buscarAuditoria();
+    });
+  }
 
   @override
   void dispose() {
@@ -61,16 +71,14 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// HEADER
                   _buildHeader(),
-
                   const SizedBox(height: 30),
 
                   /// CARDS
-                  Consumer<BuscarBaseCnpjaProvider>(
+                  Consumer<AuditoriaProvider>(
                     builder: (context, provider, _) {
 
-                      final isLoading = provider.listaProspecao.isEmpty;
+                      final isLoading = provider.loading;
 
                       return Wrap(
                         spacing: 30,
@@ -179,7 +187,10 @@ class _TelaDashBoardState extends State<TelaDashBoard> {
           const SizedBox(height: 10),
           Text(
             "Busque por nome do sócio, CPF ou CNPJ para encontrar empresas vinculadas.",
-            style: TextStyle(fontSize: 15, color: Cores.cinza),
+            style: TextStyle(
+              fontSize: 15,
+              color: Cores.cinza,
+            ),
           ),
           const SizedBox(height: 35),
           Row(

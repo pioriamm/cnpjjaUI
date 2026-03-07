@@ -7,6 +7,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:provider/provider.dart';
 
 import 'modelview/atualizar_status_base_provider.dart';
+import 'modelview/auditoria_provider.dart';
 import 'modelview/buscar_base_cnpja_provider.dart';
 
 Future<void> main() async {
@@ -21,6 +22,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(create: (_) => BuscarBaseConciliadoraProvider()),
         ChangeNotifierProvider(create: (_) => BuscarBaseCnpjaProvider()),
+        ChangeNotifierProvider(create: (_) => AuditoriaProvider()),
+
+
       ],
       child: const MyApp(),
     ),
