@@ -32,7 +32,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - producao.env
     - local.env
     - assets/img/pipedrive_icon.png
     - assets/img/cnpja.png
