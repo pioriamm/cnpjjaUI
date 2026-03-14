@@ -1,6 +1,7 @@
 import 'package:cnpjjaUi/helprs/cores.dart';
 import 'package:cnpjjaUi/helprs/formatadores.dart';
 import 'package:cnpjjaUi/model/enum_menu_item.dart';
+import 'package:cnpjjaUi/view/widgets/PaginationShimmer.dart';
 import 'package:cnpjjaUi/view/widgets/empresa_card_widget.dart';
 import 'package:cnpjjaUi/view/widgets/filtro_busca_widget.dart';
 import 'package:cnpjjaUi/view/widgets/side_bar_widget.dart';
@@ -188,7 +189,9 @@ class _TelaEmpresasState extends State<TelaEmpresas> {
 
                         const SizedBox(height: 20),
 
-                        Row(
+                        provider.isLoading
+                            ?  PaginationShimmer()
+                            :  Row(
                           children: [
 
                             IconButton(
